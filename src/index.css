@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/* ===== Trinity light / Sui-clean design system ===== */
+:root{
+  --bg:#fbfcff;          /* page */
+  --bg-soft:#f3f5fb;     /* alt section */
+  --bg-card:#ffffff;
+  --line:#e6e9f2;
+  --line-strong:#d4d9e8;
+  --ink:#0e1230;         /* headings */
+  --ink-soft:#3f4663;    /* body */
+  --ink-dim:#71789a;     /* captions */
+  /* trinity accents tuned for white */
+  --earth:#2563eb;       /* Desirability */
+  --earth-soft:#dbeafe;
+  --moon:#475569;        /* Feasibility (slate) */
+  --moon-soft:#e2e8f0;
+  --sun:#d97706;         /* Viability (amber) */
+  --sun-soft:#fef3c7;
+  --violet:#7c3aed;
+  --green:#059669;
+  --rose:#e11d48;
+  --grad-ink:linear-gradient(100deg,#0e1230,#2563eb 70%,#7c3aed);
+  --r:18px;
+  --shadow:0 1px 2px rgba(14,18,48,.04),0 12px 40px -16px rgba(14,18,48,.14);
+  --shadow-lg:0 1px 2px rgba(14,18,48,.05),0 30px 70px -28px rgba(14,18,48,.22);
+  --font-disp:"Space Grotesk","Noto Sans TC",sans-serif;
+  --font-body:"Inter","Noto Sans TC",sans-serif;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink-soft);font-family:var(--font-body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{font-family:var(--font-disp);color:var(--ink);letter-spacing:-.01em;margin:0;line-height:1.1}
+.wrap{width:min(92vw,1160px);margin-inline:auto}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:1rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--earth)}
+.eyebrow::before{content:"";width:30px;height:1px;background:var(--earth)}
+.btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-body);font-weight:600;font-size:1.02rem;padding:14px 26px;border-radius:999px;cursor:pointer;border:1px solid transparent;transition:.25s var(--ease)}
+.btn-primary{background:var(--ink);color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.btn-ghost{background:#fff;border-color:var(--line-strong);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+::selection{background:var(--earth-soft)}
+::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#cfd6ea;border-radius:6px}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
