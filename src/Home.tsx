@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useSpring } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion'
 import { Reveal } from './lib/Reveal'
 import { useLenis } from './lib/useLenis'
+import { HeroNetwork } from './lib/HeroNetwork'
 import { CountUp, MaskLines, Stagger } from './lib/anim'
 
 const LOGO = (
@@ -29,87 +30,6 @@ const ENGINE = [
   { n: '02', h: 'Then they cross-link', p: 'Six directions of cross-correction. A strong demand signal raises the bar on viability, and so on.' },
   { n: '03', h: 'And converge into one verdict', p: 'D is the gate. The three become a single, actionable call: where you stand and what to fix.' },
 ]
-
-/* ---------- Hero orbit with 55-dimension stars + parallax ---------- */
-const LENS_COL = ['#2563eb', '#64748b', '#d97706'] // e / m / s
-function buildStars() {
-  const rings = [70, 110, 150]
-  const counts = [6, 8, 10]
-  const out: { ring: number; r: number; angle: number; col: string; sz: number; delay: number }[] = []
-  rings.forEach((rad, ri) => {
-    for (let i = 0; i < counts[ri]; i++) {
-      const angle = (360 / counts[ri]) * i + ri * 17
-      out.push({
-        ring: rad,
-        r: rad,
-        angle,
-        col: LENS_COL[(i + ri) % 3],
-        sz: 3.2 + ((i * 7) % 3) * 0.7,
-        delay: ((i + ri) % 6) * 0.25,
-      })
-    }
-  })
-  return out
-}
-const STARS = buildStars()
-
-function HeroOrbit({ progress }: { progress: ReturnType<typeof useScroll>['scrollYProgress'] }) {
-  const y = useTransform(progress, [0, 1], [0, 140]) // slow parallax drift
-  const rot = useTransform(progress, [0, 1], [0, 24])
-  const fade = useTransform(progress, [0, 0.8], [1, 0.25])
-  const sy = useSpring(y, { stiffness: 80, damping: 22 })
-  const ringDur = [60, 44, 30]
-  const ringIdx = (rad: number) => (rad === 150 ? 2 : rad === 110 ? 1 : 0)
-  return (
-    <div className="hero-orbit" aria-hidden>
-    <motion.div className="hero-orbit-inner" style={{ y: sy, rotate: rot, opacity: fade }}>
-      <svg viewBox="0 0 400 400" width="100%" height="100%">
-        <defs>
-          <radialGradient id="g-sun" cx="38%" cy="32%"><stop offset="0" stopColor="#fde68a" /><stop offset="1" stopColor="#d97706" /></radialGradient>
-          <radialGradient id="g-earth" cx="36%" cy="30%"><stop offset="0" stopColor="#bfdbfe" /><stop offset=".5" stopColor="#3b82f6" /><stop offset="1" stopColor="#1d4ed8" /></radialGradient>
-          <radialGradient id="g-moon" cx="36%" cy="30%"><stop offset="0" stopColor="#f8fafc" /><stop offset="1" stopColor="#64748b" /></radialGradient>
-          <radialGradient id="g-glow" cx="50%" cy="50%"><stop offset="0" stopColor="#dbeafe" stopOpacity=".9" /><stop offset="1" stopColor="#dbeafe" stopOpacity="0" /></radialGradient>
-        </defs>
-        <circle cx="200" cy="200" r="150" fill="url(#g-glow)" opacity=".5" />
-        {[150, 110, 70].map((r) => (
-          <circle key={r} cx="200" cy="200" r={r} fill="none" stroke="#d4d9e8" strokeWidth="1" strokeDasharray="2 6" />
-        ))}
-
-        {/* dimension stars: one rotating group per ring */}
-        {[70, 110, 150].map((rad) => (
-          <motion.g
-            key={`ring${rad}`}
-            style={{ originX: '200px', originY: '200px' }}
-            animate={{ rotate: rad === 110 ? -360 : 360 }}
-            transition={{ duration: ringDur[ringIdx(rad)], repeat: Infinity, ease: 'linear' }}
-          >
-            {STARS.filter((s) => s.ring === rad).map((s, i) => {
-              const a = (s.angle * Math.PI) / 180
-              const cx = 200 + s.r * Math.cos(a)
-              const cy = 200 + s.r * Math.sin(a)
-              return (
-                <circle key={i} cx={cx} cy={cy} r={s.sz} fill={s.col}>
-                  <animate attributeName="opacity" values="0.35;1;0.35" dur="2.6s" begin={`${s.delay}s`} repeatCount="indefinite" />
-                </circle>
-              )
-            })}
-          </motion.g>
-        ))}
-
-        {/* earth core */}
-        <circle cx="200" cy="200" r="36" fill="url(#g-earth)" />
-        {/* sun + moon satellites */}
-        <motion.g style={{ originX: '200px', originY: '200px' }} animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}>
-          <circle cx={200 + 150} cy="200" r="13" fill="url(#g-sun)" />
-        </motion.g>
-        <motion.g style={{ originX: '200px', originY: '200px' }} animate={{ rotate: -360 }} transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}>
-          <circle cx={200 + 110} cy="200" r="9" fill="url(#g-moon)" />
-        </motion.g>
-      </svg>
-    </motion.div>
-    </div>
-  )
-}
 
 /* ---------- Engine: Sui-style pinned scroll narrative ---------- */
 function EngineScrolly() {
@@ -367,6 +287,48 @@ function FitExplorer() {
   )
 }
 
+/* ---------- The Trinity stack: interactive composable layers ---------- */
+const STACK = [
+  { n: '01', h: '55-dimension scoring', p: 'Every idea is read across 55 weighted dimensions, each one a solid algorithm rather than a hunch.' },
+  { n: '02', h: 'Three independent lenses', p: 'Desirability, Feasibility and Viability are scored blind to each other, so no lens anchors the rest.' },
+  { n: '03', h: 'Six-way cross-link', p: 'The three lenses then correct one another in six directions before anything is concluded.' },
+  { n: '04', h: 'Evidence gating', p: 'Scores are gated on evidence, so the engine cannot be talked into an inflated number.' },
+  { n: '05', h: 'Synthesis into one verdict', p: 'Desirability is the gate. The three converge into a single, actionable call.' },
+  { n: '06', h: 'Investor & stage matching', p: 'Your verdict maps to a funding stage and a shortlist of real investors, across the US and Taiwan.' },
+] as const
+
+function StackSection() {
+  const [active, setActive] = useState(0)
+  return (
+    <section id="stack" className="sec sec-soft">
+      <div className="wrap">
+        <Reveal><div className="sec-head"><div className="eyebrow">The Trinity stack</div><h2>Innovation, engineered</h2><p className="lead">Six composable layers turn a raw idea into a verdict you can act on. Hover a layer to see it light up.</p></div></Reveal>
+        <div className="stack">
+          <div className="stack-list">
+            {STACK.map((s, i) => (
+              <button key={s.n} type="button" className={`stack-item ${active === i ? 'on' : ''}`} onMouseEnter={() => setActive(i)} onFocus={() => setActive(i)} onClick={() => setActive(i)}>
+                <span className="stack-n">{s.n}</span>
+                <span className="stack-tx">
+                  <span className="stack-h">{s.h}</span>
+                  <span className="stack-p">{s.p}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="stack-viz" aria-hidden>
+            {STACK.map((s, i) => (
+              <div key={s.n} className={`stack-plate p${i} ${active === i ? 'on' : ''}`} onMouseEnter={() => setActive(i)}>
+                <span className="plate-n">{s.n}</span>
+                <span className="plate-h">{s.h}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /** Invert the nav while a dark full-bleed section sits under it. */
 function useNavTheme() {
   const [dark, setDark] = useState(false)
@@ -386,8 +348,6 @@ function useNavTheme() {
 export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
   useLenis()
   const navDark = useNavTheme()
-  const heroRef = useRef<HTMLElement>(null)
-  const { scrollYProgress: heroProg } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
 
   return (
     <>
@@ -403,17 +363,17 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
         </div>
       </nav>
 
-      <header className="hero" id="top" ref={heroRef}>
-        <div className="hero-blob" aria-hidden />
-        <HeroOrbit progress={heroProg} />
-        <div className="wrap">
-          <Reveal><div className="eyebrow">Innovation Trinity · Feasibility Engine</div></Reveal>
-          <h1>
-            <MaskLines lines={[<>From an idea</>, <>to an <span className="hl">investable</span></>, <span className="hl">startup</span>]} />
+      <header className="hero hero-center" id="top">
+        <HeroNetwork />
+        <div className="hero-veil" aria-hidden />
+        <div className="wrap hero-inner">
+          <Reveal><div className="eyebrow eyebrow-center">Innovation Trinity · Feasibility Engine</div></Reveal>
+          <h1 className="hero-title">
+            <MaskLines lines={[<>From an idea to</>, <>an <span className="hl">investable startup</span></>]} />
           </h1>
-          <Reveal delay={0.5}><p>Feed your idea to the Trinity engine. See where it really stands across 55 dimensions, and who to talk to next.</p></Reveal>
-          <Reveal delay={0.62}>
-            <div className="hero-cta">
+          <Reveal delay={0.45}><p className="hero-lead">Feed your idea to the Trinity engine. See where it really stands across 55 dimensions, and exactly who to talk to next.</p></Reveal>
+          <Reveal delay={0.58}>
+            <div className="hero-cta hero-cta-center">
               <button className="btn btn-primary" onClick={onAnalyze}>Analyze my idea</button>
               <a className="btn btn-ghost" href="#engine">See how it works</a>
             </div>
@@ -442,6 +402,8 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
       </section>
 
       <EngineScrolly />
+
+      <StackSection />
 
       <section id="dims" className="sec sec-soft">
         <div className="wrap">
