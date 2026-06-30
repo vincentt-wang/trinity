@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform }
 import { Reveal } from './lib/Reveal'
 import { useLenis } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
+import { DimsNetwork } from './lib/DimsNetwork'
 import { Aurora } from './lib/Aurora'
 import { CountUp, MaskLines, Stagger } from './lib/anim'
 import { STATS } from './stats'
@@ -98,12 +99,6 @@ function EngineScrolly() {
 }
 
 type Dim = { en: string; zh: string; de: string; dz: string }
-const RINGS = [
-  { k: 'e', r: 92, cls: 'r1' },
-  { k: 'm', r: 132, cls: 'r2' },
-  { k: 's', r: 172, cls: 'r3' },
-] as const
-const DIM_COL = { e: '#2563eb', m: '#64748b', s: '#d97706' } as const
 const DIM_VAR = { e: 'var(--earth)', m: 'var(--moon)', s: 'var(--sun)' } as const
 
 function DimsSection() {
@@ -141,48 +136,8 @@ function DimsSection() {
         </div>
 
         <div className="stat-right">
-          <div className="galaxy" onMouseLeave={() => setHov(null)}>
-            <svg viewBox="0 0 400 400" width="100%" height="100%">
-              <defs>
-                <radialGradient id="gx-core" cx="40%" cy="34%"><stop offset="0" stopColor="#fff" /><stop offset=".5" stopColor="#93c5fd" /><stop offset="1" stopColor="#7c3aed" /></radialGradient>
-                <radialGradient id="gx-glow" cx="50%" cy="50%"><stop offset="0" stopColor="#c7d2fe" stopOpacity=".55" /><stop offset="1" stopColor="#c7d2fe" stopOpacity="0" /></radialGradient>
-              </defs>
-              <circle cx="200" cy="200" r="190" fill="url(#gx-glow)" />
-
-              {RINGS.map((ring) => {
-                const nodes = DIMENSIONS[ring.k]
-                const hot = k === ring.k
-                return (
-                  <g key={ring.k} className={`gring ${ring.cls}`} opacity={hot ? 1 : 0.32}>
-                    <circle cx="200" cy="200" r={ring.r} fill="none" stroke={DIM_COL[ring.k]} strokeOpacity={hot ? 0.32 : 0.16} strokeWidth="1" />
-                    {nodes.map((d, i) => {
-                      const a = (2 * Math.PI * i) / nodes.length
-                      const cx = 200 + ring.r * Math.cos(a)
-                      const cy = 200 + ring.r * Math.sin(a)
-                      const on = hov?.d === d
-                      return (
-                        <g key={d.en} className="gnode" onMouseEnter={() => { setK(ring.k); setHov({ k: ring.k, d }) }}>
-                          <circle cx={cx} cy={cy} r={on ? 15 : 9} fill={DIM_COL[ring.k]} opacity={on ? 0.28 : 0.14} />
-                          <circle cx={cx} cy={cy} r={on ? 6.5 : 4} fill={on ? '#fff' : DIM_COL[ring.k]} stroke={DIM_COL[ring.k]} strokeWidth={on ? 2.5 : 0}>
-                            {on && <animate attributeName="r" values="6.5;8;6.5" dur="1.3s" repeatCount="indefinite" />}
-                          </circle>
-                        </g>
-                      )
-                    })}
-                  </g>
-                )
-              })}
-
-              <circle cx="200" cy="200" r="46" fill="none" stroke="#a5b4fc" strokeWidth="1" opacity=".5">
-                <animate attributeName="r" values="46;58;46" dur="3.6s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.5;0;0.5" dur="3.6s" repeatCount="indefinite" />
-              </circle>
-              <circle cx="200" cy="200" r="42" fill="url(#gx-core)">
-                <animate attributeName="r" values="42;45;42" dur="3.6s" repeatCount="indefinite" />
-              </circle>
-              <text x="200" y="197" textAnchor="middle" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="32" fill="#fff">55</text>
-              <text x="200" y="216" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="9" fill="#e0e7ff" letterSpacing="2">DIMENSIONS</text>
-            </svg>
+          <div className="galaxy">
+            <DimsNetwork activeLens={k} lang={lang} onHover={(h) => { setHov(h); if (h) setK(h.k) }} onPick={setK} />
           </div>
         </div>
       </div>

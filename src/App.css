@@ -412,3 +412,6 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
 .lenstab em{font-style:normal;font-weight:700;opacity:.55;margin-left:1px}
 .lenstab.on em{opacity:.95}
 .gnode circle{transition:r .25s var(--ease)}
+
+/* dims network canvas */
+.dims-net{width:100%;height:100%;display:block;cursor:crosshair}
