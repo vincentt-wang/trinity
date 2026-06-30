@@ -309,14 +309,16 @@ function StackSection() {
               </button>
             ))}
           </div>
-          <div className="stack-viz" aria-hidden>
+          <motion.div className="stack-viz" aria-hidden initial="hide" whileInView="show" viewport={{ once: true, margin: '-15% 0px' }} variants={{ show: { transition: { staggerChildren: 0.08 } } }}>
             {STACK.map((s, i) => (
-              <div key={s.n} className={`stack-plate p${i} ${active === i ? 'on' : ''}`} onMouseEnter={() => setActive(i)}>
-                <span className="plate-n">{s.n}</span>
-                <span className="plate-h">{s.h}</span>
-              </div>
+              <motion.div key={s.n} className="stack-plate-wrap" variants={{ hide: { opacity: 0, x: 40 }, show: { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 130, damping: 18 } } }}>
+                <div className={`stack-plate p${i} ${active === i ? 'on' : ''}`} onMouseEnter={() => setActive(i)}>
+                  <span className="plate-n">{s.n}</span>
+                  <span className="plate-h">{s.h}</span>
+                </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -365,34 +367,32 @@ function BeforeAfter() {
     <section className="sec sec-soft">
       <div className="wrap">
         <Reveal><div className="sec-head"><div className="eyebrow">Before and after</div><h2>From guesswork to a clear move</h2><p className="lead">The same idea, read two ways. One leaves you guessing; the other hands you the next step.</p></div></Reveal>
-        <Reveal delay={0.1}>
-          <div className="ba">
-            <div className="ba-col before">
-              <div className="ba-tag">Without Trinity</div>
-              {BA.map((r) => (
-                <div className="ba-item" key={r.k}>
-                  <div className="ba-q">{r.k}</div>
-                  <div className="ba-a">{r.before}</div>
+        <div className="ba">
+          <motion.div className="ba-col before" initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-12% 0px' }} transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}>
+            <div className="ba-tag">Without Trinity</div>
+            {BA.map((r) => (
+              <div className="ba-item" key={r.k}>
+                <div className="ba-q">{r.k}</div>
+                <div className="ba-a">{r.before}</div>
+              </div>
+            ))}
+          </motion.div>
+          <motion.div className="ba-arrow" aria-hidden initial={{ opacity: 0, scale: 0.5 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.45, ease: [0.2, 0.7, 0.2, 1] }}>
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
+          </motion.div>
+          <motion.div className="ba-col after" initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-12% 0px' }} transition={{ duration: 0.6, delay: 0.18, ease: [0.2, 0.7, 0.2, 1] }}>
+            <div className="ba-tag">With Trinity</div>
+            {BA.map((r) => (
+              <div className="ba-item" key={r.k}>
+                <div className="ba-q">{r.k}</div>
+                <div className="ba-a">
+                  <svg className="ba-check" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+                  {r.after}
                 </div>
-              ))}
-            </div>
-            <div className="ba-arrow" aria-hidden>
-              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
-            </div>
-            <div className="ba-col after">
-              <div className="ba-tag">With Trinity</div>
-              {BA.map((r) => (
-                <div className="ba-item" key={r.k}>
-                  <div className="ba-q">{r.k}</div>
-                  <div className="ba-a">
-                    <svg className="ba-check" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-                    {r.after}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Reveal>
+              </div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </section>
   )
@@ -436,6 +436,20 @@ function useNavTheme() {
   return dark
 }
 
+/** Track which section is centred in the viewport (nav scrollspy). */
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState('')
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id) }),
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+    )
+    ids.forEach((id) => { const el = document.getElementById(id); if (el) obs.observe(el) })
+    return () => obs.disconnect()
+  }, [])
+  return active
+}
+
 /** Subtle magnetic pull toward the cursor for hero CTAs. */
 function useMagnetic<T extends HTMLElement>() {
   const ref = useRef<T>(null)
@@ -460,6 +474,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
   useLenis()
   const navDark = useNavTheme()
   const heroMag = useMagnetic<HTMLButtonElement>()
+  const active = useActiveSection(['engine', 'stack', 'dims', 'fit'])
 
   return (
     <>
@@ -467,10 +482,10 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
         <div className="nav-in">
           <a className="brand" href="#top">{LOGO} TRINITY</a>
           <div className="nav-links nav-center">
-            <a href="#engine">How it works</a>
-            <a href="#stack">The stack</a>
-            <a href="#dims">The 55 dimensions</a>
-            <a href="#fit">Where you fit</a>
+            <a className={active === 'engine' ? 'on' : ''} href="#engine">How it works</a>
+            <a className={active === 'stack' ? 'on' : ''} href="#stack">The stack</a>
+            <a className={active === 'dims' ? 'on' : ''} href="#dims">The 55 dimensions</a>
+            <a className={active === 'fit' ? 'on' : ''} href="#fit">Where you fit</a>
           </div>
           <div className="nav-cta">
             <button className="btn btn-primary" onClick={onAnalyze}>Analyze my idea</button>

@@ -328,3 +328,9 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
 .bn-live{background-size:220% 100%;animation:numShimmer 6.5s ease-in-out infinite}
 @keyframes numShimmer{0%,100%{background-position:0% 0}50%{background-position:100% 0}}
 .dimchip:hover,.dimchip.on{transform:translateY(-3px) scale(1.02)}
+
+/* nav active-section highlight + stack entrance wrapper */
+.nav-center a.on{color:var(--ink)}
+.nav-center a.on::after{transform:scaleX(1)}
+.nav.on-dark .nav-center a.on{color:#fff}
+.stack-plate-wrap{width:100%}

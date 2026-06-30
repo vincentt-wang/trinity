@@ -4,8 +4,8 @@ const LENS_COLORS = ['#2563eb', '#64748b', '#d97706'] // earth / moon / sun
 
 /**
  * Sui / Netflix-style living network: dimension nodes drift, link to nearby
- * neighbours with faint blue lines, and the whole field parallaxes to the mouse.
- * Light-theme friendly; honours prefers-reduced-motion.
+ * neighbours with faint blue lines, with light pulses travelling along the
+ * links and a mouse parallax. Light-theme friendly; honours reduced-motion.
  */
 export function HeroNetwork() {
   const ref = useRef<HTMLCanvasElement>(null)
@@ -21,7 +21,23 @@ export function HeroNetwork() {
     let w = 0, h = 0, raf = 0
     const mouse = { x: 0, y: 0, tx: 0, ty: 0 }
     type Node = { x: number; y: number; vx: number; vy: number; c: string; r: number }
+    type Pulse = { a: number; b: number; t: number; spd: number; c: string }
     let nodes: Node[] = []
+    let pulses: Pulse[] = []
+    const LINK = 138
+
+    const spawn = (): Pulse => {
+      const a = (Math.random() * nodes.length) | 0
+      // find a neighbour currently within link range, else any node
+      const near: number[] = []
+      for (let j = 0; j < nodes.length; j++) {
+        if (j === a) continue
+        const dx = nodes[a].x - nodes[j].x, dy = nodes[a].y - nodes[j].y
+        if (dx * dx + dy * dy < LINK * LINK) near.push(j)
+      }
+      const b = near.length ? near[(Math.random() * near.length) | 0] : (a + 1) % nodes.length
+      return { a, b, t: 0, spd: 0.006 + Math.random() * 0.01, c: nodes[a].c }
+    }
 
     const build = () => {
       const rect = canvas.getBoundingClientRect()
@@ -38,6 +54,7 @@ export function HeroNetwork() {
         c: LENS_COLORS[i % 3],
         r: 1.5 + Math.random() * 2.4,
       }))
+      pulses = reduce ? [] : Array.from({ length: Math.max(6, (count / 6) | 0) }, spawn)
     }
     build()
 
@@ -50,7 +67,6 @@ export function HeroNetwork() {
     window.addEventListener('resize', onResize)
     window.addEventListener('mousemove', onMove)
 
-    const LINK = 138
     const render = () => {
       mouse.x += (mouse.tx - mouse.x) * 0.05
       mouse.y += (mouse.ty - mouse.y) * 0.05
@@ -79,6 +95,22 @@ export function HeroNetwork() {
           }
         }
       }
+
+      // travelling light pulses along links
+      for (const p of pulses) {
+        p.t += p.spd
+        const a = nodes[p.a], b = nodes[p.b]
+        if (p.t >= 1 || !a || !b) { Object.assign(p, spawn()); continue }
+        const x = a.x + (b.x - a.x) * p.t + ox
+        const y = a.y + (b.y - a.y) * p.t + oy
+        const fade = Math.sin(p.t * Math.PI)
+        ctx.globalAlpha = fade
+        ctx.fillStyle = p.c
+        ctx.beginPath(); ctx.arc(x, y, 2.6, 0, Math.PI * 2); ctx.fill()
+        ctx.globalAlpha = fade * 0.25
+        ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill()
+      }
+      ctx.globalAlpha = 1
 
       for (const n of nodes) {
         ctx.globalAlpha = 0.85
