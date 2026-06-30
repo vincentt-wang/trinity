@@ -413,5 +413,7 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
 .lenstab.on em{opacity:.95}
 .gnode circle{transition:r .25s var(--ease)}
 
-/* dims network canvas */
-.dims-net{width:100%;height:100%;display:block;cursor:crosshair}
+/* dims network canvas — radial fade so it blends into the page (no hard frame) */
+.dims-net{width:100%;height:100%;display:block;cursor:crosshair;
+  -webkit-mask:radial-gradient(circle at 50% 50%,#000 62%,transparent 90%);
+  mask:radial-gradient(circle at 50% 50%,#000 62%,transparent 90%)}

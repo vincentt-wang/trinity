@@ -47,14 +47,14 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       CX = W / 2; CY = H / 2
-      const base = Math.min(W, H) * 0.42
-      RINGS[0].R = base * 1.06; RINGS[1].R = base * 0.78; RINGS[2].R = base * 0.5
+      const base = Math.min(W, H) * 0.40
+      RINGS[0].R = base * 1.0; RINGS[1].R = base * 0.72; RINGS[2].R = base * 0.46
       RINGS.forEach((r) => { r.Ry = r.R })
       nodes = []
       RINGS.forEach((ring, ri) => {
         const list = DIMENSIONS[ring.k]
         list.forEach((_, di) => {
-          nodes.push({ k: ring.k, di, ring: ri, angle: di * (Math.PI * 2 / list.length) + ri * 0.6, x: 0, y: 0, r: W < 600 ? 4.5 : 5.5, stickX: null, stickY: null })
+          nodes.push({ k: ring.k, di, ring: ri, angle: di * (Math.PI * 2 / list.length) + ri * 0.6, x: 0, y: 0, r: W < 600 ? 8 : 11, stickX: null, stickY: null })
         })
       })
       if (sunX === 0) { sunX = CX; sunY = CY }
@@ -186,17 +186,20 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
         const isH = i === hovI
         const hot = nd.k === act
         const c = COL[nd.k]
-        const baseAlpha = hot ? 1 : 0.4
-        // halo
-        ctx.globalAlpha = isH ? 0.32 : hot ? 0.16 : 0.07
+        const baseAlpha = hot ? 1 : 0.42
+        const dotR = isH ? nd.r * 1.3 : nd.r
+        // soft halo
+        ctx.globalAlpha = isH ? 0.34 : hot ? 0.18 : 0.09
         ctx.fillStyle = c
-        ctx.beginPath(); ctx.arc(nd.x, nd.y, isH ? 16 : 10, 0, Math.PI * 2); ctx.fill()
+        ctx.beginPath(); ctx.arc(nd.x, nd.y, isH ? nd.r * 2.8 : nd.r * 1.9, 0, Math.PI * 2); ctx.fill()
         // dot
         ctx.globalAlpha = isH ? 1 : baseAlpha
-        if (isH) { ctx.shadowColor = c; ctx.shadowBlur = 16 }
+        if (isH) { ctx.shadowColor = c; ctx.shadowBlur = 20 }
         ctx.fillStyle = isH ? '#fff' : c
-        ctx.beginPath(); ctx.arc(nd.x, nd.y, isH ? 7 : nd.r, 0, Math.PI * 2); ctx.fill()
-        if (isH) { ctx.shadowBlur = 0; ctx.lineWidth = 2.5; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(nd.x, nd.y, 7, 0, Math.PI * 2); ctx.stroke() }
+        ctx.beginPath(); ctx.arc(nd.x, nd.y, dotR, 0, Math.PI * 2); ctx.fill()
+        if (isH) { ctx.shadowBlur = 0; ctx.lineWidth = 3; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(nd.x, nd.y, dotR, 0, Math.PI * 2); ctx.stroke() }
+        // subtle inner sheen on every dot for a glossier look
+        else if (hot) { ctx.globalAlpha = 0.5; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(nd.x - dotR * 0.3, nd.y - dotR * 0.3, dotR * 0.32, 0, Math.PI * 2); ctx.fill() }
         ctx.globalAlpha = 1
       })
 
