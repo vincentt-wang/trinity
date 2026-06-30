@@ -189,18 +189,19 @@ function DimsSection() {
 function StackSection() {
   const { lang } = useLang()
   const c = COPY[lang].stack
-  const ref = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start center', 'end end'] })
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
   const [active, setActive] = useState(0)
   const n = c.layers.length
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     setActive(Math.min(n - 1, Math.max(0, Math.floor(p * n))))
   })
   return (
-    <section id="stack" className="sec sec-soft" ref={ref}>
+    <section id="stack" className="stack-scrolly sec-soft">
       <Aurora tone="mixed" />
-      <div className="wrap">
-        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
+      <div ref={ref} className="stack-track">
+        <div className="stack-stage wrap">
+        <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div>
         <div className="stack">
           <div className="stack-list">
             {c.layers.map((s, i) => (
@@ -223,6 +224,7 @@ function StackSection() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
         </div>
       </div>
     </section>
