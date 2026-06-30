@@ -82,7 +82,7 @@
 .bn-ghost{visibility:hidden}
 .bn-live{position:absolute;inset:0;text-align:left;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;color:transparent}
 .bignum-sub{margin-top:14px;font-size:1.04rem;color:var(--ink-soft);max-width:24ch;line-height:1.45}
-.dim-detail{margin-top:24px;padding:18px 20px;border-radius:14px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--acc,var(--earth));box-shadow:var(--shadow);min-height:120px}
+.dim-detail{margin-top:24px;padding:18px 20px;border-radius:14px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--acc,var(--earth));box-shadow:var(--shadow);height:156px;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
 .dim-detail-name{font-family:var(--font-disp);font-weight:700;color:var(--ink);font-size:1.16rem;line-height:1.2}
 .dim-detail-desc{margin-top:7px;font-size:1.02rem;color:var(--ink-soft);line-height:1.5}
 .dimgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:9px}
@@ -362,7 +362,8 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
 @media(prefers-reduced-motion:reduce){.aurora-blob{animation:none}}
 
 /* ============ 55-dimension galaxy ============ */
-.galaxy{width:100%;max-width:460px;aspect-ratio:1;margin-inline:auto;filter:drop-shadow(0 20px 50px rgba(37,99,235,.16))}
+.galaxy{width:100%;max-width:460px;aspect-ratio:1;margin-inline:auto}
+.gring{will-change:transform}
 .gring{transform-box:fill-box;transform-origin:center;animation:gspin linear infinite}
 .gring.r1{animation-duration:64s}
 .gring.r2{animation-duration:84s;animation-direction:reverse}
@@ -382,3 +383,19 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
   .stack-track{height:auto}
   .stack-stage{position:static;min-height:0;padding:clamp(90px,12vh,150px) 0}
 }
+
+/* ============ Where you fit: pinned scroll-tied ============ */
+.fit-scrolly{position:relative;background:var(--bg)}
+.fit-track{position:relative;z-index:1;height:300vh}
+.fit-stage{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:96px 0}
+@media(max-width:880px){
+  .fit-track{height:auto}
+  .fit-stage{position:static;min-height:0;padding:clamp(90px,12vh,150px) 0}
+}
+
+/* sui-style scroll progress bar pinned to top of a stage */
+.sec-progress{position:absolute;top:74px;left:0;right:0;height:4px;transform-origin:left;border-radius:0 3px 3px 0;background:linear-gradient(90deg,var(--earth),var(--violet));z-index:4;box-shadow:0 1px 8px rgba(37,99,235,.4)}
+.sec-progress.dark{background:linear-gradient(90deg,#60a5fa,#c4b5fd)}
+
+/* compositor hints to kill scroll jank */
+.aurora-blob{will-change:transform}

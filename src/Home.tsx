@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform } from 'framer-motion'
 import { Reveal } from './lib/Reveal'
 import { useLenis } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
@@ -42,6 +42,7 @@ function EngineScrolly() {
     <section id="engine" className="engine-scrolly sec-dark">
       <div ref={ref} className="scrolly-track">
         <div className="scrolly-stage wrap">
+          <motion.div className="sec-progress dark" style={{ scaleX: scrollYProgress }} aria-hidden />
           <div className="scrolly-copy">
             <div className="eyebrow">{c.eyebrow}</div>
             <h2>{c.h2a}<br />{c.h2b}</h2>
@@ -98,9 +99,9 @@ function EngineScrolly() {
 
 type Dim = { en: string; zh: string; de: string; dz: string }
 const RINGS = [
-  { k: 'e', r: 78, cls: 'r1' },
-  { k: 'm', r: 120, cls: 'r2' },
-  { k: 's', r: 162, cls: 'r3' },
+  { k: 'e', r: 92, cls: 'r1' },
+  { k: 'm', r: 132, cls: 'r2' },
+  { k: 's', r: 172, cls: 'r3' },
 ] as const
 const DIM_COL = { e: '#2563eb', m: '#64748b', s: '#d97706' } as const
 const DIM_VAR = { e: 'var(--earth)', m: 'var(--moon)', s: 'var(--sun)' } as const
@@ -174,11 +175,11 @@ function DimsSection() {
               )
             })}
 
-            <circle cx="200" cy="200" r="30" fill="url(#gx-core)">
-              <animate attributeName="r" values="30;33;30" dur="3.4s" repeatCount="indefinite" />
+            <circle cx="200" cy="200" r="40" fill="url(#gx-core)">
+              <animate attributeName="r" values="40;44;40" dur="3.4s" repeatCount="indefinite" />
             </circle>
-            <text x="200" y="194" textAnchor="middle" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="22" fill="#fff">55</text>
-            <text x="200" y="212" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="8.5" fill="#e0e7ff" letterSpacing="1">DIMENSIONS</text>
+            <text x="200" y="196" textAnchor="middle" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="30" fill="#fff">55</text>
+            <text x="200" y="214" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="9" fill="#e0e7ff" letterSpacing="1.5">DIMENSIONS</text>
           </svg>
         </div>
       </div>
@@ -201,6 +202,7 @@ function StackSection() {
       <Aurora tone="mixed" />
       <div ref={ref} className="stack-track">
         <div className="stack-stage wrap">
+        <motion.div className="sec-progress" style={{ scaleX: scrollYProgress }} aria-hidden />
         <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div>
         <div className="stack">
           <div className="stack-list">
@@ -239,11 +241,12 @@ const FIRMS = [
   [{ n: 'Sequoia', geo: 'US' }, { n: 'Taiwania Capital', geo: 'TW' }, { n: 'CDIB Capital', geo: 'TW' }],
 ] as const
 
-function FitExplorer() {
+function FitSection() {
   const { lang } = useLang()
   const c = COPY[lang].fit
   const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 78%', 'end 30%'] })
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
+  const fill = useTransform(scrollYProgress, [0.05, 0.95], ['0%', '100%'])
   const [i, setI] = useState(0)
   const n = c.stages.length
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
@@ -251,38 +254,47 @@ function FitExplorer() {
   })
   const s = c.stages[i]
   return (
-    <div className="fit" ref={ref}>
-      <div className="fit-rail">
-        <div className="fit-rail-line"><motion.div className="fit-rail-fill" animate={{ width: `${(i / (c.stages.length - 1)) * 100}%` }} transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }} /></div>
-        {c.stages.map((st, idx) => (
-          <button key={idx} className={`fit-node ${idx <= i ? 'on' : ''} ${idx === i ? 'cur' : ''}`} onClick={() => setI(idx)}>
-            <span className="fit-dot" />
-            <span className="fit-node-lbl">{st.label}</span>
-          </button>
-        ))}
-      </div>
-
-      <AnimatePresence mode="wait">
-        <motion.div key={i} className="fit-panel" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}>
-          <div className="fit-room">
-            <div className="eyebrow">{c.roomAtPre}{s.label}{c.roomAtPost}</div>
-            <h3>{s.room}</h3>
-            <p>{s.desc}</p>
-          </div>
-          <div className="fit-firms">
-            <div className="fit-firms-cap">{c.who}</div>
-            <motion.div className="fit-firm-list" initial="hide" animate="show" variants={{ show: { transition: { staggerChildren: 0.07 } } }}>
-              {FIRMS[i].map((f) => (
-                <motion.div key={f.n} className="fit-firm" variants={{ hide: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.7, 0.2, 1] } } }}>
-                  <span className="fit-firm-n">{f.n}</span>
-                  <span className="fit-firm-geo">{f.geo}</span>
-                </motion.div>
+    <section id="fit" className="fit-scrolly">
+      <Aurora tone="cool" />
+      <div ref={ref} className="fit-track">
+        <div className="fit-stage wrap">
+          <motion.div className="sec-progress" style={{ scaleX: scrollYProgress }} aria-hidden />
+          <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div>
+          <div className="fit">
+            <div className="fit-rail">
+              <div className="fit-rail-line"><motion.div className="fit-rail-fill" style={{ width: fill }} /></div>
+              {c.stages.map((st, idx) => (
+                <button key={idx} className={`fit-node ${idx <= i ? 'on' : ''} ${idx === i ? 'cur' : ''}`} onClick={() => setI(idx)}>
+                  <span className="fit-dot" />
+                  <span className="fit-node-lbl">{st.label}</span>
+                </button>
               ))}
-            </motion.div>
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div key={i} className="fit-panel" initial={{ opacity: 0, x: 28 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -28 }} transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}>
+                <div className="fit-room">
+                  <div className="eyebrow">{c.roomAtPre}{s.label}{c.roomAtPost}</div>
+                  <h3>{s.room}</h3>
+                  <p>{s.desc}</p>
+                </div>
+                <div className="fit-firms">
+                  <div className="fit-firms-cap">{c.who}</div>
+                  <motion.div className="fit-firm-list" initial="hide" animate="show" variants={{ show: { transition: { staggerChildren: 0.08 } } }}>
+                    {FIRMS[i].map((f) => (
+                      <motion.div key={f.n} className="fit-firm" variants={{ hide: { opacity: 0, x: 20 }, show: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.2, 0.7, 0.2, 1] } } }}>
+                        <span className="fit-firm-n">{f.n}</span>
+                        <span className="fit-firm-geo">{f.geo}</span>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </motion.div>
-      </AnimatePresence>
-    </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -456,7 +468,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
             <a className={active === 'fit' ? 'on' : ''} href="#fit">{c.nav.fit}</a>
           </div>
           <div className="nav-cta">
-            <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? '中' : 'EN'}</button>
+            <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
             <button className="btn btn-primary" onClick={onAnalyze}>{c.nav.cta}</button>
           </div>
         </div>
@@ -485,17 +497,17 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
         <Aurora tone="cool" />
         <div className="wrap">
           <Reveal><div className="sec-head"><div className="eyebrow">{c.lenses.eyebrow}</div><h2>{c.lenses.h2}</h2><p className="lead">{c.lenses.lead}</p></div></Reveal>
-          <Stagger className="cards c3">
+          <motion.div className="cards c3" initial="hide" whileInView="show" viewport={{ once: true, margin: '-12% 0px' }} variants={{ show: { transition: { staggerChildren: 0.16 } } }}>
             {c.lenses.items.map((l, i) => (
-              <div className="card" key={i}>
-                <div className={`ic ${LENS_KEYS[i]}`}>{LENS_ICON}</div>
+              <motion.div className="card" key={i} variants={{ hide: { opacity: 0, y: 60, scale: 0.92 }, show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 110, damping: 16 } } }}>
+                <motion.div className={`ic ${LENS_KEYS[i]}`} variants={{ hide: { scale: 0, rotate: -40 }, show: { scale: 1, rotate: 0, transition: { type: 'spring', stiffness: 200, damping: 12, delay: 0.12 } } }}>{LENS_ICON}</motion.div>
                 <div className="eyebrow" style={{ color: 'var(--ink-dim)' }}>{l.tag}</div>
                 <h3>{l.h}</h3>
                 <p>{l.p}</p>
                 <div className="q">“{l.q}”</div>
-              </div>
+              </motion.div>
             ))}
-          </Stagger>
+          </motion.div>
         </div>
       </section>
 
@@ -511,13 +523,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
         </div>
       </section>
 
-      <section id="fit" className="sec">
-        <Aurora tone="cool" />
-        <div className="wrap">
-          <Reveal><div className="sec-head"><div className="eyebrow">{c.fit.eyebrow}</div><h2>{c.fit.h2}</h2><p className="lead">{c.fit.lead}</p></div></Reveal>
-          <Reveal delay={0.1}><FitExplorer /></Reveal>
-        </div>
-      </section>
+      <FitSection />
 
       <WhyFounders />
 
