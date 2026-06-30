@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useMotionValueEvent, useSpring } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useSpring } from 'framer-motion'
 import { Reveal } from './lib/Reveal'
 import { useLenis } from './lib/useLenis'
 import { CountUp, MaskLines, Stagger } from './lib/anim'
@@ -191,8 +191,11 @@ function EngineScrolly() {
                   <animate attributeName="r" values="58;72;58" dur="3s" repeatCount="indefinite" />
                   <animate attributeName="opacity" values="0.6;0;0.6" dur="3s" repeatCount="indefinite" />
                 </circle>
-                <text x="180" y="174" textAnchor="middle" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="30" fill="#fff">D / F / V</text>
-                <text x="180" y="200" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="13" fill="#e0e7ff">one verdict</text>
+                {/* the three lenses, now merged into one */}
+                <circle cx="170" cy="166" r="9" fill="url(#v-e)" stroke="#fff" strokeWidth="2" />
+                <circle cx="190" cy="166" r="9" fill="url(#v-s)" stroke="#fff" strokeWidth="2" />
+                <circle cx="180" cy="181" r="9" fill="url(#v-m)" stroke="#fff" strokeWidth="2" />
+                <text x="180" y="210" textAnchor="middle" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="16" letterSpacing=".02em" fill="#fff">One clear call</text>
               </motion.g>
             </svg>
           </div>
@@ -202,26 +205,164 @@ function EngineScrolly() {
   )
 }
 
-function Dims() {
+const LENS_META = {
+  e: { label: 'Desirability', q: 'Is the need real, sharp and shared by enough people to pay?', col: 'var(--earth)' },
+  m: { label: 'Feasibility', q: 'Can this team actually build the mechanism and ship it?', col: 'var(--moon)' },
+  s: { label: 'Viability', q: 'Will the model fund itself and let the venture endure?', col: 'var(--sun)' },
+} as const
+
+// one-line plain-English read for every dimension, shown on hover
+const DESC: Record<string, string> = {
+  'Painkiller vs vitamin': 'Must-have urgency versus nice-to-have. Only painkillers get bought fast.',
+  'Tar-pit test': 'A seductive idea that quietly traps founders for years.',
+  'Venture-backable': 'Could this plausibly return a whole fund, not just a salary?',
+  'Three eternal markets': 'Health, wealth or relationships, the demand that never dies.',
+  'Perfect-market traits': 'Large, growing, urgent, underserved and reachable.',
+  'Six pain tests': 'Frequency, intensity, budget, urgency, reach and willingness to pay.',
+  'Top-down vs bottom-up': 'Two independent ways to size whether the demand is really there.',
+  'Fermi pain cost': 'A back-of-envelope dollar cost of the problem today.',
+  'ICP / HXC specificity': 'How sharply you have defined the ideal, high-expectation customer.',
+  'B2B stakeholder matrix': 'Who decides, who uses, who pays and who can block the deal.',
+  'JTBD three layers': 'The functional, emotional and social job the customer hires you for.',
+  'Five-layer insight': 'How deep the non-obvious truth behind the idea really runs.',
+  'TPO scenarios': 'The time, place and occasion where the need actually fires.',
+  'Perceived value 3D': 'Functional, emotional and economic value as the buyer feels it.',
+  'Octalysis drivers': 'Which core motivation drivers pull users in and keep them.',
+  'North-star + bowling pin': 'A clear beachhead that knocks down the next segments in turn.',
+  'Golden intersection': 'Where real demand, your unfair edge and a market overlap.',
+  'Founder-market fit': 'Why this team, uniquely, is built to win this market.',
+  'Geo & policy targeting': 'The region and regulation that make the wedge winnable now.',
+  'Stage placement': 'Pre-seed to growth, placed by evidence rather than age.',
+  'PSF -> PMF -> Scaling': 'Which proof milestone you have actually cleared so far.',
+  'Willingness to pay': 'Real signed or paid intent, not survey smiles.',
+  'PMF three signals': 'Retention, word-of-mouth and organic pull as proof of fit.',
+  'Four MVP types': 'The cheapest build that tests the single riskiest thing.',
+  'Technical first-principles': 'Does the mechanism hold up from physics, not from hype?',
+  'Business Model Canvas': 'Do the nine building blocks actually fit together?',
+  'Model & multi-side needs': 'Every side of the market has a reason to show up.',
+  'Ecosystem & competition': 'Who else is in the arena and where the open gaps are.',
+  'Five moat types': 'Network effects, scale, brand, switching cost or IP.',
+  'Team three traits': 'Founder grit, sharp insight and the ability to recruit.',
+  'FMF (execution)': 'Can this specific team really ship and sell it?',
+  'Technical gross margin': 'What it actually costs you to deliver one more unit.',
+  'Runway & valley of death': 'Enough cash to reach the next proof point before zero.',
+  'Riskiest assumption': 'The one belief that, if wrong, kills the company.',
+  'Demo-ability': 'Can you show, not just tell, that it works?',
+  'AI gap positioning': 'Where you sit as foundation models keep getting better.',
+  'TAM / SAM / SOM': 'Total, serviceable and obtainable market, honestly sized.',
+  'PMF three pillars': 'Demand, retention and economics all holding together.',
+  'Six key numbers': 'The metrics an investor checks before anything else.',
+  'Unit economics': 'Do you make money on a single customer?',
+  'Rule of 40': 'Growth rate plus profit margin should clear forty percent.',
+  'Burn multiple': 'Cash burned for every dollar of new recurring revenue.',
+  'Stage / round thresholds': 'The numbers each funding round expects you to hit.',
+  'Customer-funded (CFA)': 'Can customers fund growth instead of dilution?',
+  'Hormozi value equation': 'Dream outcome over perceived effort, time and risk.',
+  'Pricing strategy': 'Capturing a fair share of the value you create.',
+  'Break-even point': 'When revenue finally covers the whole cost base.',
+  'Multi-method valuation': 'A triangulated worth, not one hopeful number.',
+  'Exit paths': 'Who realistically buys this one day, and why.',
+  'Liquidation preference': 'How the terms reshape who actually gets paid first.',
+  'VC return lens (10x?)': 'Could this plausibly 10x from where it stands today?',
+  'D2C trap / B2B margin': 'The margin reality of the chosen go-to-market.',
+  'Pitch ten elements': 'Whether the story covers what investors must hear.',
+  'Valuation vs comparables': 'Priced sanely against similar recent deals.',
+  'AI-durable value': 'Does the value survive as AI commoditizes the easy parts?',
+}
+
+function DimsSection() {
   const [k, setK] = useState<'e' | 'm' | 's'>('e')
-  const counts = { e: 19, m: 17, s: 19 }
-  const label = { e: 'Desirability', m: 'Feasibility', s: 'Viability' }
+  const [hov, setHov] = useState<string | null>(null)
+  const meta = LENS_META[k]
+  const name = hov ?? `${meta.label} · ${DIMS[k].length} dimensions`
+  const desc = hov ? DESC[hov] : meta.q
+  const lens = (['e', 'm', 's'] as const)
+
   return (
-    <div>
-      <div className="lenstabs">
-        {(['e', 'm', 's'] as const).map((x) => (
-          <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => setK(x)}>
-            {label[x]} · {counts[x]}
+    <div className="stat-row">
+      <div className="stat-left">
+        <div className="bignum"><span className="bn-ghost">55</span><span className="bn-live"><CountUp to={55} /></span></div>
+        <div className="bignum-sub">weighted dimensions, scored across three lenses</div>
+        <div className="dim-detail" style={{ ['--acc' as string]: meta.col }}>
+          <AnimatePresence mode="wait">
+            <motion.div key={name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, ease: [0.2, 0.7, 0.2, 1] }}>
+              <div className="dim-detail-name">{name}</div>
+              <div className="dim-detail-desc">{desc}</div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      <div className="stat-right">
+        <div className="lenstabs">
+          {lens.map((x) => (
+            <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => { setK(x); setHov(null) }}>
+              {LENS_META[x].label} · {DIMS[x].length}
+            </button>
+          ))}
+        </div>
+        <motion.div className="dimgrid" key={k} initial="hide" animate="show" variants={{ show: { transition: { staggerChildren: 0.022 } } }} onMouseLeave={() => setHov(null)}>
+          {DIMS[k].map((d) => (
+            <motion.button
+              key={d}
+              type="button"
+              className={`dimchip ${k} ${hov === d ? 'on' : ''}`}
+              onMouseEnter={() => setHov(d)}
+              onFocus={() => setHov(d)}
+              variants={{ hide: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.2, 0.7, 0.2, 1] } } }}
+            >
+              {d}
+            </motion.button>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/* ---------- Where you fit: interactive stage explorer ---------- */
+const STAGES = [
+  { id: 'pre', label: 'Pre-seed', room: 'Accelerators & angels', desc: 'Conviction on the founder and a sharp wedge, before the metrics exist.', firms: [{ n: 'Y Combinator', geo: 'US' }, { n: 'Techstars', geo: 'US' }, { n: 'AppWorks', geo: 'TW' }] },
+  { id: 'seed', label: 'Seed', room: 'Thesis-driven seed funds', desc: 'A non-obvious insight and the first real signs of pull.', firms: [{ n: 'a16z', geo: 'US' }, { n: 'First Round', geo: 'US' }, { n: 'Hive Ventures', geo: 'TW' }] },
+  { id: 'a', label: 'Series A', room: 'Metrics-led growth VCs', desc: 'Repeatable traction and unit economics that actually work.', firms: [{ n: 'Accel', geo: 'US' }, { n: 'Lightspeed', geo: 'US' }, { n: 'Cherubic Ventures', geo: 'US / TW' }] },
+  { id: 'growth', label: 'Growth', room: 'Late-stage & crossover funds', desc: 'A proven engine, now the question is how efficiently it scales.', firms: [{ n: 'Sequoia', geo: 'US' }, { n: 'Taiwania Capital', geo: 'TW' }, { n: 'CDIB Capital', geo: 'TW' }] },
+] as const
+
+function FitExplorer() {
+  const [i, setI] = useState(1)
+  const s = STAGES[i]
+  return (
+    <div className="fit">
+      <div className="fit-rail">
+        <div className="fit-rail-line"><motion.div className="fit-rail-fill" animate={{ width: `${(i / (STAGES.length - 1)) * 100}%` }} transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }} /></div>
+        {STAGES.map((st, idx) => (
+          <button key={st.id} className={`fit-node ${idx <= i ? 'on' : ''} ${idx === i ? 'cur' : ''}`} onClick={() => setI(idx)}>
+            <span className="fit-dot" />
+            <span className="fit-node-lbl">{st.label}</span>
           </button>
         ))}
       </div>
-      <motion.div className="dimgrid" key={k} initial="hide" animate="show" variants={{ show: { transition: { staggerChildren: 0.025 } } }}>
-        {DIMS[k].map((d) => (
-          <motion.div key={d} className={`dimchip ${k}`} variants={{ hide: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.2, 0.7, 0.2, 1] } } }}>
-            {d}
-          </motion.div>
-        ))}
-      </motion.div>
+
+      <AnimatePresence mode="wait">
+        <motion.div key={s.id} className="fit-panel" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}>
+          <div className="fit-room">
+            <div className="eyebrow">The room at {s.label}</div>
+            <h3>{s.room}</h3>
+            <p>{s.desc}</p>
+          </div>
+          <div className="fit-firms">
+            <div className="fit-firms-cap">Who you would talk to</div>
+            <motion.div className="fit-firm-list" initial="hide" animate="show" variants={{ show: { transition: { staggerChildren: 0.07 } } }}>
+              {s.firms.map((f) => (
+                <motion.div key={f.n} className="fit-firm" variants={{ hide: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.7, 0.2, 1] } } }}>
+                  <span className="fit-firm-n">{f.n}</span>
+                  <span className="fit-firm-geo">{f.geo}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }
@@ -304,26 +445,15 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
 
       <section id="dims" className="sec sec-soft">
         <div className="wrap">
-          <Reveal><div className="sec-head"><div className="eyebrow">The 55 dimensions</div><h2>Every score is a solid algorithm</h2><p className="lead">Trinity scores a startup across 55 weighted dimensions, split across the three lenses.</p></div></Reveal>
-          <div className="stat-row">
-            <div className="bignum"><CountUp to={55} /></div>
-            <Reveal delay={0.1}><Dims /></Reveal>
-          </div>
+          <Reveal><div className="sec-head"><div className="eyebrow">The 55 dimensions</div><h2>Every score is a solid algorithm</h2><p className="lead">Trinity scores a startup across 55 weighted dimensions, split across the three lenses. Hover any one to see what it checks.</p></div></Reveal>
+          <Reveal delay={0.1}><DimsSection /></Reveal>
         </div>
       </section>
 
       <section id="fit" className="sec">
         <div className="wrap">
-          <Reveal><div className="sec-head"><div className="eyebrow">Where you fit</div><h2>Your analysis, turned into a move</h2><p className="lead">Trinity places your stage, names the investor type that weights your strongest lens, and shortlists real institutions to contact, across the US and Taiwan.</p></div></Reveal>
-          <Stagger className="cards c3">
-            {[
-              { h: 'Your stage', p: 'Pre-seed, seed, Series A or growth, placed by evidence, not age.' },
-              { h: 'The right room', p: 'The investor type that buys what you are strongest at right now.' },
-              { h: 'Named contacts', p: 'Real institutions with sites and how to approach each one.' },
-            ].map((c) => (
-              <div className="card" key={c.h}><h3>{c.h}</h3><p>{c.p}</p></div>
-            ))}
-          </Stagger>
+          <Reveal><div className="sec-head"><div className="eyebrow">Where you fit</div><h2>Your analysis, turned into a move</h2><p className="lead">Trinity places your stage, names the investor type that weights your strongest lens, and shortlists real institutions to contact. Walk the stages to see who you would talk to.</p></div></Reveal>
+          <Reveal delay={0.1}><FitExplorer /></Reveal>
         </div>
       </section>
 
