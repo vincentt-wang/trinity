@@ -399,3 +399,16 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
 
 /* compositor hints to kill scroll jank */
 .aurora-blob{will-change:transform}
+
+/* ============ Dims: clean lens-tab row + galaxy node polish ============ */
+.lenstabs-row{margin-top:46px;margin-bottom:0;gap:12px;justify-content:flex-start}
+.lenstabs-row + .stat-row{margin-top:30px}
+.lenstab{display:inline-flex;align-items:center;gap:9px;padding:11px 22px}
+.lenstab-dot{width:9px;height:9px;border-radius:50%;flex:none;transition:.2s}
+.lenstab.e .lenstab-dot{background:var(--earth)}
+.lenstab.m .lenstab-dot{background:var(--moon)}
+.lenstab.s .lenstab-dot{background:var(--sun)}
+.lenstab.on .lenstab-dot{background:#fff}
+.lenstab em{font-style:normal;font-weight:700;opacity:.55;margin-left:1px}
+.lenstab.on em{opacity:.95}
+.gnode circle{transition:r .25s var(--ease)}

@@ -117,73 +117,76 @@ function DimsSection() {
   const desc = hov ? (lang === 'en' ? hov.d.de : hov.d.dz) : meta.q
 
   return (
-    <div className="stat-row">
-      <div className="stat-left">
-        <div className="bignum"><span className="bn-ghost">55</span><span className="bn-live"><CountUp to={55} /></span></div>
-        <div className="bignum-sub">{c.sub}</div>
-        <div className="dim-detail" style={{ ['--acc' as string]: accent }}>
-          <AnimatePresence mode="wait">
-            <motion.div key={name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, ease: [0.2, 0.7, 0.2, 1] }}>
-              <div className="dim-detail-name">{name}</div>
-              <div className="dim-detail-desc">{desc}</div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-        <div className="lenstabs">
-          {LENS_KEYS.map((x) => (
-            <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => setK(x)}>
-              {c.lensMeta[x].label} · {DIMENSIONS[x].length}
-            </button>
-          ))}
-        </div>
+    <>
+      <div className="lenstabs lenstabs-row">
+        {LENS_KEYS.map((x) => (
+          <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => setK(x)}>
+            <span className="lenstab-dot" /> {c.lensMeta[x].label} <em>{DIMENSIONS[x].length}</em>
+          </button>
+        ))}
       </div>
 
-      <div className="stat-right">
-        <div className="galaxy" onMouseLeave={() => setHov(null)}>
-          <svg viewBox="0 0 400 400" width="100%" height="100%">
-            <defs>
-              <radialGradient id="gx-core" cx="42%" cy="36%"><stop offset="0" stopColor="#fff" /><stop offset=".5" stopColor="#93c5fd" /><stop offset="1" stopColor="#7c3aed" /></radialGradient>
-              <radialGradient id="gx-glow" cx="50%" cy="50%"><stop offset="0" stopColor="#dbeafe" stopOpacity=".7" /><stop offset="1" stopColor="#dbeafe" stopOpacity="0" /></radialGradient>
-            </defs>
-            <circle cx="200" cy="200" r="170" fill="url(#gx-glow)" opacity=".5" />
+      <div className="stat-row">
+        <div className="stat-left">
+          <div className="bignum"><span className="bn-ghost">55</span><span className="bn-live"><CountUp to={55} /></span></div>
+          <div className="bignum-sub">{c.sub}</div>
+          <div className="dim-detail" style={{ ['--acc' as string]: accent }}>
+            <AnimatePresence mode="wait">
+              <motion.div key={name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, ease: [0.2, 0.7, 0.2, 1] }}>
+                <div className="dim-detail-name">{name}</div>
+                <div className="dim-detail-desc">{desc}</div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
 
-            {RINGS.map((ring) => {
-              const nodes = DIMENSIONS[ring.k]
-              const hot = k === ring.k
-              return (
-                <g key={ring.k} className={`gring ${ring.cls} ${hot ? 'hot' : 'dim'}`}>
-                  <circle cx="200" cy="200" r={ring.r} fill="none" stroke={DIM_COL[ring.k]} strokeOpacity={hot ? 0.4 : 0.18} strokeWidth="1" strokeDasharray="2 7" />
-                  {nodes.map((d, i) => {
-                    const a = (2 * Math.PI * i) / nodes.length
-                    const cx = 200 + ring.r * Math.cos(a)
-                    const cy = 200 + ring.r * Math.sin(a)
-                    const on = hov?.d === d
-                    return (
-                      <circle
-                        key={d.en}
-                        className="gnode"
-                        cx={cx} cy={cy} r={on ? 8 : 4.2}
-                        fill={DIM_COL[ring.k]}
-                        opacity={hot ? 1 : 0.5}
-                        onMouseEnter={() => { setK(ring.k); setHov({ k: ring.k, d }) }}
-                      >
-                        {on && <animate attributeName="r" values="8;10;8" dur="1.2s" repeatCount="indefinite" />}
-                      </circle>
-                    )
-                  })}
-                </g>
-              )
-            })}
+        <div className="stat-right">
+          <div className="galaxy" onMouseLeave={() => setHov(null)}>
+            <svg viewBox="0 0 400 400" width="100%" height="100%">
+              <defs>
+                <radialGradient id="gx-core" cx="40%" cy="34%"><stop offset="0" stopColor="#fff" /><stop offset=".5" stopColor="#93c5fd" /><stop offset="1" stopColor="#7c3aed" /></radialGradient>
+                <radialGradient id="gx-glow" cx="50%" cy="50%"><stop offset="0" stopColor="#c7d2fe" stopOpacity=".55" /><stop offset="1" stopColor="#c7d2fe" stopOpacity="0" /></radialGradient>
+              </defs>
+              <circle cx="200" cy="200" r="190" fill="url(#gx-glow)" />
 
-            <circle cx="200" cy="200" r="40" fill="url(#gx-core)">
-              <animate attributeName="r" values="40;44;40" dur="3.4s" repeatCount="indefinite" />
-            </circle>
-            <text x="200" y="196" textAnchor="middle" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="30" fill="#fff">55</text>
-            <text x="200" y="214" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="9" fill="#e0e7ff" letterSpacing="1.5">DIMENSIONS</text>
-          </svg>
+              {RINGS.map((ring) => {
+                const nodes = DIMENSIONS[ring.k]
+                const hot = k === ring.k
+                return (
+                  <g key={ring.k} className={`gring ${ring.cls}`} opacity={hot ? 1 : 0.32}>
+                    <circle cx="200" cy="200" r={ring.r} fill="none" stroke={DIM_COL[ring.k]} strokeOpacity={hot ? 0.32 : 0.16} strokeWidth="1" />
+                    {nodes.map((d, i) => {
+                      const a = (2 * Math.PI * i) / nodes.length
+                      const cx = 200 + ring.r * Math.cos(a)
+                      const cy = 200 + ring.r * Math.sin(a)
+                      const on = hov?.d === d
+                      return (
+                        <g key={d.en} className="gnode" onMouseEnter={() => { setK(ring.k); setHov({ k: ring.k, d }) }}>
+                          <circle cx={cx} cy={cy} r={on ? 15 : 9} fill={DIM_COL[ring.k]} opacity={on ? 0.28 : 0.14} />
+                          <circle cx={cx} cy={cy} r={on ? 6.5 : 4} fill={on ? '#fff' : DIM_COL[ring.k]} stroke={DIM_COL[ring.k]} strokeWidth={on ? 2.5 : 0}>
+                            {on && <animate attributeName="r" values="6.5;8;6.5" dur="1.3s" repeatCount="indefinite" />}
+                          </circle>
+                        </g>
+                      )
+                    })}
+                  </g>
+                )
+              })}
+
+              <circle cx="200" cy="200" r="46" fill="none" stroke="#a5b4fc" strokeWidth="1" opacity=".5">
+                <animate attributeName="r" values="46;58;46" dur="3.6s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;0;0.5" dur="3.6s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="200" cy="200" r="42" fill="url(#gx-core)">
+                <animate attributeName="r" values="42;45;42" dur="3.6s" repeatCount="indefinite" />
+              </circle>
+              <text x="200" y="197" textAnchor="middle" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="32" fill="#fff">55</text>
+              <text x="200" y="216" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="9" fill="#e0e7ff" letterSpacing="2">DIMENSIONS</text>
+            </svg>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
