@@ -47,7 +47,7 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       CX = W / 2; CY = H / 2
-      const base = Math.min(W, H) * 0.40
+      const base = Math.min(W, H) * 0.46
       RINGS[0].R = base * 1.0; RINGS[1].R = base * 0.72; RINGS[2].R = base * 0.46
       RINGS.forEach((r) => { r.Ry = r.R })
       nodes = []

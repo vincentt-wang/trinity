@@ -112,36 +112,33 @@ function DimsSection() {
   const desc = hov ? (lang === 'en' ? hov.d.de : hov.d.dz) : meta.q
 
   return (
-    <>
-      <div className="lenstabs lenstabs-row">
-        {LENS_KEYS.map((x) => (
-          <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => setK(x)}>
-            <span className="lenstab-dot" /> {c.lensMeta[x].label} <em>{DIMENSIONS[x].length}</em>
-          </button>
-        ))}
+    <section id="dims" className="sec sec-soft dims-sec">
+      <div className="dims-net-layer">
+        <DimsNetwork activeLens={k} lang={lang} onHover={(h) => { setHov(h); if (h) setK(h.k) }} onPick={setK} />
       </div>
-
-      <div className="stat-row">
-        <div className="stat-left">
-          <div className="bignum"><span className="bn-ghost">55</span><span className="bn-live"><CountUp to={55} /></span></div>
-          <div className="bignum-sub">{c.sub}</div>
-          <div className="dim-detail" style={{ ['--acc' as string]: accent }}>
-            <AnimatePresence mode="wait">
-              <motion.div key={name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, ease: [0.2, 0.7, 0.2, 1] }}>
-                <div className="dim-detail-name">{name}</div>
-                <div className="dim-detail-desc">{desc}</div>
-              </motion.div>
-            </AnimatePresence>
+      <div className="wrap dims-overlay">
+        <div className="dims-copy">
+          <Reveal>
+            <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div>
+          </Reveal>
+          <div className="lenstabs lenstabs-row">
+            {LENS_KEYS.map((x) => (
+              <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => setK(x)}>
+                <span className="lenstab-dot" /> {c.lensMeta[x].label} <em>{DIMENSIONS[x].length}</em>
+              </button>
+            ))}
           </div>
         </div>
-
-        <div className="stat-right">
-          <div className="galaxy">
-            <DimsNetwork activeLens={k} lang={lang} onHover={(h) => { setHov(h); if (h) setK(h.k) }} onPick={setK} />
-          </div>
+        <div className="dim-detail" style={{ ['--acc' as string]: accent }}>
+          <AnimatePresence mode="wait">
+            <motion.div key={name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, ease: [0.2, 0.7, 0.2, 1] }}>
+              <div className="dim-detail-name">{name}</div>
+              <div className="dim-detail-desc">{desc}</div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
-    </>
+    </section>
   )
 }
 
@@ -473,13 +470,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
 
       <StackSection />
 
-      <section id="dims" className="sec sec-soft">
-        <Aurora tone="mixed" />
-        <div className="wrap">
-          <Reveal><div className="sec-head"><div className="eyebrow">{c.dims.eyebrow}</div><h2>{c.dims.h2}</h2><p className="lead">{c.dims.lead}</p></div></Reveal>
-          <Reveal delay={0.1}><DimsSection /></Reveal>
-        </div>
-      </section>
+      <DimsSection />
 
       <FitSection />
 
