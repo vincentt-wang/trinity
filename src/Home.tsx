@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
 import { Reveal } from './lib/Reveal'
 import { useLenis } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
@@ -33,6 +33,11 @@ const ENGINE = [
 ]
 
 /* ---------- Engine: Sui-style pinned scroll narrative ---------- */
+const SPRING = { type: 'spring' as const, stiffness: 120, damping: 18, mass: 0.9 }
+// lens home positions (triangle) and converged centre
+const LP = { e: { x: 180, y: 86 }, m: { x: 96, y: 232 }, s: { x: 264, y: 232 } }
+const CEN = { x: 180, y: 176 }
+
 function EngineScrolly() {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
@@ -41,24 +46,9 @@ function EngineScrolly() {
     setStep(v < 0.34 ? 0 : v < 0.67 ? 1 : 2)
   })
 
-  // diagram geometry
-  const C = 180
-  const D = { x: 180, y: 86 }
-  const M = { x: 96, y: 232 }
-  const S = { x: 264, y: 232 }
-  // cross-link draw-in (phase 2)
-  const linkLen = useTransform(scrollYProgress, [0.36, 0.62], [0, 1])
-  // converge (phase 3): lerp each lens toward center
-  const t = useTransform(scrollYProgress, [0.68, 0.96], [0, 1])
-  const lerp = (from: { x: number; y: number }, key: 'x' | 'y') =>
-    useTransform(t, (v) => from[key] + (C - from[key]) * v)
-  const Dx = lerp(D, 'x'), Dy = lerp(D, 'y')
-  const Mx = lerp(M, 'x'), My = lerp(M, 'y')
-  const Sx = lerp(S, 'x'), Sy = lerp(S, 'y')
-  const lensOp = useTransform(scrollYProgress, [0.78, 0.96], [1, 0.12])
-  const linkOp = useTransform(scrollYProgress, [0.34, 0.4, 0.7, 0.86], [0, 1, 1, 0])
-  const verdictScale = useTransform(scrollYProgress, [0.82, 1], [0, 1])
-  const verdictOp = useTransform(scrollYProgress, [0.82, 0.96], [0, 1])
+  // step-driven (springy, not scroll-scrubbed) so it never feels janky
+  const at = (k: 'e' | 'm' | 's', axis: 'x' | 'y') => (step === 2 ? CEN[axis] : LP[k][axis])
+  const lensR = (base: number) => (step === 2 ? 0 : base)
 
   return (
     <section id="engine" className="engine-scrolly sec-dark">
@@ -84,41 +74,37 @@ function EngineScrolly() {
                 <radialGradient id="v-e" cx="36%" cy="30%"><stop offset="0" stopColor="#93c5fd" /><stop offset="1" stopColor="#2563eb" /></radialGradient>
                 <radialGradient id="v-m" cx="36%" cy="30%"><stop offset="0" stopColor="#e2e8f0" /><stop offset="1" stopColor="#64748b" /></radialGradient>
                 <radialGradient id="v-s" cx="36%" cy="30%"><stop offset="0" stopColor="#fde68a" /><stop offset="1" stopColor="#d97706" /></radialGradient>
-                <radialGradient id="v-core" cx="42%" cy="36%"><stop offset="0" stopColor="#fff" /><stop offset=".5" stopColor="#60a5fa" /><stop offset="1" stopColor="#7c3aed" /></radialGradient>
+                <radialGradient id="v-core" cx="42%" cy="34%"><stop offset="0" stopColor="#fff" /><stop offset=".45" stopColor="#7aa2f7" /><stop offset="1" stopColor="#7c3aed" /></radialGradient>
               </defs>
 
-              {/* cross-link lines */}
-              <motion.g style={{ opacity: linkOp }} stroke="#7c8bbf" strokeWidth="1.4">
-                <motion.line x1={D.x} y1={D.y} x2={M.x} y2={M.y} style={{ pathLength: linkLen }} />
-                <motion.line x1={M.x} y1={M.y} x2={S.x} y2={S.y} style={{ pathLength: linkLen }} />
-                <motion.line x1={S.x} y1={S.y} x2={D.x} y2={D.y} style={{ pathLength: linkLen }} />
+              {/* cross-link lines: visible only while cross-linking (step 1) */}
+              <motion.g stroke="#8b96c9" strokeWidth="1.4" animate={{ opacity: step === 1 ? 1 : 0 }} transition={{ duration: 0.5 }}>
+                <motion.line x1={LP.e.x} y1={LP.e.y} x2={LP.m.x} y2={LP.m.y} animate={{ pathLength: step >= 1 ? 1 : 0 }} transition={{ duration: 0.6 }} />
+                <motion.line x1={LP.m.x} y1={LP.m.y} x2={LP.s.x} y2={LP.s.y} animate={{ pathLength: step >= 1 ? 1 : 0 }} transition={{ duration: 0.6, delay: 0.08 }} />
+                <motion.line x1={LP.s.x} y1={LP.s.y} x2={LP.e.x} y2={LP.e.y} animate={{ pathLength: step >= 1 ? 1 : 0 }} transition={{ duration: 0.6, delay: 0.16 }} />
               </motion.g>
 
-              {/* three lenses */}
-              <motion.circle cx={Dx} cy={Dy} r="34" fill="url(#v-e)" style={{ opacity: lensOp }}>
-                <animate attributeName="r" values="34;37;34" dur="3s" repeatCount="indefinite" />
-              </motion.circle>
-              <motion.circle cx={Mx} cy={My} r="28" fill="url(#v-m)" style={{ opacity: lensOp }}>
-                <animate attributeName="r" values="28;31;28" dur="3.4s" begin=".4s" repeatCount="indefinite" />
-              </motion.circle>
-              <motion.circle cx={Sx} cy={Sy} r="30" fill="url(#v-s)" style={{ opacity: lensOp }}>
-                <animate attributeName="r" values="30;33;30" dur="3.2s" begin=".8s" repeatCount="indefinite" />
-              </motion.circle>
+              {/* three lenses: animate to centre + shrink as they merge */}
+              <motion.circle fill="url(#v-e)" animate={{ cx: at('e', 'x'), cy: at('e', 'y'), r: lensR(34), opacity: step === 2 ? 0 : 1 }} transition={SPRING} />
+              <motion.circle fill="url(#v-m)" animate={{ cx: at('m', 'x'), cy: at('m', 'y'), r: lensR(28), opacity: step === 2 ? 0 : 1 }} transition={SPRING} />
+              <motion.circle fill="url(#v-s)" animate={{ cx: at('s', 'x'), cy: at('s', 'y'), r: lensR(30), opacity: step === 2 ? 0 : 1 }} transition={SPRING} />
 
-              {/* converged verdict */}
-              <motion.g style={{ scale: verdictScale, opacity: verdictOp, transformBox: 'fill-box', transformOrigin: 'center' }}>
-                <circle cx="180" cy="180" r="58" fill="url(#v-core)" />
-                <circle cx="180" cy="180" r="58" fill="none" stroke="#a5b4fc" strokeWidth="1" opacity=".6">
-                  <animate attributeName="r" values="58;72;58" dur="3s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.6;0;0.6" dur="3s" repeatCount="indefinite" />
+              {/* converged core springs in last, covering the merge cleanly */}
+              <motion.g animate={{ scale: step === 2 ? 1 : 0, opacity: step === 2 ? 1 : 0 }} transition={SPRING} style={{ transformBox: 'fill-box', transformOrigin: 'center' }}>
+                <circle cx={CEN.x} cy={CEN.y} r="58" fill="url(#v-core)" />
+                <circle cx={CEN.x} cy={CEN.y} r="58" fill="none" stroke="#a5b4fc" strokeWidth="1">
+                  <animate attributeName="r" values="58;76;58" dur="3.4s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.5;0;0.5" dur="3.4s" repeatCount="indefinite" />
                 </circle>
-                {/* the three lenses, now merged into one */}
-                <circle cx="170" cy="166" r="9" fill="url(#v-e)" stroke="#fff" strokeWidth="2" />
-                <circle cx="190" cy="166" r="9" fill="url(#v-s)" stroke="#fff" strokeWidth="2" />
-                <circle cx="180" cy="181" r="9" fill="url(#v-m)" stroke="#fff" strokeWidth="2" />
-                <text x="180" y="210" textAnchor="middle" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="16" letterSpacing=".02em" fill="#fff">One clear call</text>
               </motion.g>
             </svg>
+
+            {/* clean verdict caption, sits below the orb and fades up */}
+            <motion.div className="verdict-cap" initial={false} animate={{ opacity: step === 2 ? 1 : 0, y: step === 2 ? 0 : 14 }} transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }}>
+              <div className="verdict-dots"><span className="verdict-dot e" /><span className="verdict-dot m" /><span className="verdict-dot s" /></div>
+              <div className="verdict-h">One clear verdict</div>
+              <div className="verdict-p">Where you stand, and what to fix first.</div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -250,12 +236,19 @@ const STAGES = [
 ] as const
 
 function FitExplorer() {
-  const [i, setI] = useState(1)
+  const [i, setI] = useState(0)
+  const [paused, setPaused] = useState(false)
   const s = STAGES[i]
+  // auto-walk Pre-seed -> Growth until the user takes over
+  useEffect(() => {
+    if (paused) return
+    const id = setInterval(() => setI((p) => (p + 1) % STAGES.length), 3000)
+    return () => clearInterval(id)
+  }, [paused])
   return (
-    <div className="fit">
+    <div className="fit" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <div className="fit-rail">
-        <div className="fit-rail-line"><motion.div className="fit-rail-fill" animate={{ width: `${(i / (STAGES.length - 1)) * 100}%` }} transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }} /></div>
+        <div className="fit-rail-line"><motion.div className="fit-rail-fill" animate={{ width: `${(i / (STAGES.length - 1)) * 100}%` }} transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }} /></div>
         {STAGES.map((st, idx) => (
           <button key={st.id} className={`fit-node ${idx <= i ? 'on' : ''} ${idx === i ? 'cur' : ''}`} onClick={() => setI(idx)}>
             <span className="fit-dot" />
@@ -340,7 +333,8 @@ const WHY = [
 
 function WhyFounders() {
   return (
-    <section className="sec">
+    <section className="sec why">
+      <div className="why-bg" aria-hidden><span className="why-blob b1" /><span className="why-blob b2" /><span className="why-blob b3" /></div>
       <div className="wrap">
         <Reveal><div className="sec-head"><div className="eyebrow">Why founders choose Trinity</div><h2>An honest read you can act on</h2><p className="lead">Most tools flatter you. Trinity is built to tell you where you actually stand.</p></div></Reveal>
         <Stagger className="cards c4">
