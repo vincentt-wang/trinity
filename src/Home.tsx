@@ -442,19 +442,43 @@ function useNavTheme() {
   return dark
 }
 
+/** Subtle magnetic pull toward the cursor for hero CTAs. */
+function useMagnetic<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const move = (e: MouseEvent) => {
+      const r = el.getBoundingClientRect()
+      const x = e.clientX - r.left - r.width / 2
+      const y = e.clientY - r.top - r.height / 2
+      el.style.transform = `translate(${x * 0.28}px, ${y * 0.4}px)`
+    }
+    const leave = () => { el.style.transform = '' }
+    el.addEventListener('mousemove', move)
+    el.addEventListener('mouseleave', leave)
+    return () => { el.removeEventListener('mousemove', move); el.removeEventListener('mouseleave', leave) }
+  }, [])
+  return ref
+}
+
 export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
   useLenis()
   const navDark = useNavTheme()
+  const heroMag = useMagnetic<HTMLButtonElement>()
 
   return (
     <>
       <nav className={`nav${navDark ? ' on-dark' : ''}`}>
         <div className="nav-in">
           <a className="brand" href="#top">{LOGO} TRINITY</a>
-          <div className="nav-links">
+          <div className="nav-links nav-center">
             <a href="#engine">How it works</a>
+            <a href="#stack">The stack</a>
             <a href="#dims">The 55 dimensions</a>
             <a href="#fit">Where you fit</a>
+          </div>
+          <div className="nav-cta">
             <button className="btn btn-primary" onClick={onAnalyze}>Analyze my idea</button>
           </div>
         </div>
@@ -471,7 +495,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
           <Reveal delay={0.45}><p className="hero-lead">Feed your idea to the Trinity engine. See where it really stands across 55 dimensions, and exactly who to talk to next.</p></Reveal>
           <Reveal delay={0.58}>
             <div className="hero-cta hero-cta-center">
-              <button className="btn btn-primary" onClick={onAnalyze}>Analyze my idea</button>
+              <button ref={heroMag} className="btn btn-primary" onClick={onAnalyze}>Analyze my idea</button>
               <a className="btn btn-ghost" href="#engine">See how it works</a>
             </div>
           </Reveal>
@@ -527,11 +551,27 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
         <div className="wrap">
           <Reveal>
             <div className="cta">
-              <h2>Run your first round, free</h2>
-              <p>A full report: your Trinity scores, your stage, and the top three things to fix.</p>
-              <button className="btn btn-primary" onClick={onAnalyze}>Analyze my idea</button>
+              <h2>Get started</h2>
+              <p>Run your first round free. A full report: your Trinity scores, your stage, and the top three things to fix.</p>
             </div>
           </Reveal>
+          <Stagger className="paths">
+            <button className="path primary" onClick={onAnalyze}>
+              <span className="path-h">Analyze my idea</span>
+              <span className="path-p">Your D / F / V verdict, stage and top-three fixes.</span>
+              <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
+            </button>
+            <a className="path" href="#engine">
+              <span className="path-h">See how it works</span>
+              <span className="path-p">The engine, step by step, from lenses to verdict.</span>
+              <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
+            </a>
+            <a className="path" href="#fit">
+              <span className="path-h">Where you fit</span>
+              <span className="path-p">The stage and the investors that match your idea.</span>
+              <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
+            </a>
+          </Stagger>
         </div>
       </section>
 
