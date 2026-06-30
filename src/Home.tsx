@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-
 import { Reveal } from './lib/Reveal'
 import { useLenis } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
+import { Aurora } from './lib/Aurora'
 import { CountUp, MaskLines, Stagger } from './lib/anim'
 import { STATS } from './stats'
 import { useLang } from './i18n'
@@ -95,24 +96,31 @@ function EngineScrolly() {
   )
 }
 
+type Dim = { en: string; zh: string; de: string; dz: string }
+const RINGS = [
+  { k: 'e', r: 78, cls: 'r1' },
+  { k: 'm', r: 120, cls: 'r2' },
+  { k: 's', r: 162, cls: 'r3' },
+] as const
+const DIM_COL = { e: '#2563eb', m: '#64748b', s: '#d97706' } as const
+const DIM_VAR = { e: 'var(--earth)', m: 'var(--moon)', s: 'var(--sun)' } as const
+
 function DimsSection() {
   const { lang } = useLang()
   const c = COPY[lang].dims
   const [k, setK] = useState<'e' | 'm' | 's'>('e')
-  const [hovI, setHovI] = useState<number | null>(null)
+  const [hov, setHov] = useState<{ k: 'e' | 'm' | 's'; d: Dim } | null>(null)
   const meta = c.lensMeta[k]
-  const list = DIMENSIONS[k]
-  const hov = hovI != null ? list[hovI] : null
-  const name = hov ? (lang === 'en' ? hov.en : hov.zh) : `${meta.label} · ${list.length} ${c.dimsWord}`
-  const desc = hov ? (lang === 'en' ? hov.de : hov.dz) : meta.q
-  const COL = { e: 'var(--earth)', m: 'var(--moon)', s: 'var(--sun)' }
+  const accent = hov ? DIM_VAR[hov.k] : DIM_VAR[k]
+  const name = hov ? (lang === 'en' ? hov.d.en : hov.d.zh) : `${meta.label} · ${DIMENSIONS[k].length} ${c.dimsWord}`
+  const desc = hov ? (lang === 'en' ? hov.d.de : hov.d.dz) : meta.q
 
   return (
     <div className="stat-row">
       <div className="stat-left">
         <div className="bignum"><span className="bn-ghost">55</span><span className="bn-live"><CountUp to={55} /></span></div>
         <div className="bignum-sub">{c.sub}</div>
-        <div className="dim-detail" style={{ ['--acc' as string]: COL[k] }}>
+        <div className="dim-detail" style={{ ['--acc' as string]: accent }}>
           <AnimatePresence mode="wait">
             <motion.div key={name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, ease: [0.2, 0.7, 0.2, 1] }}>
               <div className="dim-detail-name">{name}</div>
@@ -120,30 +128,59 @@ function DimsSection() {
             </motion.div>
           </AnimatePresence>
         </div>
-      </div>
-
-      <div className="stat-right">
         <div className="lenstabs">
           {LENS_KEYS.map((x) => (
-            <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => { setK(x); setHovI(null) }}>
+            <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => setK(x)}>
               {c.lensMeta[x].label} · {DIMENSIONS[x].length}
             </button>
           ))}
         </div>
-        <motion.div className="dimgrid" key={k} initial="hide" animate="show" variants={{ show: { transition: { staggerChildren: 0.022 } } }} onMouseLeave={() => setHovI(null)}>
-          {list.map((d, i) => (
-            <motion.button
-              key={d.en}
-              type="button"
-              className={`dimchip ${k} ${hovI === i ? 'on' : ''}`}
-              onMouseEnter={() => setHovI(i)}
-              onFocus={() => setHovI(i)}
-              variants={{ hide: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.2, 0.7, 0.2, 1] } } }}
-            >
-              {lang === 'en' ? d.en : d.zh}
-            </motion.button>
-          ))}
-        </motion.div>
+      </div>
+
+      <div className="stat-right">
+        <div className="galaxy" onMouseLeave={() => setHov(null)}>
+          <svg viewBox="0 0 400 400" width="100%" height="100%">
+            <defs>
+              <radialGradient id="gx-core" cx="42%" cy="36%"><stop offset="0" stopColor="#fff" /><stop offset=".5" stopColor="#93c5fd" /><stop offset="1" stopColor="#7c3aed" /></radialGradient>
+              <radialGradient id="gx-glow" cx="50%" cy="50%"><stop offset="0" stopColor="#dbeafe" stopOpacity=".7" /><stop offset="1" stopColor="#dbeafe" stopOpacity="0" /></radialGradient>
+            </defs>
+            <circle cx="200" cy="200" r="170" fill="url(#gx-glow)" opacity=".5" />
+
+            {RINGS.map((ring) => {
+              const nodes = DIMENSIONS[ring.k]
+              const hot = k === ring.k
+              return (
+                <g key={ring.k} className={`gring ${ring.cls} ${hot ? 'hot' : 'dim'}`}>
+                  <circle cx="200" cy="200" r={ring.r} fill="none" stroke={DIM_COL[ring.k]} strokeOpacity={hot ? 0.4 : 0.18} strokeWidth="1" strokeDasharray="2 7" />
+                  {nodes.map((d, i) => {
+                    const a = (2 * Math.PI * i) / nodes.length
+                    const cx = 200 + ring.r * Math.cos(a)
+                    const cy = 200 + ring.r * Math.sin(a)
+                    const on = hov?.d === d
+                    return (
+                      <circle
+                        key={d.en}
+                        className="gnode"
+                        cx={cx} cy={cy} r={on ? 8 : 4.2}
+                        fill={DIM_COL[ring.k]}
+                        opacity={hot ? 1 : 0.5}
+                        onMouseEnter={() => { setK(ring.k); setHov({ k: ring.k, d }) }}
+                      >
+                        {on && <animate attributeName="r" values="8;10;8" dur="1.2s" repeatCount="indefinite" />}
+                      </circle>
+                    )
+                  })}
+                </g>
+              )
+            })}
+
+            <circle cx="200" cy="200" r="30" fill="url(#gx-core)">
+              <animate attributeName="r" values="30;33;30" dur="3.4s" repeatCount="indefinite" />
+            </circle>
+            <text x="200" y="194" textAnchor="middle" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="22" fill="#fff">55</text>
+            <text x="200" y="212" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="8.5" fill="#e0e7ff" letterSpacing="1">DIMENSIONS</text>
+          </svg>
+        </div>
       </div>
     </div>
   )
@@ -152,9 +189,16 @@ function DimsSection() {
 function StackSection() {
   const { lang } = useLang()
   const c = COPY[lang].stack
+  const ref = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start center', 'end end'] })
   const [active, setActive] = useState(0)
+  const n = c.layers.length
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    setActive(Math.min(n - 1, Math.max(0, Math.floor(p * n))))
+  })
   return (
-    <section id="stack" className="sec sec-soft">
+    <section id="stack" className="sec sec-soft" ref={ref}>
+      <Aurora tone="mixed" />
       <div className="wrap">
         <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
         <div className="stack">
@@ -196,16 +240,16 @@ const FIRMS = [
 function FitExplorer() {
   const { lang } = useLang()
   const c = COPY[lang].fit
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 78%', 'end 30%'] })
   const [i, setI] = useState(0)
-  const [paused, setPaused] = useState(false)
+  const n = c.stages.length
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    setI(Math.min(n - 1, Math.max(0, Math.floor(p * n))))
+  })
   const s = c.stages[i]
-  useEffect(() => {
-    if (paused) return
-    const id = setInterval(() => setI((p) => (p + 1) % c.stages.length), 3000)
-    return () => clearInterval(id)
-  }, [paused, c.stages.length])
   return (
-    <div className="fit" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+    <div className="fit" ref={ref}>
       <div className="fit-rail">
         <div className="fit-rail-line"><motion.div className="fit-rail-fill" animate={{ width: `${(i / (c.stages.length - 1)) * 100}%` }} transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }} /></div>
         {c.stages.map((st, idx) => (
@@ -276,36 +320,41 @@ function WhyFounders() {
 function BeforeAfter() {
   const { lang } = useLang()
   const c = COPY[lang].ba
+  const EASE = [0.2, 0.7, 0.2, 1] as const
   return (
     <section className="sec sec-soft">
+      <Aurora tone="warm" />
       <div className="wrap">
         <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
-        <div className="ba">
-          <motion.div className="ba-col before" initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-12% 0px' }} transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}>
+        <motion.div className="ba" initial="hide" whileInView="show" viewport={{ once: true, margin: '-15% 0px' }}>
+          <motion.div className="ba-col before" variants={{ hide: { opacity: 0, x: -70 }, show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: EASE } } }}>
             <div className="ba-tag">{c.without}</div>
-            {c.rows.map((r) => (
-              <div className="ba-item" key={r.k}>
+            {c.rows.map((r, i) => (
+              <motion.div className="ba-item" key={r.k} variants={{ hide: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.15 + i * 0.08, ease: EASE } } }}>
                 <div className="ba-q">{r.k}</div>
                 <div className="ba-a">{r.before}</div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
-          <motion.div className="ba-arrow" aria-hidden initial={{ opacity: 0, scale: 0.5 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.45, ease: [0.2, 0.7, 0.2, 1] }}>
+          <motion.div className="ba-arrow" aria-hidden variants={{ hide: { opacity: 0, scale: 0, rotate: -90 }, show: { opacity: 1, scale: 1, rotate: 0, transition: { type: 'spring', stiffness: 200, damping: 14, delay: 0.5 } } }}>
             <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
           </motion.div>
-          <motion.div className="ba-col after" initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-12% 0px' }} transition={{ duration: 0.6, delay: 0.18, ease: [0.2, 0.7, 0.2, 1] }}>
+          <motion.div className="ba-col after" variants={{ hide: { opacity: 0, x: 70 }, show: { opacity: 1, x: 0, transition: { duration: 0.6, delay: 0.2, ease: EASE } } }}>
             <div className="ba-tag">{c.withT}</div>
-            {c.rows.map((r) => (
-              <div className="ba-item" key={r.k}>
+            {c.rows.map((r, i) => (
+              <motion.div className="ba-item" key={r.k} variants={{ hide: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.4 + i * 0.12, ease: EASE } } }}>
                 <div className="ba-q">{r.k}</div>
                 <div className="ba-a">
-                  <svg className="ba-check" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+                  <motion.svg className="ba-check" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
+                    variants={{ hide: { scale: 0, opacity: 0 }, show: { scale: 1, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 12, delay: 0.55 + i * 0.12 } } }}>
+                    <path d="M20 6L9 17l-5-5" />
+                  </motion.svg>
                   {r.after}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )
@@ -405,10 +454,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
             <a className={active === 'fit' ? 'on' : ''} href="#fit">{c.nav.fit}</a>
           </div>
           <div className="nav-cta">
-            <div className="lang-toggle" role="group" aria-label="Language">
-              <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>EN</button>
-              <button className={lang === 'zh' ? 'on' : ''} onClick={() => setLang('zh')}>中</button>
-            </div>
+            <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? '中' : 'EN'}</button>
             <button className="btn btn-primary" onClick={onAnalyze}>{c.nav.cta}</button>
           </div>
         </div>
@@ -434,6 +480,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
       </header>
 
       <section className="sec sec-soft">
+        <Aurora tone="cool" />
         <div className="wrap">
           <Reveal><div className="sec-head"><div className="eyebrow">{c.lenses.eyebrow}</div><h2>{c.lenses.h2}</h2><p className="lead">{c.lenses.lead}</p></div></Reveal>
           <Stagger className="cards c3">
@@ -455,6 +502,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
       <StackSection />
 
       <section id="dims" className="sec sec-soft">
+        <Aurora tone="mixed" />
         <div className="wrap">
           <Reveal><div className="sec-head"><div className="eyebrow">{c.dims.eyebrow}</div><h2>{c.dims.h2}</h2><p className="lead">{c.dims.lead}</p></div></Reveal>
           <Reveal delay={0.1}><DimsSection /></Reveal>
@@ -462,6 +510,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
       </section>
 
       <section id="fit" className="sec">
+        <Aurora tone="cool" />
         <div className="wrap">
           <Reveal><div className="sec-head"><div className="eyebrow">{c.fit.eyebrow}</div><h2>{c.fit.h2}</h2><p className="lead">{c.fit.lead}</p></div></Reveal>
           <Reveal delay={0.1}><FitExplorer /></Reveal>

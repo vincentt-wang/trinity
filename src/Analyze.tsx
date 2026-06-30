@@ -115,10 +115,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
       <div className="az-top">
         <button className="brand" onClick={onBack}>{LOGO} TRINITY</button>
         <div className="az-top-right">
-          <div className="lang-toggle" role="group" aria-label="Language">
-            <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>EN</button>
-            <button className={lang === 'zh' ? 'on' : ''} onClick={() => setLang('zh')}>中</button>
-          </div>
+          <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? '中' : 'EN'}</button>
           <button className="az-back" onClick={onBack}>
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
             {a.back}
