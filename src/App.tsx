@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import './App.css'
 import Home from './Home'
 import Analyze from './Analyze'
+import { LangProvider } from './i18n'
 
 type View = 'home' | 'analyze'
 
@@ -12,6 +13,7 @@ export default function App() {
   const [view, setView] = useState<View>('home')
 
   return (
+    <LangProvider>
     <AnimatePresence mode="wait" initial={false}>
       {view === 'home' ? (
         <motion.div
@@ -35,5 +37,6 @@ export default function App() {
         </motion.div>
       )}
     </AnimatePresence>
+    </LangProvider>
   )
 }

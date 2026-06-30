@@ -5,6 +5,8 @@ import { useLenis } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
 import { CountUp, MaskLines, Stagger } from './lib/anim'
 import { STATS } from './stats'
+import { useLang } from './i18n'
+import { COPY, DIMENSIONS } from './copy'
 
 const LOGO = (
   <svg viewBox="0 0 32 32" aria-hidden>
@@ -14,39 +16,24 @@ const LOGO = (
   </svg>
 )
 
-const LENSES = [
-  { k: 'e', tag: 'Desirability', q: 'Is this a real need?', h: 'Does anyone want it', p: 'Start from people. Is the pain real enough and shared by enough of them to use and pay.' },
-  { k: 'm', tag: 'Feasibility', q: 'Can you build it?', h: 'Can you make it work', p: 'Tech, team and resources. Can the mechanism actually operate and ship.' },
-  { k: 's', tag: 'Viability', q: 'Will it last?', h: 'Does it sustain itself', p: 'Can the business model generate its own fuel and let the venture endure.' },
-] as const
-
-const DIMS: Record<'e' | 'm' | 's', string[]> = {
-  e: ['Painkiller vs vitamin', 'Tar-pit test', 'Venture-backable', 'Three eternal markets', 'Perfect-market traits', 'Six pain tests', 'Top-down vs bottom-up', 'Fermi pain cost', 'ICP / HXC specificity', 'B2B stakeholder matrix', 'JTBD three layers', 'Five-layer insight', 'TPO scenarios', 'Perceived value 3D', 'Octalysis drivers', 'North-star + bowling pin', 'Golden intersection', 'Founder-market fit', 'Geo & policy targeting'],
-  m: ['Stage placement', 'PSF -> PMF -> Scaling', 'Willingness to pay', 'PMF three signals', 'Four MVP types', 'Technical first-principles', 'Business Model Canvas', 'Model & multi-side needs', 'Ecosystem & competition', 'Five moat types', 'Team three traits', 'FMF (execution)', 'Technical gross margin', 'Runway & valley of death', 'Riskiest assumption', 'Demo-ability', 'AI gap positioning'],
-  s: ['TAM / SAM / SOM', 'PMF three pillars', 'Six key numbers', 'Unit economics', 'Rule of 40', 'Burn multiple', 'Stage / round thresholds', 'Customer-funded (CFA)', 'Hormozi value equation', 'Pricing strategy', 'Break-even point', 'Multi-method valuation', 'Exit paths', 'Liquidation preference', 'VC return lens (10x?)', 'D2C trap / B2B margin', 'Pitch ten elements', 'Valuation vs comparables', 'AI-durable value'],
-}
-
-const ENGINE = [
-  { n: '01', h: 'Each lens scores in isolation', p: 'Desirability, Feasibility and Viability are scored independently, blind to each other, to avoid anchoring.' },
-  { n: '02', h: 'Then they cross-link', p: 'Six directions of cross-correction. A strong demand signal raises the bar on viability, and so on.' },
-  { n: '03', h: 'And converge into one verdict', p: 'D is the gate. The three become a single, actionable call: where you stand and what to fix.' },
-]
+const LENS_KEYS = ['e', 'm', 's'] as const
+const LENS_ICON = (
+  <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" /></svg>
+)
 
 /* ---------- Engine: Sui-style pinned scroll narrative ---------- */
 const SPRING = { type: 'spring' as const, stiffness: 120, damping: 18, mass: 0.9 }
-// lens home positions (triangle) and converged centre
 const LP = { e: { x: 180, y: 86 }, m: { x: 96, y: 232 }, s: { x: 264, y: 232 } }
 const CEN = { x: 180, y: 176 }
 
 function EngineScrolly() {
+  const { lang } = useLang()
+  const c = COPY[lang].engine
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
   const [step, setStep] = useState(0)
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    setStep(v < 0.34 ? 0 : v < 0.67 ? 1 : 2)
-  })
+  useMotionValueEvent(scrollYProgress, 'change', (v) => setStep(v < 0.34 ? 0 : v < 0.67 ? 1 : 2))
 
-  // step-driven (springy, not scroll-scrubbed) so it never feels janky
   const at = (k: 'e' | 'm' | 's', axis: 'x' | 'y') => (step === 2 ? CEN[axis] : LP[k][axis])
   const lensR = (base: number) => (step === 2 ? 0 : base)
 
@@ -55,11 +42,11 @@ function EngineScrolly() {
       <div ref={ref} className="scrolly-track">
         <div className="scrolly-stage wrap">
           <div className="scrolly-copy">
-            <div className="eyebrow">How the engine computes</div>
-            <h2>Independent first,<br />then cross-linked</h2>
-            <p className="lead">Not vibes. Not one prompt. A disciplined sequence that mirrors how the best investors actually reason.</p>
+            <div className="eyebrow">{c.eyebrow}</div>
+            <h2>{c.h2a}<br />{c.h2b}</h2>
+            <p className="lead">{c.lead}</p>
             <div className="estep-list">
-              {ENGINE.map((s, i) => (
+              {c.steps.map((s, i) => (
                 <div key={s.n} className={`estep ${step === i ? 'on' : ''}`}>
                   <div className="en">{s.n}</div>
                   <div><h3>{s.h}</h3><p>{s.p}</p></div>
@@ -77,19 +64,16 @@ function EngineScrolly() {
                 <radialGradient id="v-core" cx="42%" cy="34%"><stop offset="0" stopColor="#fff" /><stop offset=".45" stopColor="#7aa2f7" /><stop offset="1" stopColor="#7c3aed" /></radialGradient>
               </defs>
 
-              {/* cross-link lines: visible only while cross-linking (step 1) */}
               <motion.g stroke="#8b96c9" strokeWidth="1.4" animate={{ opacity: step === 1 ? 1 : 0 }} transition={{ duration: 0.5 }}>
                 <motion.line x1={LP.e.x} y1={LP.e.y} x2={LP.m.x} y2={LP.m.y} animate={{ pathLength: step >= 1 ? 1 : 0 }} transition={{ duration: 0.6 }} />
                 <motion.line x1={LP.m.x} y1={LP.m.y} x2={LP.s.x} y2={LP.s.y} animate={{ pathLength: step >= 1 ? 1 : 0 }} transition={{ duration: 0.6, delay: 0.08 }} />
                 <motion.line x1={LP.s.x} y1={LP.s.y} x2={LP.e.x} y2={LP.e.y} animate={{ pathLength: step >= 1 ? 1 : 0 }} transition={{ duration: 0.6, delay: 0.16 }} />
               </motion.g>
 
-              {/* three lenses: animate to centre + shrink as they merge */}
               <motion.circle fill="url(#v-e)" animate={{ cx: at('e', 'x'), cy: at('e', 'y'), r: lensR(34), opacity: step === 2 ? 0 : 1 }} transition={SPRING} />
               <motion.circle fill="url(#v-m)" animate={{ cx: at('m', 'x'), cy: at('m', 'y'), r: lensR(28), opacity: step === 2 ? 0 : 1 }} transition={SPRING} />
               <motion.circle fill="url(#v-s)" animate={{ cx: at('s', 'x'), cy: at('s', 'y'), r: lensR(30), opacity: step === 2 ? 0 : 1 }} transition={SPRING} />
 
-              {/* converged core springs in last, covering the merge cleanly */}
               <motion.g animate={{ scale: step === 2 ? 1 : 0, opacity: step === 2 ? 1 : 0 }} transition={SPRING} style={{ transformBox: 'fill-box', transformOrigin: 'center' }}>
                 <circle cx={CEN.x} cy={CEN.y} r="58" fill="url(#v-core)" />
                 <circle cx={CEN.x} cy={CEN.y} r="58" fill="none" stroke="#a5b4fc" strokeWidth="1">
@@ -99,11 +83,10 @@ function EngineScrolly() {
               </motion.g>
             </svg>
 
-            {/* clean verdict caption, sits below the orb and fades up */}
             <motion.div className="verdict-cap" initial={false} animate={{ opacity: step === 2 ? 1 : 0, y: step === 2 ? 0 : 14 }} transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }}>
               <div className="verdict-dots"><span className="verdict-dot e" /><span className="verdict-dot m" /><span className="verdict-dot s" /></div>
-              <div className="verdict-h">One clear verdict</div>
-              <div className="verdict-p">Where you stand, and what to fix first.</div>
+              <div className="verdict-h">{c.verdictH}</div>
+              <div className="verdict-p">{c.verdictP}</div>
             </motion.div>
           </div>
         </div>
@@ -112,85 +95,24 @@ function EngineScrolly() {
   )
 }
 
-const LENS_META = {
-  e: { label: 'Desirability', q: 'Is the need real, sharp and shared by enough people to pay?', col: 'var(--earth)' },
-  m: { label: 'Feasibility', q: 'Can this team actually build the mechanism and ship it?', col: 'var(--moon)' },
-  s: { label: 'Viability', q: 'Will the model fund itself and let the venture endure?', col: 'var(--sun)' },
-} as const
-
-// one-line plain-English read for every dimension, shown on hover
-const DESC: Record<string, string> = {
-  'Painkiller vs vitamin': 'Must-have urgency versus nice-to-have. Only painkillers get bought fast.',
-  'Tar-pit test': 'A seductive idea that quietly traps founders for years.',
-  'Venture-backable': 'Could this plausibly return a whole fund, not just a salary?',
-  'Three eternal markets': 'Health, wealth or relationships, the demand that never dies.',
-  'Perfect-market traits': 'Large, growing, urgent, underserved and reachable.',
-  'Six pain tests': 'Frequency, intensity, budget, urgency, reach and willingness to pay.',
-  'Top-down vs bottom-up': 'Two independent ways to size whether the demand is really there.',
-  'Fermi pain cost': 'A back-of-envelope dollar cost of the problem today.',
-  'ICP / HXC specificity': 'How sharply you have defined the ideal, high-expectation customer.',
-  'B2B stakeholder matrix': 'Who decides, who uses, who pays and who can block the deal.',
-  'JTBD three layers': 'The functional, emotional and social job the customer hires you for.',
-  'Five-layer insight': 'How deep the non-obvious truth behind the idea really runs.',
-  'TPO scenarios': 'The time, place and occasion where the need actually fires.',
-  'Perceived value 3D': 'Functional, emotional and economic value as the buyer feels it.',
-  'Octalysis drivers': 'Which core motivation drivers pull users in and keep them.',
-  'North-star + bowling pin': 'A clear beachhead that knocks down the next segments in turn.',
-  'Golden intersection': 'Where real demand, your unfair edge and a market overlap.',
-  'Founder-market fit': 'Why this team, uniquely, is built to win this market.',
-  'Geo & policy targeting': 'The region and regulation that make the wedge winnable now.',
-  'Stage placement': 'Pre-seed to growth, placed by evidence rather than age.',
-  'PSF -> PMF -> Scaling': 'Which proof milestone you have actually cleared so far.',
-  'Willingness to pay': 'Real signed or paid intent, not survey smiles.',
-  'PMF three signals': 'Retention, word-of-mouth and organic pull as proof of fit.',
-  'Four MVP types': 'The cheapest build that tests the single riskiest thing.',
-  'Technical first-principles': 'Does the mechanism hold up from physics, not from hype?',
-  'Business Model Canvas': 'Do the nine building blocks actually fit together?',
-  'Model & multi-side needs': 'Every side of the market has a reason to show up.',
-  'Ecosystem & competition': 'Who else is in the arena and where the open gaps are.',
-  'Five moat types': 'Network effects, scale, brand, switching cost or IP.',
-  'Team three traits': 'Founder grit, sharp insight and the ability to recruit.',
-  'FMF (execution)': 'Can this specific team really ship and sell it?',
-  'Technical gross margin': 'What it actually costs you to deliver one more unit.',
-  'Runway & valley of death': 'Enough cash to reach the next proof point before zero.',
-  'Riskiest assumption': 'The one belief that, if wrong, kills the company.',
-  'Demo-ability': 'Can you show, not just tell, that it works?',
-  'AI gap positioning': 'Where you sit as foundation models keep getting better.',
-  'TAM / SAM / SOM': 'Total, serviceable and obtainable market, honestly sized.',
-  'PMF three pillars': 'Demand, retention and economics all holding together.',
-  'Six key numbers': 'The metrics an investor checks before anything else.',
-  'Unit economics': 'Do you make money on a single customer?',
-  'Rule of 40': 'Growth rate plus profit margin should clear forty percent.',
-  'Burn multiple': 'Cash burned for every dollar of new recurring revenue.',
-  'Stage / round thresholds': 'The numbers each funding round expects you to hit.',
-  'Customer-funded (CFA)': 'Can customers fund growth instead of dilution?',
-  'Hormozi value equation': 'Dream outcome over perceived effort, time and risk.',
-  'Pricing strategy': 'Capturing a fair share of the value you create.',
-  'Break-even point': 'When revenue finally covers the whole cost base.',
-  'Multi-method valuation': 'A triangulated worth, not one hopeful number.',
-  'Exit paths': 'Who realistically buys this one day, and why.',
-  'Liquidation preference': 'How the terms reshape who actually gets paid first.',
-  'VC return lens (10x?)': 'Could this plausibly 10x from where it stands today?',
-  'D2C trap / B2B margin': 'The margin reality of the chosen go-to-market.',
-  'Pitch ten elements': 'Whether the story covers what investors must hear.',
-  'Valuation vs comparables': 'Priced sanely against similar recent deals.',
-  'AI-durable value': 'Does the value survive as AI commoditizes the easy parts?',
-}
-
 function DimsSection() {
+  const { lang } = useLang()
+  const c = COPY[lang].dims
   const [k, setK] = useState<'e' | 'm' | 's'>('e')
-  const [hov, setHov] = useState<string | null>(null)
-  const meta = LENS_META[k]
-  const name = hov ?? `${meta.label} · ${DIMS[k].length} dimensions`
-  const desc = hov ? DESC[hov] : meta.q
-  const lens = (['e', 'm', 's'] as const)
+  const [hovI, setHovI] = useState<number | null>(null)
+  const meta = c.lensMeta[k]
+  const list = DIMENSIONS[k]
+  const hov = hovI != null ? list[hovI] : null
+  const name = hov ? (lang === 'en' ? hov.en : hov.zh) : `${meta.label} · ${list.length} ${c.dimsWord}`
+  const desc = hov ? (lang === 'en' ? hov.de : hov.dz) : meta.q
+  const COL = { e: 'var(--earth)', m: 'var(--moon)', s: 'var(--sun)' }
 
   return (
     <div className="stat-row">
       <div className="stat-left">
         <div className="bignum"><span className="bn-ghost">55</span><span className="bn-live"><CountUp to={55} /></span></div>
-        <div className="bignum-sub">weighted dimensions, scored across three lenses</div>
-        <div className="dim-detail" style={{ ['--acc' as string]: meta.col }}>
+        <div className="bignum-sub">{c.sub}</div>
+        <div className="dim-detail" style={{ ['--acc' as string]: COL[k] }}>
           <AnimatePresence mode="wait">
             <motion.div key={name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, ease: [0.2, 0.7, 0.2, 1] }}>
               <div className="dim-detail-name">{name}</div>
@@ -202,23 +124,23 @@ function DimsSection() {
 
       <div className="stat-right">
         <div className="lenstabs">
-          {lens.map((x) => (
-            <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => { setK(x); setHov(null) }}>
-              {LENS_META[x].label} · {DIMS[x].length}
+          {LENS_KEYS.map((x) => (
+            <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => { setK(x); setHovI(null) }}>
+              {c.lensMeta[x].label} · {DIMENSIONS[x].length}
             </button>
           ))}
         </div>
-        <motion.div className="dimgrid" key={k} initial="hide" animate="show" variants={{ show: { transition: { staggerChildren: 0.022 } } }} onMouseLeave={() => setHov(null)}>
-          {DIMS[k].map((d) => (
+        <motion.div className="dimgrid" key={k} initial="hide" animate="show" variants={{ show: { transition: { staggerChildren: 0.022 } } }} onMouseLeave={() => setHovI(null)}>
+          {list.map((d, i) => (
             <motion.button
-              key={d}
+              key={d.en}
               type="button"
-              className={`dimchip ${k} ${hov === d ? 'on' : ''}`}
-              onMouseEnter={() => setHov(d)}
-              onFocus={() => setHov(d)}
+              className={`dimchip ${k} ${hovI === i ? 'on' : ''}`}
+              onMouseEnter={() => setHovI(i)}
+              onFocus={() => setHovI(i)}
               variants={{ hide: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.2, 0.7, 0.2, 1] } } }}
             >
-              {d}
+              {lang === 'en' ? d.en : d.zh}
             </motion.button>
           ))}
         </motion.div>
@@ -227,79 +149,17 @@ function DimsSection() {
   )
 }
 
-/* ---------- Where you fit: interactive stage explorer ---------- */
-const STAGES = [
-  { id: 'pre', label: 'Pre-seed', room: 'Accelerators & angels', desc: 'Conviction on the founder and a sharp wedge, before the metrics exist.', firms: [{ n: 'Y Combinator', geo: 'US' }, { n: 'Techstars', geo: 'US' }, { n: 'AppWorks', geo: 'TW' }] },
-  { id: 'seed', label: 'Seed', room: 'Thesis-driven seed funds', desc: 'A non-obvious insight and the first real signs of pull.', firms: [{ n: 'a16z', geo: 'US' }, { n: 'First Round', geo: 'US' }, { n: 'Hive Ventures', geo: 'TW' }] },
-  { id: 'a', label: 'Series A', room: 'Metrics-led growth VCs', desc: 'Repeatable traction and unit economics that actually work.', firms: [{ n: 'Accel', geo: 'US' }, { n: 'Lightspeed', geo: 'US' }, { n: 'Cherubic Ventures', geo: 'US / TW' }] },
-  { id: 'growth', label: 'Growth', room: 'Late-stage & crossover funds', desc: 'A proven engine, now the question is how efficiently it scales.', firms: [{ n: 'Sequoia', geo: 'US' }, { n: 'Taiwania Capital', geo: 'TW' }, { n: 'CDIB Capital', geo: 'TW' }] },
-] as const
-
-function FitExplorer() {
-  const [i, setI] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const s = STAGES[i]
-  // auto-walk Pre-seed -> Growth until the user takes over
-  useEffect(() => {
-    if (paused) return
-    const id = setInterval(() => setI((p) => (p + 1) % STAGES.length), 3000)
-    return () => clearInterval(id)
-  }, [paused])
-  return (
-    <div className="fit" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <div className="fit-rail">
-        <div className="fit-rail-line"><motion.div className="fit-rail-fill" animate={{ width: `${(i / (STAGES.length - 1)) * 100}%` }} transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }} /></div>
-        {STAGES.map((st, idx) => (
-          <button key={st.id} className={`fit-node ${idx <= i ? 'on' : ''} ${idx === i ? 'cur' : ''}`} onClick={() => setI(idx)}>
-            <span className="fit-dot" />
-            <span className="fit-node-lbl">{st.label}</span>
-          </button>
-        ))}
-      </div>
-
-      <AnimatePresence mode="wait">
-        <motion.div key={s.id} className="fit-panel" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}>
-          <div className="fit-room">
-            <div className="eyebrow">The room at {s.label}</div>
-            <h3>{s.room}</h3>
-            <p>{s.desc}</p>
-          </div>
-          <div className="fit-firms">
-            <div className="fit-firms-cap">Who you would talk to</div>
-            <motion.div className="fit-firm-list" initial="hide" animate="show" variants={{ show: { transition: { staggerChildren: 0.07 } } }}>
-              {s.firms.map((f) => (
-                <motion.div key={f.n} className="fit-firm" variants={{ hide: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.7, 0.2, 1] } } }}>
-                  <span className="fit-firm-n">{f.n}</span>
-                  <span className="fit-firm-geo">{f.geo}</span>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  )
-}
-
-/* ---------- The Trinity stack: interactive composable layers ---------- */
-const STACK = [
-  { n: '01', h: '55-dimension scoring', p: 'Every idea is read across 55 weighted dimensions, each one a solid algorithm rather than a hunch.' },
-  { n: '02', h: 'Three independent lenses', p: 'Desirability, Feasibility and Viability are scored blind to each other, so no lens anchors the rest.' },
-  { n: '03', h: 'Six-way cross-link', p: 'The three lenses then correct one another in six directions before anything is concluded.' },
-  { n: '04', h: 'Evidence gating', p: 'Scores are gated on evidence, so the engine cannot be talked into an inflated number.' },
-  { n: '05', h: 'Synthesis into one verdict', p: 'Desirability is the gate. The three converge into a single, actionable call.' },
-  { n: '06', h: 'Investor & stage matching', p: 'Your verdict maps to a funding stage and a shortlist of real investors, across the US and Taiwan.' },
-] as const
-
 function StackSection() {
+  const { lang } = useLang()
+  const c = COPY[lang].stack
   const [active, setActive] = useState(0)
   return (
     <section id="stack" className="sec sec-soft">
       <div className="wrap">
-        <Reveal><div className="sec-head"><div className="eyebrow">The Trinity stack</div><h2>Innovation, engineered</h2><p className="lead">Six composable layers turn a raw idea into a verdict you can act on. Hover a layer to see it light up.</p></div></Reveal>
+        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
         <div className="stack">
           <div className="stack-list">
-            {STACK.map((s, i) => (
+            {c.layers.map((s, i) => (
               <button key={s.n} type="button" className={`stack-item ${active === i ? 'on' : ''}`} onMouseEnter={() => setActive(i)} onFocus={() => setActive(i)} onClick={() => setActive(i)}>
                 <span className="stack-n">{s.n}</span>
                 <span className="stack-tx">
@@ -310,7 +170,7 @@ function StackSection() {
             ))}
           </div>
           <motion.div className="stack-viz" aria-hidden initial="hide" whileInView="show" viewport={{ once: true, margin: '-15% 0px' }} variants={{ show: { transition: { staggerChildren: 0.08 } } }}>
-            {STACK.map((s, i) => (
+            {c.layers.map((s, i) => (
               <motion.div key={s.n} className="stack-plate-wrap" variants={{ hide: { opacity: 0, x: 40 }, show: { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 130, damping: 18 } } }}>
                 <div className={`stack-plate p${i} ${active === i ? 'on' : ''}`} onMouseEnter={() => setActive(i)}>
                   <span className="plate-n">{s.n}</span>
@@ -325,25 +185,82 @@ function StackSection() {
   )
 }
 
+/* ---------- Where you fit: interactive stage explorer ---------- */
+const FIRMS = [
+  [{ n: 'Y Combinator', geo: 'US' }, { n: 'Techstars', geo: 'US' }, { n: 'AppWorks', geo: 'TW' }],
+  [{ n: 'a16z', geo: 'US' }, { n: 'First Round', geo: 'US' }, { n: 'Hive Ventures', geo: 'TW' }],
+  [{ n: 'Accel', geo: 'US' }, { n: 'Lightspeed', geo: 'US' }, { n: 'Cherubic Ventures', geo: 'US / TW' }],
+  [{ n: 'Sequoia', geo: 'US' }, { n: 'Taiwania Capital', geo: 'TW' }, { n: 'CDIB Capital', geo: 'TW' }],
+] as const
+
+function FitExplorer() {
+  const { lang } = useLang()
+  const c = COPY[lang].fit
+  const [i, setI] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const s = c.stages[i]
+  useEffect(() => {
+    if (paused) return
+    const id = setInterval(() => setI((p) => (p + 1) % c.stages.length), 3000)
+    return () => clearInterval(id)
+  }, [paused, c.stages.length])
+  return (
+    <div className="fit" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <div className="fit-rail">
+        <div className="fit-rail-line"><motion.div className="fit-rail-fill" animate={{ width: `${(i / (c.stages.length - 1)) * 100}%` }} transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }} /></div>
+        {c.stages.map((st, idx) => (
+          <button key={idx} className={`fit-node ${idx <= i ? 'on' : ''} ${idx === i ? 'cur' : ''}`} onClick={() => setI(idx)}>
+            <span className="fit-dot" />
+            <span className="fit-node-lbl">{st.label}</span>
+          </button>
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div key={i} className="fit-panel" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}>
+          <div className="fit-room">
+            <div className="eyebrow">{c.roomAtPre}{s.label}{c.roomAtPost}</div>
+            <h3>{s.room}</h3>
+            <p>{s.desc}</p>
+          </div>
+          <div className="fit-firms">
+            <div className="fit-firms-cap">{c.who}</div>
+            <motion.div className="fit-firm-list" initial="hide" animate="show" variants={{ show: { transition: { staggerChildren: 0.07 } } }}>
+              {FIRMS[i].map((f) => (
+                <motion.div key={f.n} className="fit-firm" variants={{ hide: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.7, 0.2, 1] } } }}>
+                  <span className="fit-firm-n">{f.n}</span>
+                  <span className="fit-firm-geo">{f.geo}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  )
+}
+
 /* ---------- Why founders choose Trinity ---------- */
-const WHY = [
-  { k: 'e', h: 'A verdict, not vibes', p: 'A clear call gated on evidence, instead of a flattering gut feeling.', icon: <path d="M20 6L9 17l-5-5" /> },
-  { k: 's', h: 'Scored across 55 dimensions', p: 'Every weighted dimension is a solid algorithm, not a one-line prompt.', icon: <><path d="M4 19V5" /><path d="M4 19h16" /><path d="M8 16v-5m4 5V8m4 8v-3" /></> },
-  { k: 'm', h: 'Your stage and the right room', p: 'The funding stage you are really at, and the investor type that buys it.', icon: <><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></> },
-  { k: 'e', h: 'Honest gating, no inflated scores', p: 'The engine cannot be talked into a high number it has not earned.', icon: <><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 018 0v3" /></> },
+const WHY_META = [
+  { k: 'e', icon: <path d="M20 6L9 17l-5-5" /> },
+  { k: 's', icon: <><path d="M4 19V5" /><path d="M4 19h16" /><path d="M8 16v-5m4 5V8m4 8v-3" /></> },
+  { k: 'm', icon: <><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></> },
+  { k: 'e', icon: <><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 018 0v3" /></> },
 ] as const
 
 function WhyFounders() {
+  const { lang } = useLang()
+  const c = COPY[lang].why
   return (
     <section className="sec why">
       <div className="why-bg" aria-hidden><span className="why-blob b1" /><span className="why-blob b2" /><span className="why-blob b3" /></div>
       <div className="wrap">
-        <Reveal><div className="sec-head"><div className="eyebrow">Why founders choose Trinity</div><h2>An honest read you can act on</h2><p className="lead">Most tools flatter you. Trinity is built to tell you where you actually stand.</p></div></Reveal>
+        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
         <Stagger className="cards c4">
-          {WHY.map((w, i) => (
+          {c.cards.map((w, i) => (
             <div className="card" key={i}>
-              <div className={`ic ${w.k}`}>
-                <svg fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">{w.icon}</svg>
+              <div className={`ic ${WHY_META[i].k}`}>
+                <svg fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">{WHY_META[i].icon}</svg>
               </div>
               <h3>{w.h}</h3>
               <p>{w.p}</p>
@@ -355,22 +272,18 @@ function WhyFounders() {
   )
 }
 
-/* ---------- Before / After: show the muscle ---------- */
-const BA = [
-  { k: 'Your read of the idea', before: 'A gut feeling and a flattering self-score.', after: 'A D / F / V verdict, gated on real evidence.' },
-  { k: 'Who to raise from', before: 'A guessed list of famous VCs.', after: 'Named funds matched to your stage and strongest lens.' },
-  { k: 'What to do on Monday', before: 'Polish the deck again and hope.', after: 'The top three things to fix, in priority order.' },
-] as const
-
+/* ---------- Before / After ---------- */
 function BeforeAfter() {
+  const { lang } = useLang()
+  const c = COPY[lang].ba
   return (
     <section className="sec sec-soft">
       <div className="wrap">
-        <Reveal><div className="sec-head"><div className="eyebrow">Before and after</div><h2>From guesswork to a clear move</h2><p className="lead">The same idea, read two ways. One leaves you guessing; the other hands you the next step.</p></div></Reveal>
+        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
         <div className="ba">
           <motion.div className="ba-col before" initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-12% 0px' }} transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}>
-            <div className="ba-tag">Without Trinity</div>
-            {BA.map((r) => (
+            <div className="ba-tag">{c.without}</div>
+            {c.rows.map((r) => (
               <div className="ba-item" key={r.k}>
                 <div className="ba-q">{r.k}</div>
                 <div className="ba-a">{r.before}</div>
@@ -381,8 +294,8 @@ function BeforeAfter() {
             <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
           </motion.div>
           <motion.div className="ba-col after" initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-12% 0px' }} transition={{ duration: 0.6, delay: 0.18, ease: [0.2, 0.7, 0.2, 1] }}>
-            <div className="ba-tag">With Trinity</div>
-            {BA.map((r) => (
+            <div className="ba-tag">{c.withT}</div>
+            {c.rows.map((r) => (
               <div className="ba-item" key={r.k}>
                 <div className="ba-q">{r.k}</div>
                 <div className="ba-a">
@@ -400,40 +313,26 @@ function BeforeAfter() {
 
 /* ---------- Track-record stats band ---------- */
 function StatsBand() {
+  const { lang } = useLang()
+  const labels = COPY[lang].stats.labels
   const items = [
-    { v: STATS.analyzed, plus: true, l: 'startups analyzed' },
-    { v: 55, l: 'dimensions scored' },
-    { v: 3, l: 'independent lenses' },
-    { v: 2, l: 'markets mapped · US + TW' },
+    { v: STATS.analyzed, plus: true },
+    { v: 55, plus: false },
+    { v: 3, plus: false },
+    { v: 2, plus: false },
   ]
   return (
     <section className="statsband sec-dark">
       <div className="wrap statsband-in">
-        {items.map((it) => (
-          <div className="stat-cell" key={it.l}>
+        {items.map((it, i) => (
+          <div className="stat-cell" key={i}>
             <div className="stat-v"><CountUp to={it.v} />{it.plus && <span className="stat-plus">+</span>}</div>
-            <div className="stat-l">{it.l}</div>
+            <div className="stat-l">{labels[i]}</div>
           </div>
         ))}
       </div>
     </section>
   )
-}
-
-/** Invert the nav while a dark full-bleed section sits under it. */
-function useNavTheme() {
-  const [dark, setDark] = useState(false)
-  useEffect(() => {
-    const onScroll = () => {
-      const el = document.elementsFromPoint(window.innerWidth / 2, 64)
-        .find((n) => n instanceof HTMLElement && (n.classList.contains('sec-dark') || n.closest('.sec-dark')))
-      setDark(Boolean(el))
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-  return dark
 }
 
 /** Track which section is centred in the viewport (nav scrollspy). */
@@ -470,8 +369,26 @@ function useMagnetic<T extends HTMLElement>() {
   return ref
 }
 
+/** Invert the nav while a dark full-bleed section sits under it. */
+function useNavTheme() {
+  const [dark, setDark] = useState(false)
+  useEffect(() => {
+    const onScroll = () => {
+      const el = document.elementsFromPoint(window.innerWidth / 2, 64)
+        .find((n) => n instanceof HTMLElement && (n.classList.contains('sec-dark') || n.closest('.sec-dark')))
+      setDark(Boolean(el))
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  return dark
+}
+
 export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
   useLenis()
+  const { lang, setLang } = useLang()
+  const c = COPY[lang]
   const navDark = useNavTheme()
   const heroMag = useMagnetic<HTMLButtonElement>()
   const active = useActiveSection(['engine', 'stack', 'dims', 'fit'])
@@ -482,13 +399,17 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
         <div className="nav-in">
           <a className="brand" href="#top">{LOGO} TRINITY</a>
           <div className="nav-links nav-center">
-            <a className={active === 'engine' ? 'on' : ''} href="#engine">How it works</a>
-            <a className={active === 'stack' ? 'on' : ''} href="#stack">The stack</a>
-            <a className={active === 'dims' ? 'on' : ''} href="#dims">The 55 dimensions</a>
-            <a className={active === 'fit' ? 'on' : ''} href="#fit">Where you fit</a>
+            <a className={active === 'engine' ? 'on' : ''} href="#engine">{c.nav.howItWorks}</a>
+            <a className={active === 'stack' ? 'on' : ''} href="#stack">{c.nav.stack}</a>
+            <a className={active === 'dims' ? 'on' : ''} href="#dims">{c.nav.dims}</a>
+            <a className={active === 'fit' ? 'on' : ''} href="#fit">{c.nav.fit}</a>
           </div>
           <div className="nav-cta">
-            <button className="btn btn-primary" onClick={onAnalyze}>Analyze my idea</button>
+            <div className="lang-toggle" role="group" aria-label="Language">
+              <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>EN</button>
+              <button className={lang === 'zh' ? 'on' : ''} onClick={() => setLang('zh')}>中</button>
+            </div>
+            <button className="btn btn-primary" onClick={onAnalyze}>{c.nav.cta}</button>
           </div>
         </div>
       </nav>
@@ -497,15 +418,15 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
         <HeroNetwork />
         <div className="hero-veil" aria-hidden />
         <div className="wrap hero-inner">
-          <Reveal><div className="eyebrow eyebrow-center">Innovation Trinity · Feasibility Engine</div></Reveal>
-          <h1 className="hero-title">
-            <MaskLines lines={[<>From an idea to</>, <>an <span className="hl">investable startup</span></>]} />
+          <Reveal><div className="eyebrow eyebrow-center">{c.hero.eyebrow}</div></Reveal>
+          <h1 className="hero-title" key={lang}>
+            <MaskLines lines={[<>{c.hero.titleA}</>, <>{c.hero.titleB}<span className="hl">{c.hero.titleHl}</span></>]} />
           </h1>
-          <Reveal delay={0.45}><p className="hero-lead">Feed your idea to the Trinity engine. See where it really stands across 55 dimensions, and exactly who to talk to next.</p></Reveal>
+          <Reveal delay={0.45}><p className="hero-lead">{c.hero.lead}</p></Reveal>
           <Reveal delay={0.58}>
             <div className="hero-cta hero-cta-center">
-              <button ref={heroMag} className="btn btn-primary" onClick={onAnalyze}>Analyze my idea</button>
-              <a className="btn btn-ghost" href="#engine">See how it works</a>
+              <button ref={heroMag} className="btn btn-primary" onClick={onAnalyze}>{c.hero.ctaPrimary}</button>
+              <a className="btn btn-ghost" href="#engine">{c.hero.ctaGhost}</a>
             </div>
           </Reveal>
         </div>
@@ -514,13 +435,11 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
 
       <section className="sec sec-soft">
         <div className="wrap">
-          <Reveal><div className="sec-head"><div className="eyebrow">How the engine thinks</div><h2>Three lenses, three questions</h2><p className="lead">An investable startup needs three things to hold at once. Miss one and the engine tells you.</p></div></Reveal>
+          <Reveal><div className="sec-head"><div className="eyebrow">{c.lenses.eyebrow}</div><h2>{c.lenses.h2}</h2><p className="lead">{c.lenses.lead}</p></div></Reveal>
           <Stagger className="cards c3">
-            {LENSES.map((l) => (
-              <div className="card" key={l.k}>
-                <div className={`ic ${l.k}`}>
-                  <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" /></svg>
-                </div>
+            {c.lenses.items.map((l, i) => (
+              <div className="card" key={i}>
+                <div className={`ic ${LENS_KEYS[i]}`}>{LENS_ICON}</div>
                 <div className="eyebrow" style={{ color: 'var(--ink-dim)' }}>{l.tag}</div>
                 <h3>{l.h}</h3>
                 <p>{l.p}</p>
@@ -537,14 +456,14 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
 
       <section id="dims" className="sec sec-soft">
         <div className="wrap">
-          <Reveal><div className="sec-head"><div className="eyebrow">The 55 dimensions</div><h2>Every score is a solid algorithm</h2><p className="lead">Trinity scores a startup across 55 weighted dimensions, split across the three lenses. Hover any one to see what it checks.</p></div></Reveal>
+          <Reveal><div className="sec-head"><div className="eyebrow">{c.dims.eyebrow}</div><h2>{c.dims.h2}</h2><p className="lead">{c.dims.lead}</p></div></Reveal>
           <Reveal delay={0.1}><DimsSection /></Reveal>
         </div>
       </section>
 
       <section id="fit" className="sec">
         <div className="wrap">
-          <Reveal><div className="sec-head"><div className="eyebrow">Where you fit</div><h2>Your analysis, turned into a move</h2><p className="lead">Trinity places your stage, names the investor type that weights your strongest lens, and shortlists real institutions to contact. Walk the stages to see who you would talk to.</p></div></Reveal>
+          <Reveal><div className="sec-head"><div className="eyebrow">{c.fit.eyebrow}</div><h2>{c.fit.h2}</h2><p className="lead">{c.fit.lead}</p></div></Reveal>
           <Reveal delay={0.1}><FitExplorer /></Reveal>
         </div>
       </section>
@@ -560,24 +479,24 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
         <div className="wrap">
           <Reveal>
             <div className="cta">
-              <h2>Get started</h2>
-              <p>Run your first round free. A full report: your Trinity scores, your stage, and the top three things to fix.</p>
+              <h2>{c.cta.h2}</h2>
+              <p>{c.cta.p}</p>
             </div>
           </Reveal>
           <Stagger className="paths">
             <button className="path primary" onClick={onAnalyze}>
-              <span className="path-h">Analyze my idea</span>
-              <span className="path-p">Your D / F / V verdict, stage and top-three fixes.</span>
+              <span className="path-h">{c.cta.paths[0].h}</span>
+              <span className="path-p">{c.cta.paths[0].p}</span>
               <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
             </button>
             <a className="path" href="#engine">
-              <span className="path-h">See how it works</span>
-              <span className="path-p">The engine, step by step, from lenses to verdict.</span>
+              <span className="path-h">{c.cta.paths[1].h}</span>
+              <span className="path-p">{c.cta.paths[1].p}</span>
               <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
             </a>
             <a className="path" href="#fit">
-              <span className="path-h">Where you fit</span>
-              <span className="path-p">The stage and the investors that match your idea.</span>
+              <span className="path-h">{c.cta.paths[2].h}</span>
+              <span className="path-p">{c.cta.paths[2].p}</span>
               <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
             </a>
           </Stagger>
@@ -587,7 +506,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
       <footer>
         <div className="wrap foot-in">
           <a className="brand" href="#top">{LOGO} TRINITY</a>
-          <div>Innovation Trinity · Feasibility Engine</div>
+          <div>{c.footer}</div>
         </div>
       </footer>
     </>
