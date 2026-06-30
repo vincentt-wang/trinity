@@ -4,6 +4,7 @@ import { Reveal } from './lib/Reveal'
 import { useLenis } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
 import { CountUp, MaskLines, Stagger } from './lib/anim'
+import { STATS } from './stats'
 
 const LOGO = (
   <svg viewBox="0 0 32 32" aria-hidden>
@@ -329,6 +330,102 @@ function StackSection() {
   )
 }
 
+/* ---------- Why founders choose Trinity ---------- */
+const WHY = [
+  { k: 'e', h: 'A verdict, not vibes', p: 'A clear call gated on evidence, instead of a flattering gut feeling.', icon: <path d="M20 6L9 17l-5-5" /> },
+  { k: 's', h: 'Scored across 55 dimensions', p: 'Every weighted dimension is a solid algorithm, not a one-line prompt.', icon: <><path d="M4 19V5" /><path d="M4 19h16" /><path d="M8 16v-5m4 5V8m4 8v-3" /></> },
+  { k: 'm', h: 'Your stage and the right room', p: 'The funding stage you are really at, and the investor type that buys it.', icon: <><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></> },
+  { k: 'e', h: 'Honest gating, no inflated scores', p: 'The engine cannot be talked into a high number it has not earned.', icon: <><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 018 0v3" /></> },
+] as const
+
+function WhyFounders() {
+  return (
+    <section className="sec">
+      <div className="wrap">
+        <Reveal><div className="sec-head"><div className="eyebrow">Why founders choose Trinity</div><h2>An honest read you can act on</h2><p className="lead">Most tools flatter you. Trinity is built to tell you where you actually stand.</p></div></Reveal>
+        <Stagger className="cards c4">
+          {WHY.map((w, i) => (
+            <div className="card" key={i}>
+              <div className={`ic ${w.k}`}>
+                <svg fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">{w.icon}</svg>
+              </div>
+              <h3>{w.h}</h3>
+              <p>{w.p}</p>
+            </div>
+          ))}
+        </Stagger>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- Before / After: show the muscle ---------- */
+const BA = [
+  { k: 'Your read of the idea', before: 'A gut feeling and a flattering self-score.', after: 'A D / F / V verdict, gated on real evidence.' },
+  { k: 'Who to raise from', before: 'A guessed list of famous VCs.', after: 'Named funds matched to your stage and strongest lens.' },
+  { k: 'What to do on Monday', before: 'Polish the deck again and hope.', after: 'The top three things to fix, in priority order.' },
+] as const
+
+function BeforeAfter() {
+  return (
+    <section className="sec sec-soft">
+      <div className="wrap">
+        <Reveal><div className="sec-head"><div className="eyebrow">Before and after</div><h2>From guesswork to a clear move</h2><p className="lead">The same idea, read two ways. One leaves you guessing; the other hands you the next step.</p></div></Reveal>
+        <Reveal delay={0.1}>
+          <div className="ba">
+            <div className="ba-col before">
+              <div className="ba-tag">Without Trinity</div>
+              {BA.map((r) => (
+                <div className="ba-item" key={r.k}>
+                  <div className="ba-q">{r.k}</div>
+                  <div className="ba-a">{r.before}</div>
+                </div>
+              ))}
+            </div>
+            <div className="ba-arrow" aria-hidden>
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
+            </div>
+            <div className="ba-col after">
+              <div className="ba-tag">With Trinity</div>
+              {BA.map((r) => (
+                <div className="ba-item" key={r.k}>
+                  <div className="ba-q">{r.k}</div>
+                  <div className="ba-a">
+                    <svg className="ba-check" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+                    {r.after}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- Track-record stats band ---------- */
+function StatsBand() {
+  const items = [
+    { v: STATS.analyzed, plus: true, l: 'startups analyzed' },
+    { v: 55, l: 'dimensions scored' },
+    { v: 3, l: 'independent lenses' },
+    { v: 2, l: 'markets mapped · US + TW' },
+  ]
+  return (
+    <section className="statsband sec-dark">
+      <div className="wrap statsband-in">
+        {items.map((it) => (
+          <div className="stat-cell" key={it.l}>
+            <div className="stat-v"><CountUp to={it.v} />{it.plus && <span className="stat-plus">+</span>}</div>
+            <div className="stat-l">{it.l}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 /** Invert the nav while a dark full-bleed section sits under it. */
 function useNavTheme() {
   const [dark, setDark] = useState(false)
@@ -418,6 +515,12 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
           <Reveal delay={0.1}><FitExplorer /></Reveal>
         </div>
       </section>
+
+      <WhyFounders />
+
+      <BeforeAfter />
+
+      <StatsBand />
 
       <section id="cta" className="sec sec-dark cta-sec">
         <div className="cta-glow" aria-hidden />
