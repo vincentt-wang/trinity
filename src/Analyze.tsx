@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, animate } from 'framer-motion'
 import { CountUp } from './lib/anim'
+import { Aurora } from './lib/Aurora'
 import { useLang } from './i18n'
 import { COPY, DIMENSIONS } from './copy'
+
+const EASE = [0.2, 0.7, 0.2, 1] as const
+const STAG = { hide: {}, show: { transition: { staggerChildren: 0.09, delayChildren: 0.06 } } }
+const ITEM = { hide: { opacity: 0, y: 26 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }
 
 const LOGO = (
   <svg viewBox="0 0 32 32" aria-hidden>
@@ -112,6 +117,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="az">
+      <Aurora tone="cool" />
       <div className="az-top">
         <button className="brand" onClick={onBack}>{LOGO} TRINITY</button>
         <div className="az-top-right">
@@ -125,14 +131,15 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
 
       <AnimatePresence mode="wait">
         {phase === 'input' && (
-          <motion.section key="in" className="az-stage" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}>
-            <div className="eyebrow">{a.input.eyebrow}</div>
-            <h1 className="az-h1">{a.input.h1}</h1>
-            <p className="az-sub">{a.input.sub}</p>
+          <motion.section key="in" className="az-stage" variants={STAG} initial="hide" animate="show" exit={{ opacity: 0, y: -18 }}>
+            <motion.div className="eyebrow" variants={ITEM}>{a.input.eyebrow}</motion.div>
+            <motion.h1 className="az-h1" variants={ITEM}>{a.input.h1}</motion.h1>
+            <motion.p className="az-sub" variants={ITEM}>{a.input.sub}</motion.p>
 
-            <textarea className="az-text" value={idea} onChange={(e) => setIdea(e.target.value)} placeholder={a.input.placeholder} />
+            <motion.textarea className="az-text" variants={ITEM} value={idea} onChange={(e) => setIdea(e.target.value)} placeholder={a.input.placeholder} />
 
-            <div
+            <motion.div
+              variants={ITEM}
               className={`az-drop${drag ? ' on' : ''}${file ? ' has' : ''}`}
               onClick={() => fileRef.current?.click()}
               onDragOver={(e) => { e.preventDefault(); setDrag(true) }}
@@ -142,38 +149,38 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
               <input ref={fileRef} type="file" hidden accept=".pdf,.ppt,.pptx,.key,.doc,.docx,.md,.txt" onChange={(e) => { const f = e.target.files?.[0]; if (f) setFile(f.name) }} />
               <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 16V4m0 0L8 8m4-4l4 4" /><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" /></svg>
               {file ? <span className="az-drop-file">{file}</span> : <span>{a.input.dropMain} <i>{a.input.dropHint}</i></span>}
-            </div>
+            </motion.div>
 
-            <button className="btn btn-primary az-run" disabled={!ready} onClick={run}>
+            <motion.button className="btn btn-primary az-run" variants={ITEM} disabled={!ready} onClick={run}>
               {a.input.run}
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
-            </button>
+            </motion.button>
           </motion.section>
         )}
 
         {phase === 'running' && <Scanning key="run" onDone={() => setPhase('done')} />}
 
         {phase === 'done' && (
-          <motion.section key="done" className="az-report" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }}>
-            <div className="az-sample">
+          <motion.section key="done" className="az-report" variants={STAG} initial="hide" animate="show">
+            <motion.div className="az-sample" variants={ITEM}>
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 8v4m0 4h.01" /></svg>
               {r.sample}
-            </div>
+            </motion.div>
 
-            <div className="az-verdict">
+            <motion.div className="az-verdict" variants={ITEM}>
               <div>
                 <div className="eyebrow">{r.verdictKicker}</div>
                 <h1 className="az-h1">{r.verdict}</h1>
                 <p className="az-sub">{r.verdictLine}</p>
               </div>
               <div className="rings">
-                <ScoreRing label={r.rings[0]} value={SCORES.e} col={COLS.e} delay={0.1} />
-                <ScoreRing label={r.rings[1]} value={SCORES.m} col={COLS.m} delay={0.22} />
-                <ScoreRing label={r.rings[2]} value={SCORES.s} col={COLS.s} delay={0.34} />
+                <ScoreRing label={r.rings[0]} value={SCORES.e} col={COLS.e} delay={0.3} />
+                <ScoreRing label={r.rings[1]} value={SCORES.m} col={COLS.m} delay={0.42} />
+                <ScoreRing label={r.rings[2]} value={SCORES.s} col={COLS.s} delay={0.54} />
               </div>
-            </div>
+            </motion.div>
 
-            <div className="az-grid">
+            <motion.div className="az-grid" variants={ITEM}>
               <div className="az-card">
                 <div className="az-kicker">{r.stageKicker}</div>
                 <div className="az-big">{r.stage}</div>
@@ -184,22 +191,22 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
                 <div className="az-big">{r.archetype}</div>
                 <p>{r.archetypeWhy}</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="az-firms">
+            <motion.div className="az-firms" variants={ITEM}>
               <div className="az-kicker">{r.firmsKicker}</div>
-              <div className="firm-list">
+              <motion.div className="firm-list" variants={{ show: { transition: { staggerChildren: 0.07 } } }}>
                 {r.firms.map((f) => (
-                  <div className="firm" key={f.n}>
+                  <motion.div className="firm" key={f.n} variants={{ hide: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE } } }}>
                     <div className="firm-top"><span className="firm-n">{f.n}</span><span className="firm-geo">{f.geo}</span></div>
                     <div className="firm-type">{f.type}</div>
                     <p>{f.note}</p>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <div className="az-fixes">
+            <motion.div className="az-fixes" variants={ITEM}>
               <div className="az-kicker">{r.fixesKicker}</div>
               {r.fixes.map((f, i) => (
                 <div className="fix" key={f.h}>
@@ -207,12 +214,12 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
                   <div><h3 style={{ color: COLS[f.lens as 'e' | 'm' | 's'] }}>{f.h}</h3><p>{f.p}</p></div>
                 </div>
               ))}
-            </div>
+            </motion.div>
 
-            <div className="az-actions">
+            <motion.div className="az-actions" variants={ITEM}>
               <button className="btn btn-ghost" onClick={reset}>{r.again}</button>
               <button className="btn btn-primary" onClick={onBack}>{r.backHome}</button>
-            </div>
+            </motion.div>
           </motion.section>
         )}
       </AnimatePresence>
