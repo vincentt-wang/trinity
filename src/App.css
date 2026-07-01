@@ -458,3 +458,22 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
 .fstage.on{background:var(--ink);color:#fff;border-color:transparent}
 .ldot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
 .ldot.e{background:var(--earth)}.ldot.m{background:var(--moon)}.ldot.s{background:var(--sun)}
+
+/* ============ Vertical scroll-progress rail (pinned sections) ============ */
+.vrail{position:absolute;left:-46px;top:50%;transform:translateY(-50%);height:46vh;width:4px;z-index:5}
+@media(max-width:1200px){.vrail{display:none}}
+.vrail-track{position:absolute;inset:0;background:var(--line-strong);border-radius:99px}
+.vrail.dark .vrail-track{background:rgba(255,255,255,.16)}
+.vrail-fill{position:absolute;inset:0;transform-origin:top;border-radius:99px;background:linear-gradient(var(--earth),var(--violet))}
+.vrail.dark .vrail-fill{background:linear-gradient(#60a5fa,#c4b5fd)}
+.vrail-dot{position:absolute;left:50%;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);background:var(--bg-soft);border:2px solid var(--line-strong);transition:.3s var(--ease)}
+.vrail.dark .vrail-dot{background:#0b0e1f;border-color:rgba(255,255,255,.28)}
+.vrail-dot.on{background:var(--earth);border-color:var(--earth);box-shadow:0 0 0 4px var(--earth-soft)}
+.vrail.dark .vrail-dot.on{background:#93c5fd;border-color:#93c5fd;box-shadow:0 0 0 4px rgba(147,197,253,.2)}
+
+/* Analyze consent + pricing + fineprint */
+.az-consent{display:flex;align-items:flex-start;gap:11px;margin-top:26px;cursor:pointer;font-size:1rem;color:var(--ink-soft);line-height:1.5}
+.az-consent input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--earth);cursor:pointer}
+.az-pricenote{margin-top:18px;font-size:1.04rem;font-weight:600;color:var(--ink)}
+.az-fineprint{margin-top:12px;font-size:.9rem;color:var(--ink-dim);line-height:1.55;max-width:62ch}
+.az-fineprint:first-of-type{margin-top:16px}

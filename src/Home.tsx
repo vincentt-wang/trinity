@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform, type MotionValue } from 'framer-motion'
 import { Reveal } from './lib/Reveal'
 import { useLenis, scrollToId } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
@@ -23,6 +23,19 @@ const LENS_ICON = (
   <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" /></svg>
 )
 
+/* ---------- Vertical scroll-progress rail (sui-style) for pinned sections ---------- */
+function VScrollRail({ progress, steps, active, dark }: { progress: MotionValue<number>; steps: number; active: number; dark?: boolean }) {
+  return (
+    <div className={`vrail${dark ? ' dark' : ''}`} aria-hidden>
+      <div className="vrail-track" />
+      <motion.div className="vrail-fill" style={{ scaleY: progress }} />
+      {Array.from({ length: steps }).map((_, i) => (
+        <span key={i} className={`vrail-dot${i <= active ? ' on' : ''}`} style={{ top: `${(i / (steps - 1)) * 100}%` }} />
+      ))}
+    </div>
+  )
+}
+
 /* ---------- Engine: Sui-style pinned scroll narrative ---------- */
 const SPRING = { type: 'spring' as const, stiffness: 120, damping: 18, mass: 0.9 }
 const LP = { e: { x: 180, y: 86 }, m: { x: 96, y: 232 }, s: { x: 264, y: 232 } }
@@ -43,7 +56,7 @@ function EngineScrolly() {
     <section id="engine" className="engine-scrolly sec-dark">
       <div ref={ref} className="scrolly-track">
         <div className="scrolly-stage wrap">
-          <motion.div className="sec-progress dark" style={{ scaleX: scrollYProgress }} aria-hidden />
+          <VScrollRail progress={scrollYProgress} steps={3} active={step} dark />
           <div className="scrolly-copy">
             <div className="eyebrow">{c.eyebrow}</div>
             <h2>{c.h2a}<br />{c.h2b}</h2>
@@ -157,7 +170,7 @@ function StackSection() {
       <Aurora tone="mixed" />
       <div ref={ref} className="stack-track">
         <div className="stack-stage wrap">
-        <motion.div className="sec-progress" style={{ scaleX: scrollYProgress }} aria-hidden />
+        <VScrollRail progress={scrollYProgress} steps={6} active={active} />
         <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div>
         <div className="stack">
           <div className="stack-list">
@@ -213,7 +226,6 @@ function FitSection() {
       <Aurora tone="cool" />
       <div ref={ref} className="fit-track">
         <div className="fit-stage wrap">
-          <motion.div className="sec-progress" style={{ scaleX: scrollYProgress }} aria-hidden />
           <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div>
           <div className="fit">
             <div className="fit-rail">

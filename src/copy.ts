@@ -158,6 +158,10 @@ export const COPY = {
         emailPlaceholder: 'Your email — we send the full read here',
         run: 'Run the Trinity engine',
         optional: 'optional',
+        priceNote: 'Your first read is on us. A full hand-made analysis is normally NT$3,000+.',
+        consent: 'I agree that the information I provide is used to prepare my feasibility analysis and handled as described below.',
+        privacy: 'We collect your idea, project name, name and role, email and answers to prepare a written read, reviewed by a person (Vincent), kept confidential, never sold, retained up to 12 months, and deletable anytime via vincent@easeai.com.tw.',
+        disclaimer: 'This analysis is an independent opinion for informational purposes only, and is not investment, legal, or financial advice.',
         form: {
           s1: 'About you', s2: 'Your idea', s3: 'The three lenses',
           company: { l: 'Company or project name', ph: 'Acme Inc.' },
@@ -289,6 +293,10 @@ export const COPY = {
         emailPlaceholder: '你的 email，完整判讀寄這裡',
         run: '啟動 Trinity 引擎',
         optional: '選填',
+        priceNote: '第一次判讀免費。完整人工分析原價 NT$3,000 起。',
+        consent: '我同意所提供的資料將用於製作我的可行性分析，並依下方隱私說明處理。',
+        privacy: '我們收集你的構想、專案名稱、姓名與職稱、email 與答覆，用於製作書面判讀，由本人（Vincent）親自檢視，保密處理、絕不販售、保存最長 12 個月，可隨時來信 vincent@easeai.com.tw 要求刪除。',
+        disclaimer: '本分析為獨立意見，僅供參考，不構成任何投資、法律或財務建議。',
         form: {
           s1: '關於你', s2: '你的點子', s3: '三個透鏡',
           company: { l: '公司或專案名稱', ph: '例：Acme Inc.' },

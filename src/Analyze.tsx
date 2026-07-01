@@ -108,8 +108,9 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
   const fc = a.input.form
   const [phase, setPhase] = useState<Phase>('input')
   const [f, setF] = useState({ company: '', name: '', email: '', website: '', stage: 0, oneLine: '', desir: '', feas: '', via: '' })
+  const [agree, setAgree] = useState(false)
   const upd = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((s) => ({ ...s, [k]: e.target.value }))
-  const ready = Boolean(f.company.trim() && f.name.trim() && /\S+@\S+\.\S+/.test(f.email) && f.oneLine.trim().length > 6)
+  const ready = Boolean(f.company.trim() && f.name.trim() && /\S+@\S+\.\S+/.test(f.email) && f.oneLine.trim().length > 6 && agree)
 
   useEffect(() => { window.scrollTo(0, 0) }, [phase])
 
@@ -182,10 +183,20 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
               <label className="ffield"><span className="fl"><span className="ldot s" />{fc.via.l}</span><textarea value={f.via} onChange={upd('via')} placeholder={fc.via.ph} /></label>
             </motion.div>
 
+            <motion.label className="az-consent" variants={ITEM}>
+              <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
+              <span>{a.input.consent}</span>
+            </motion.label>
+
+            <motion.div className="az-pricenote" variants={ITEM}>{a.input.priceNote}</motion.div>
+
             <motion.button className="btn btn-primary az-run" variants={ITEM} disabled={!ready} onClick={run}>
               {a.input.run}
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
             </motion.button>
+
+            <motion.p className="az-fineprint" variants={ITEM}>{a.input.privacy}</motion.p>
+            <motion.p className="az-fineprint" variants={ITEM}>{a.input.disclaimer}</motion.p>
           </motion.section>
         )}
 
