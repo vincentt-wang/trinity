@@ -19,6 +19,8 @@ const LOGO = (
 
 type Phase = 'input' | 'running' | 'done'
 
+// HITL mini-loop: submissions email here; Vincent runs deal-lens by hand, then automates later.
+const FORM_TO = 'new.vincent21@gmail.com'
 const COLS = { e: '#2563eb', m: '#475569', s: '#d97706' } as const
 const SCORES = { e: 72, m: 64, s: 58 } as const
 const ORDER = ['e', 'm', 's'] as const
@@ -105,14 +107,27 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
   const r = a.report
   const [phase, setPhase] = useState<Phase>('input')
   const [idea, setIdea] = useState('')
+  const [email, setEmail] = useState('')
   const [file, setFile] = useState<string | null>(null)
   const [drag, setDrag] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
-  const ready = idea.trim().length > 12 || Boolean(file)
+  const ready = (idea.trim().length > 12 || Boolean(file)) && /\S+@\S+\.\S+/.test(email)
 
   useEffect(() => { window.scrollTo(0, 0) }, [phase])
 
-  const run = () => { if (ready) setPhase('running') }
+  const run = () => {
+    if (!ready) return
+    // fire-and-forget: route the idea to Vincent so a real read can be sent back
+    try {
+      const fd = new FormData()
+      fd.append('idea', idea)
+      fd.append('email', email)
+      if (file) fd.append('deck', file)
+      fd.append('_subject', 'Trinity · new idea to analyze')
+      fetch('https://formsubmit.co/ajax/' + encodeURIComponent(FORM_TO), { method: 'POST', headers: { Accept: 'application/json' }, body: fd }).catch(() => {})
+    } catch { /* never block the flow */ }
+    setPhase('running')
+  }
   const reset = () => { setPhase('input') }
 
   return (
@@ -150,6 +165,8 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
               <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 16V4m0 0L8 8m4-4l4 4" /><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" /></svg>
               {file ? <span className="az-drop-file">{file}</span> : <span>{a.input.dropMain} <i>{a.input.dropHint}</i></span>}
             </motion.div>
+
+            <motion.input className="az-email" variants={ITEM} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={a.input.emailPlaceholder} />
 
             <motion.button className="btn btn-primary az-run" variants={ITEM} disabled={!ready} onClick={run}>
               {a.input.run}

@@ -123,7 +123,7 @@
 
 /* engine — Sui-style pinned scroll narrative */
 .engine-scrolly{background:#0b0e1f;color:#c7cdec;position:relative}
-.scrolly-track{height:300vh;position:relative}
+.scrolly-track{height:240vh;position:relative}
 .scrolly-stage{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,80px);align-items:center}
 @media(max-width:920px){.scrolly-track{height:auto}.scrolly-stage{position:relative;height:auto;grid-template-columns:1fr;gap:40px;padding:120px 0}}
 .scrolly-copy h2{font-size:clamp(2.2rem,4.6vw,3.4rem);font-weight:700;line-height:1.04;color:#fff;margin-top:16px}
@@ -378,7 +378,7 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
 
 /* ============ The Trinity stack: pinned scroll-tied ============ */
 .stack-scrolly{position:relative;background:var(--bg-soft)}
-.stack-track{position:relative;z-index:1;height:300vh}
+.stack-track{position:relative;z-index:1;height:250vh}
 .stack-stage{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:96px 0}
 @media(max-width:880px){
   .stack-track{height:auto}
@@ -387,7 +387,7 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
 
 /* ============ Where you fit: pinned scroll-tied ============ */
 .fit-scrolly{position:relative;background:var(--bg)}
-.fit-track{position:relative;z-index:1;height:300vh}
+.fit-track{position:relative;z-index:1;height:240vh}
 .fit-stage{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:96px 0}
 @media(max-width:880px){
   .fit-track{height:auto}
@@ -431,3 +431,8 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
   .dims-overlay{order:1;min-height:0;gap:24px}
   .dims-sec{display:flex;flex-direction:column}
 }
+
+/* Analyze email field (HITL capture) */
+.az-email{width:100%;margin-top:16px;padding:15px 22px;border-radius:var(--r);border:1px solid var(--line-strong);background:var(--bg-card);font-family:var(--font-body);font-size:1.08rem;color:var(--ink);box-shadow:var(--shadow);transition:.22s var(--ease)}
+.az-email::placeholder{color:#9aa0bd}
+.az-email:focus{outline:0;border-color:var(--earth);box-shadow:0 0 0 4px var(--earth-soft)}
