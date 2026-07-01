@@ -108,9 +108,6 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
   const fc = a.input.form
   const [phase, setPhase] = useState<Phase>('input')
   const [f, setF] = useState({ company: '', name: '', email: '', website: '', stage: 0, oneLine: '', desir: '', feas: '', via: '' })
-  const [file, setFile] = useState<string | null>(null)
-  const [drag, setDrag] = useState(false)
-  const fileRef = useRef<HTMLInputElement>(null)
   const upd = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((s) => ({ ...s, [k]: e.target.value }))
   const ready = Boolean(f.company.trim() && f.name.trim() && /\S+@\S+\.\S+/.test(f.email) && f.oneLine.trim().length > 6)
 
@@ -125,7 +122,6 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
       fd.append('Website', f.website); fd.append('Stage', fc.stages[f.stage])
       fd.append('One-line', f.oneLine)
       fd.append('Desirability', f.desir); fd.append('Feasibility', f.feas); fd.append('Viability', f.via)
-      if (file) fd.append('Deck', file)
       fd.append('_subject', 'Trinity · new idea to analyze')
       fetch('https://formsubmit.co/ajax/' + encodeURIComponent(FORM_TO), { method: 'POST', headers: { Accept: 'application/json' }, body: fd }).catch(() => {})
     } catch { /* never block the flow */ }
@@ -184,19 +180,6 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
               <label className="ffield"><span className="fl"><span className="ldot e" />{fc.desir.l}</span><textarea value={f.desir} onChange={upd('desir')} placeholder={fc.desir.ph} /></label>
               <label className="ffield"><span className="fl"><span className="ldot m" />{fc.feas.l}</span><textarea value={f.feas} onChange={upd('feas')} placeholder={fc.feas.ph} /></label>
               <label className="ffield"><span className="fl"><span className="ldot s" />{fc.via.l}</span><textarea value={f.via} onChange={upd('via')} placeholder={fc.via.ph} /></label>
-            </motion.div>
-
-            <motion.div
-              variants={ITEM}
-              className={`az-drop${drag ? ' on' : ''}${file ? ' has' : ''}`}
-              onClick={() => fileRef.current?.click()}
-              onDragOver={(e) => { e.preventDefault(); setDrag(true) }}
-              onDragLeave={() => setDrag(false)}
-              onDrop={(e) => { e.preventDefault(); setDrag(false); const df = e.dataTransfer.files?.[0]; if (df) setFile(df.name) }}
-            >
-              <input ref={fileRef} type="file" hidden accept=".pdf,.ppt,.pptx,.key,.doc,.docx,.md,.txt" onChange={(e) => { const df = e.target.files?.[0]; if (df) setFile(df.name) }} />
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 16V4m0 0L8 8m4-4l4 4" /><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" /></svg>
-              {file ? <span className="az-drop-file">{file}</span> : <span>{a.input.dropMain} <i>{a.input.dropHint}</i></span>}
             </motion.div>
 
             <motion.button className="btn btn-primary az-run" variants={ITEM} disabled={!ready} onClick={run}>

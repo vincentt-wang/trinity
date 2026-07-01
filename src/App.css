@@ -203,6 +203,7 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
 .az-verdict .az-h1{background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;color:transparent;margin-top:6px}
 .az-verdict .az-sub{font-size:1.1rem}
 .rings{display:flex;gap:18px}
+.ring,.ring svg,.ring .ring-mid{border:0;outline:0;box-shadow:none;background:none}
 .ring{position:relative;width:130px;text-align:center}
 .ring-mid{position:absolute;top:0;left:0;width:130px;height:130px;display:flex;align-items:center;justify-content:center}
 .ring-num{font-family:var(--font-disp);font-weight:700;font-size:2.3rem;line-height:1}

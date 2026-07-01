@@ -174,7 +174,7 @@ export const COPY = {
       },
       scan: { caption: 'Scoring 55 dimensions across three lenses, independently.' },
       report: {
-        sample: 'Sample of your report · your full human read is on its way to your inbox',
+        sample: 'This is a sample · your full read is prepared by hand and emailed within 24 hours',
         verdictKicker: 'The verdict',
         verdict: 'Conditional GO',
         verdictLine: 'The demand is real and the wedge is sharp. Durability is the open question. The engine gates on Desirability, and it clears, so this is fundable once viability is shown.',
@@ -305,7 +305,7 @@ export const COPY = {
       },
       scan: { caption: '正在以三個透鏡、各自獨立地為 55 個維度評分。' },
       report: {
-        sample: '這是報告範例 · 完整的人工判讀正送往你的信箱',
+        sample: '這是範例 · 完整判讀由專人手工準備，24 小時內寄到你的信箱',
         verdictKicker: '判決',
         verdict: '附條件通過',
         verdictLine: '需求是真的，切入點也夠尖銳。存續性是還沒解的問題。引擎以欲求性為門檻，而它過關了，所以一旦補上存續性證據，這就值得投資。',
