@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform } from 'framer-motion'
 import { Reveal } from './lib/Reveal'
-import { useLenis } from './lib/useLenis'
+import { useLenis, scrollToId } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
 import { DimsNetwork } from './lib/DimsNetwork'
 import { Aurora } from './lib/Aurora'
@@ -417,10 +417,10 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
         <div className="nav-in">
           <a className="brand" href="#top">{LOGO} TRINITY</a>
           <div className="nav-links nav-center">
-            <a className={active === 'engine' ? 'on' : ''} href="#engine">{c.nav.howItWorks}</a>
-            <a className={active === 'stack' ? 'on' : ''} href="#stack">{c.nav.stack}</a>
-            <a className={active === 'dims' ? 'on' : ''} href="#dims">{c.nav.dims}</a>
-            <a className={active === 'fit' ? 'on' : ''} href="#fit">{c.nav.fit}</a>
+            <a className={active === 'engine' ? 'on' : ''} href="#engine" onClick={(e) => { e.preventDefault(); scrollToId('#engine') }}>{c.nav.howItWorks}</a>
+            <a className={active === 'stack' ? 'on' : ''} href="#stack" onClick={(e) => { e.preventDefault(); scrollToId('#stack') }}>{c.nav.stack}</a>
+            <a className={active === 'dims' ? 'on' : ''} href="#dims" onClick={(e) => { e.preventDefault(); scrollToId('#dims') }}>{c.nav.dims}</a>
+            <a className={active === 'fit' ? 'on' : ''} href="#fit" onClick={(e) => { e.preventDefault(); scrollToId('#fit') }}>{c.nav.fit}</a>
           </div>
           <div className="nav-cta">
             <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
@@ -441,7 +441,7 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
           <Reveal delay={0.58}>
             <div className="hero-cta hero-cta-center">
               <button ref={heroMag} className="btn btn-primary" onClick={onAnalyze}>{c.hero.ctaPrimary}</button>
-              <a className="btn btn-ghost" href="#engine">{c.hero.ctaGhost}</a>
+              <a className="btn btn-ghost" href="#engine" onClick={(e) => { e.preventDefault(); scrollToId('#engine') }}>{c.hero.ctaGhost}</a>
             </div>
           </Reveal>
         </div>
@@ -495,12 +495,12 @@ export default function Home({ onAnalyze }: { onAnalyze: () => void }) {
               <span className="path-p">{c.cta.paths[0].p}</span>
               <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
             </button>
-            <a className="path" href="#engine">
+            <a className="path" href="#engine" onClick={(e) => { e.preventDefault(); scrollToId('#engine') }}>
               <span className="path-h">{c.cta.paths[1].h}</span>
               <span className="path-p">{c.cta.paths[1].p}</span>
               <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
             </a>
-            <a className="path" href="#fit">
+            <a className="path" href="#fit" onClick={(e) => { e.preventDefault(); scrollToId('#fit') }}>
               <span className="path-h">{c.cta.paths[2].h}</span>
               <span className="path-p">{c.cta.paths[2].p}</span>
               <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>

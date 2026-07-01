@@ -33,7 +33,7 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
     let W = 0, H = 0, raf = 0, frame = 0, mx = -9999, my = -9999, hovI = -1, prevHov = -2
     let CX = 0, CY = 0, sunX = 0, sunY = 0
 
-    type Node = { k: LensK; di: number; ring: number; angle: number; x: number; y: number; r: number; stickX: number | null; stickY: number | null }
+    type Node = { k: LensK; di: number; ring: number; angle: number; x: number; y: number; r: number; stickX: number | null; stickY: number | null; ret: boolean; retFromX: number; retFromY: number; retF: number }
     const RINGS = [
       { k: 's' as LensK, speed: 0.0011, tilt: 0.30, dir: 1, R: 0, Ry: 0 },
       { k: 'm' as LensK, speed: 0.0015, tilt: -0.22, dir: -1, R: 0, Ry: 0 },
@@ -54,7 +54,7 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       RINGS.forEach((ring, ri) => {
         const list = DIMENSIONS[ring.k]
         list.forEach((_, di) => {
-          nodes.push({ k: ring.k, di, ring: ri, angle: di * (Math.PI * 2 / list.length) + ri * 0.6, x: 0, y: 0, r: W < 600 ? 8 : 11, stickX: null, stickY: null })
+          nodes.push({ k: ring.k, di, ring: ri, angle: di * (Math.PI * 2 / list.length) + ri * 0.6, x: 0, y: 0, r: W < 600 ? 8 : 11, stickX: null, stickY: null, ret: false, retFromX: 0, retFromY: 0, retF: 0 })
         })
       })
       if (sunX === 0) { sunX = CX; sunY = CY }
@@ -92,9 +92,20 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       nodes.forEach((nd, i) => {
         const ring = RINGS[nd.ring]
         if (i === hovI && inN) {
+          nd.ret = false
           const sx0 = nd.stickX ?? nd.x, sy0 = nd.stickY ?? nd.y
           const nx = sx0 + (mx - sx0) * 0.12, ny = sy0 + (my - sy0) * 0.12
           nd.stickX = nx; nd.stickY = ny; nd.x = nx; nd.y = ny
+        } else if (nd.ret) {
+          // drifted-away node eases back to its orbit over ~2.5s (150 frames)
+          nd.retF = Math.min(150, nd.retF + 1)
+          const e = 1 - Math.pow(1 - nd.retF / 150, 3)
+          if (!reduce) nd.angle += ring.speed * ring.dir
+          const tx = CX + ring.R * Math.cos(nd.angle)
+          const ty = CY + ring.Ry * Math.sin(nd.angle) * Math.cos(ring.tilt)
+          nd.x = nd.retFromX + (tx - nd.retFromX) * e
+          nd.y = nd.retFromY + (ty - nd.retFromY) * e
+          if (nd.retF >= 150) { nd.ret = false }
         } else {
           nd.stickX = null
           if (!reduce) nd.angle += ring.speed * ring.dir
@@ -107,6 +118,10 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       hovI = -1; let mD = 9999
       nodes.forEach((nd, i) => { const dx = nd.x - mx, dy = nd.y - my, d = Math.sqrt(dx * dx + dy * dy); if (d < nd.r * 3.4 && d < mD) { mD = d; hovI = i } })
       if (hovI !== prevHov) {
+        if (prevHov >= 0 && nodes[prevHov]) {
+          const rn = nodes[prevHov]
+          rn.ret = true; rn.retFromX = rn.x; rn.retFromY = rn.y; rn.retF = 0; rn.stickX = null; rn.stickY = null
+        }
         prevHov = hovI
         const h = hovI >= 0 ? { k: nodes[hovI].k, d: DIMENSIONS[nodes[hovI].k][nodes[hovI].di] } : null
         live.current.onHover(h)
