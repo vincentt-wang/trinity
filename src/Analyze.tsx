@@ -237,6 +237,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
 
             <motion.div className="az-firms" variants={ITEM}>
               <div className="az-kicker">{r.firmsKicker}</div>
+              <p className="az-firms-note">{r.firmsNote}</p>
               <motion.div className="firm-list" variants={{ show: { transition: { staggerChildren: 0.07 } } }}>
                 {r.firms.map((f) => (
                   <motion.div className="firm" key={f.n} variants={{ hide: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE } } }}>

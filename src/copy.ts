@@ -185,7 +185,8 @@ export const COPY = {
         rings: ['Desirability', 'Feasibility', 'Viability'],
         stageKicker: 'Your stage', stage: 'Seed', stageWhy: 'A working wedge and early pull, but the unit economics are still a model, not a proof.',
         roomKicker: 'The right room', archetype: 'Thesis-driven seed funds', archetypeWhy: 'Your strongest lens is Desirability. The right room buys conviction on a sharp insight before the metrics are fully in.',
-        firmsKicker: 'Named contacts · US & Taiwan',
+        firmsKicker: 'Where to push next · US & Taiwan',
+        firmsNote: 'Real institutions worth approaching at your stage. These are directions to move forward, not an offer of investment.',
         firms: [
           { n: 'Y Combinator', geo: 'US', type: 'Accelerator', note: 'Apply with the wedge and one sentence of traction.' },
           { n: 'a16z', geo: 'US', type: 'Seed / multistage', note: 'Lead with the market insight, not the demo.' },
@@ -320,7 +321,8 @@ export const COPY = {
         rings: ['欲求性', '可行性', '存續性'],
         stageKicker: '你的階段', stage: '種子輪', stageWhy: '已有可行的切入點與早期拉力，但單位經濟還只是模型，不是證明。',
         roomKicker: '該進的房間', archetype: '論點驅動的種子基金', archetypeWhy: '你最強的透鏡是欲求性。對的投資人會在數據完全到位前，就為一個尖銳洞察的信念買單。',
-        firmsKicker: '指名對象 · 美國與台灣',
+        firmsKicker: '下一步接觸方向 · 美國與台灣',
+        firmsNote: '適合你階段、值得主動接觸的真實機構。這是推進方向，不是投資邀約。',
         firms: [
           { n: 'Y Combinator', geo: 'US', type: '加速器', note: '帶著切入點與一句話的成長動能去申請。' },
           { n: 'a16z', geo: 'US', type: '種子／多階段', note: '用市場洞察開場，而不是產品演示。' },
