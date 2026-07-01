@@ -20,7 +20,7 @@ const LOGO = (
 type Phase = 'input' | 'running' | 'done'
 
 // HITL mini-loop: submissions email here; Vincent runs deal-lens by hand, then automates later.
-const FORM_TO = 'new.vincent21@gmail.com'
+const FORM_TO = 'vincent@easeai.com.tw'
 const COLS = { e: '#2563eb', m: '#475569', s: '#d97706' } as const
 const SCORES = { e: 72, m: 64, s: 58 } as const
 const ORDER = ['e', 'm', 's'] as const
@@ -105,24 +105,27 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
   const { lang, setLang } = useLang()
   const a = COPY[lang].analyze
   const r = a.report
+  const fc = a.input.form
   const [phase, setPhase] = useState<Phase>('input')
-  const [idea, setIdea] = useState('')
-  const [email, setEmail] = useState('')
+  const [f, setF] = useState({ company: '', name: '', email: '', website: '', stage: 0, oneLine: '', desir: '', feas: '', via: '' })
   const [file, setFile] = useState<string | null>(null)
   const [drag, setDrag] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
-  const ready = (idea.trim().length > 12 || Boolean(file)) && /\S+@\S+\.\S+/.test(email)
+  const upd = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((s) => ({ ...s, [k]: e.target.value }))
+  const ready = Boolean(f.company.trim() && f.name.trim() && /\S+@\S+\.\S+/.test(f.email) && f.oneLine.trim().length > 6)
 
   useEffect(() => { window.scrollTo(0, 0) }, [phase])
 
   const run = () => {
     if (!ready) return
-    // fire-and-forget: route the idea to Vincent so a real read can be sent back
+    // fire-and-forget: route the submission to Vincent so a real read can be sent back
     try {
       const fd = new FormData()
-      fd.append('idea', idea)
-      fd.append('email', email)
-      if (file) fd.append('deck', file)
+      fd.append('Company', f.company); fd.append('Name', f.name); fd.append('Email', f.email)
+      fd.append('Website', f.website); fd.append('Stage', fc.stages[f.stage])
+      fd.append('One-line', f.oneLine)
+      fd.append('Desirability', f.desir); fd.append('Feasibility', f.feas); fd.append('Viability', f.via)
+      if (file) fd.append('Deck', file)
       fd.append('_subject', 'Trinity · new idea to analyze')
       fetch('https://formsubmit.co/ajax/' + encodeURIComponent(FORM_TO), { method: 'POST', headers: { Accept: 'application/json' }, body: fd }).catch(() => {})
     } catch { /* never block the flow */ }
@@ -146,12 +149,42 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
 
       <AnimatePresence mode="wait">
         {phase === 'input' && (
-          <motion.section key="in" className="az-stage" variants={STAG} initial="hide" animate="show" exit={{ opacity: 0, y: -18 }}>
+          <motion.section key="in" className="az-stage az-form" variants={STAG} initial="hide" animate="show" exit={{ opacity: 0, y: -18 }}>
             <motion.div className="eyebrow" variants={ITEM}>{a.input.eyebrow}</motion.div>
             <motion.h1 className="az-h1" variants={ITEM}>{a.input.h1}</motion.h1>
             <motion.p className="az-sub" variants={ITEM}>{a.input.sub}</motion.p>
 
-            <motion.textarea className="az-text" variants={ITEM} value={idea} onChange={(e) => setIdea(e.target.value)} placeholder={a.input.placeholder} />
+            <motion.div className="fgroup" variants={ITEM}>
+              <div className="fgroup-h">{fc.s1}</div>
+              <div className="frow two">
+                <label className="ffield"><span className="fl">{fc.company.l}<i>*</i></span><input value={f.company} onChange={upd('company')} placeholder={fc.company.ph} /></label>
+                <label className="ffield"><span className="fl">{fc.name.l}<i>*</i></span><input value={f.name} onChange={upd('name')} placeholder={fc.name.ph} /></label>
+              </div>
+              <div className="frow two">
+                <label className="ffield"><span className="fl">{fc.email.l}<i>*</i></span><input type="email" value={f.email} onChange={upd('email')} placeholder={fc.email.ph} /></label>
+                <label className="ffield"><span className="fl">{fc.website.l} <em className="opt">{a.input.optional}</em></span><input value={f.website} onChange={upd('website')} placeholder={fc.website.ph} /></label>
+              </div>
+              <div className="ffield">
+                <span className="fl">{fc.stageL}</span>
+                <div className="fstages">
+                  {fc.stages.map((s, i) => (
+                    <button key={i} type="button" className={`fstage ${f.stage === i ? 'on' : ''}`} onClick={() => setF((st) => ({ ...st, stage: i }))}>{s}</button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div className="fgroup" variants={ITEM}>
+              <div className="fgroup-h">{fc.s2}</div>
+              <label className="ffield"><span className="fl">{fc.oneLine.l}<i>*</i></span><input value={f.oneLine} onChange={upd('oneLine')} placeholder={fc.oneLine.ph} /></label>
+            </motion.div>
+
+            <motion.div className="fgroup" variants={ITEM}>
+              <div className="fgroup-h">{fc.s3}</div>
+              <label className="ffield"><span className="fl"><span className="ldot e" />{fc.desir.l}</span><textarea value={f.desir} onChange={upd('desir')} placeholder={fc.desir.ph} /></label>
+              <label className="ffield"><span className="fl"><span className="ldot m" />{fc.feas.l}</span><textarea value={f.feas} onChange={upd('feas')} placeholder={fc.feas.ph} /></label>
+              <label className="ffield"><span className="fl"><span className="ldot s" />{fc.via.l}</span><textarea value={f.via} onChange={upd('via')} placeholder={fc.via.ph} /></label>
+            </motion.div>
 
             <motion.div
               variants={ITEM}
@@ -159,14 +192,12 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
               onClick={() => fileRef.current?.click()}
               onDragOver={(e) => { e.preventDefault(); setDrag(true) }}
               onDragLeave={() => setDrag(false)}
-              onDrop={(e) => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files?.[0]; if (f) setFile(f.name) }}
+              onDrop={(e) => { e.preventDefault(); setDrag(false); const df = e.dataTransfer.files?.[0]; if (df) setFile(df.name) }}
             >
-              <input ref={fileRef} type="file" hidden accept=".pdf,.ppt,.pptx,.key,.doc,.docx,.md,.txt" onChange={(e) => { const f = e.target.files?.[0]; if (f) setFile(f.name) }} />
+              <input ref={fileRef} type="file" hidden accept=".pdf,.ppt,.pptx,.key,.doc,.docx,.md,.txt" onChange={(e) => { const df = e.target.files?.[0]; if (df) setFile(df.name) }} />
               <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 16V4m0 0L8 8m4-4l4 4" /><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" /></svg>
               {file ? <span className="az-drop-file">{file}</span> : <span>{a.input.dropMain} <i>{a.input.dropHint}</i></span>}
             </motion.div>
-
-            <motion.input className="az-email" variants={ITEM} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={a.input.emailPlaceholder} />
 
             <motion.button className="btn btn-primary az-run" variants={ITEM} disabled={!ready} onClick={run}>
               {a.input.run}

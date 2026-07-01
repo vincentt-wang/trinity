@@ -436,3 +436,24 @@ footer{padding:60px 0;border-top:1px solid var(--line);color:var(--ink-dim);font
 .az-email{width:100%;margin-top:16px;padding:15px 22px;border-radius:var(--r);border:1px solid var(--line-strong);background:var(--bg-card);font-family:var(--font-body);font-size:1.08rem;color:var(--ink);box-shadow:var(--shadow);transition:.22s var(--ease)}
 .az-email::placeholder{color:#9aa0bd}
 .az-email:focus{outline:0;border-color:var(--earth);box-shadow:0 0 0 4px var(--earth-soft)}
+
+/* ============ Analyze structured intake form ============ */
+.az-form{max-width:760px}
+.fgroup{margin-top:34px}
+.fgroup-h{font-family:var(--font-disp);font-weight:700;font-size:1.12rem;color:var(--ink);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.frow.two{grid-template-columns:1fr}}
+.ffield{display:block;margin-top:14px}
+.frow .ffield{margin-top:0}
+.fl{display:block;font-size:1rem;font-weight:600;color:var(--ink-soft);margin-bottom:7px}
+.fl i{color:var(--rose);font-style:normal;margin-left:3px}
+.fl .opt{font-weight:500;color:var(--ink-dim);font-style:normal;font-size:.9rem}
+.ffield input,.ffield textarea{width:100%;padding:13px 16px;border-radius:12px;border:1px solid var(--line-strong);background:var(--bg-card);font-family:var(--font-body);font-size:1.04rem;color:var(--ink);transition:.2s var(--ease)}
+.ffield textarea{min-height:84px;resize:vertical;line-height:1.55}
+.ffield input::placeholder,.ffield textarea::placeholder{color:#9aa0bd}
+.ffield input:focus,.ffield textarea:focus{outline:0;border-color:var(--earth);box-shadow:0 0 0 4px var(--earth-soft)}
+.fstages{display:flex;flex-wrap:wrap;gap:8px}
+.fstage{font:inherit;font-size:.98rem;font-weight:600;padding:9px 16px;border-radius:999px;border:1px solid var(--line-strong);background:#fff;color:var(--ink-soft);cursor:pointer;transition:.2s}
+.fstage.on{background:var(--ink);color:#fff;border-color:transparent}
+.ldot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.ldot.e{background:var(--earth)}.ldot.m{background:var(--moon)}.ldot.s{background:var(--sun)}
