@@ -1,0 +1,7 @@
+name = "trinity-counter"
+main = "index.js"
+compatibility_date = "2026-06-01"
+
+[[kv_namespaces]]
+binding = "COUNTER"
+id = "3a7a86a7169844f396fc5bf2281e15bd"

@@ -3,15 +3,17 @@ import { DIMENSIONS } from '../copy'
 import type { Lang } from '../i18n'
 
 type LensK = 'e' | 'm' | 's'
-type Dim = { en: string; zh: string; de: string; dz: string }
+type Dim = { id: string; en: string; zh: string; de: string; dz: string; ask_en: string; ask_zh: string }
 const COL: Record<LensK, string> = { e: '#2563eb', m: '#64748b', s: '#d97706' }
 const RGB: Record<LensK, [number, number, number]> = { e: [37, 99, 235], m: [100, 116, 139], s: [217, 119, 6] }
 
 /**
- * EvoScale-style orbital network, retuned for Trinity's light theme and three
- * lenses. 3 tilted rings (one per lens) orbit at different speeds; nodes link to
- * their nearest neighbours with pulsing lines; a glowing core radiates spokes; a
- * cool light drifts toward the cursor; hovering a node sticks it and surfaces it.
+ * EvoScale-style orbital network, retuned for Trinity's light theme and the 60
+ * dimensions. 3 tilted rings (one per lens, radius proportional to its count)
+ * orbit at different speeds. Nodes link to their nearest neighbours with
+ * pulsing lines; a glowing core radiates spokes; a cool light drifts toward
+ * the cursor; hovering a node sticks it to the cursor and it eases back to
+ * orbit over ~2.5s when released.
  */
 export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
   activeLens: LensK
@@ -34,10 +36,11 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
     let CX = 0, CY = 0, sunX = 0, sunY = 0
 
     type Node = { k: LensK; di: number; ring: number; angle: number; x: number; y: number; r: number; stickX: number | null; stickY: number | null; ret: boolean; retFromX: number; retFromY: number; retF: number }
+    // Ring radii are proportional to lens size: s has 23 dims (outer), e 21 (middle), m 16 (inner).
     const RINGS = [
       { k: 's' as LensK, speed: 0.0011, tilt: 0.30, dir: 1, R: 0, Ry: 0 },
-      { k: 'm' as LensK, speed: 0.0015, tilt: -0.22, dir: -1, R: 0, Ry: 0 },
-      { k: 'e' as LensK, speed: 0.0019, tilt: 0.26, dir: 1, R: 0, Ry: 0 },
+      { k: 'e' as LensK, speed: 0.0015, tilt: -0.22, dir: -1, R: 0, Ry: 0 },
+      { k: 'm' as LensK, speed: 0.0019, tilt: 0.26, dir: 1, R: 0, Ry: 0 },
     ]
     let nodes: Node[] = []
 
@@ -48,7 +51,7 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       CX = W / 2; CY = H / 2
       const base = Math.min(W, H) * 0.46
-      RINGS[0].R = base * 1.0; RINGS[1].R = base * 0.72; RINGS[2].R = base * 0.46
+      RINGS[0].R = base * 1.0; RINGS[1].R = base * 0.74; RINGS[2].R = base * 0.48
       RINGS.forEach((r) => { r.Ry = r.R })
       nodes = []
       RINGS.forEach((ring, ri) => {
@@ -91,26 +94,35 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       // positions
       nodes.forEach((nd, i) => {
         const ring = RINGS[nd.ring]
+        // the logical orbit slot ALWAYS advances, even while the node is stuck
+        // to the cursor: otherwise a long hover freezes its angle while the
+        // ring moves on, and the released node lands too close to a neighbour
+        // (even spacing is defined purely by these angles).
+        if (!reduce) nd.angle += ring.speed * ring.dir
         if (i === hovI && inN) {
           nd.ret = false
           const sx0 = nd.stickX ?? nd.x, sy0 = nd.stickY ?? nd.y
           const nx = sx0 + (mx - sx0) * 0.12, ny = sy0 + (my - sy0) * 0.12
           nd.stickX = nx; nd.stickY = ny; nd.x = nx; nd.y = ny
-        } else if (nd.ret) {
-          // drifted-away node eases back to its orbit over ~2.5s (150 frames)
+          return
+        }
+        // hover just released while displaced (cursor left the canvas or moved
+        // off the node): arm the ease-back from the current displaced spot
+        if (nd.stickX !== null) {
+          nd.ret = true; nd.retF = 0; nd.retFromX = nd.x; nd.retFromY = nd.y
+          nd.stickX = null; nd.stickY = null
+        }
+        const tx = CX + ring.R * Math.cos(nd.angle)
+        const ty = CY + ring.Ry * Math.sin(nd.angle) * Math.cos(ring.tilt)
+        if (nd.ret) {
+          // displaced node eases back to its (still-moving) orbit slot over ~2.5s (150 frames)
           nd.retF = Math.min(150, nd.retF + 1)
           const e = 1 - Math.pow(1 - nd.retF / 150, 3)
-          if (!reduce) nd.angle += ring.speed * ring.dir
-          const tx = CX + ring.R * Math.cos(nd.angle)
-          const ty = CY + ring.Ry * Math.sin(nd.angle) * Math.cos(ring.tilt)
           nd.x = nd.retFromX + (tx - nd.retFromX) * e
           nd.y = nd.retFromY + (ty - nd.retFromY) * e
           if (nd.retF >= 150) { nd.ret = false }
         } else {
-          nd.stickX = null
-          if (!reduce) nd.angle += ring.speed * ring.dir
-          nd.x = CX + ring.R * Math.cos(nd.angle)
-          nd.y = CY + ring.Ry * Math.sin(nd.angle) * Math.cos(ring.tilt)
+          nd.x = tx; nd.y = ty
         }
       })
 
@@ -118,10 +130,8 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       hovI = -1; let mD = 9999
       nodes.forEach((nd, i) => { const dx = nd.x - mx, dy = nd.y - my, d = Math.sqrt(dx * dx + dy * dy); if (d < nd.r * 3.4 && d < mD) { mD = d; hovI = i } })
       if (hovI !== prevHov) {
-        if (prevHov >= 0 && nodes[prevHov]) {
-          const rn = nodes[prevHov]
-          rn.ret = true; rn.retFromX = rn.x; rn.retFromY = rn.y; rn.retF = 0; rn.stickX = null; rn.stickY = null
-        }
+        // the released node still carries stickX; the position pass above arms
+        // its ease-back on the next frame from the displaced position
         prevHov = hovI
         const h = hovI >= 0 ? { k: nodes[hovI].k, d: DIMENSIONS[nodes[hovI].k][nodes[hovI].di] } : null
         live.current.onHover(h)
@@ -191,7 +201,7 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       ctx.beginPath(); ctx.arc(CX, CY, hubR - 4, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.lineWidth = 1; ctx.stroke()
       ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
       ctx.fillStyle = '#fff'; ctx.font = `700 ${W < 600 ? 26 : 32}px "Space Grotesk", sans-serif`
-      ctx.fillText('55', CX, CY - (W < 600 ? 5 : 6))
+      ctx.fillText('60', CX, CY - (W < 600 ? 5 : 6))
       ctx.fillStyle = 'rgba(224,231,255,0.95)'; ctx.font = `600 ${W < 600 ? 8 : 9}px "Inter", sans-serif`
       ctx.fillText('DIMENSIONS', CX, CY + (W < 600 ? 11 : 13))
       ctx.restore()
