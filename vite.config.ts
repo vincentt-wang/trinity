@@ -30,8 +30,9 @@ const cspPlugin: Plugin = {
   },
 }
 
-// base must match the GitHub Pages repo path (repo: trinity)
+// base: GitHub Pages serves under /trinity/; Cloudflare Pages (custom domain) serves at root.
+// `npm run deploy` keeps GH Pages; `npm run deploy:cf` builds with DEPLOY_TARGET=cf.
 export default defineConfig({
-  base: '/trinity/',
+  base: process.env.DEPLOY_TARGET === 'cf' ? '/' : '/trinity/',
   plugins: [react(), tailwindcss(), cspPlugin],
 })
