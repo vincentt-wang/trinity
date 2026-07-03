@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { DIMENSIONS } from '../copy'
+import { DIM_OBS, DIM_EDGES } from '../dimsGraph'
 import type { Lang } from '../i18n'
 
 type LensK = 'e' | 'm' | 's'
@@ -137,24 +138,46 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
         live.current.onHover(h)
       }
 
-      // connection lines (range based) — pulsing, lens-tinted near hover
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y
-          const d = Math.sqrt(dx * dx + dy * dy)
-          if (d < CD) {
-            const near = i === hovI || j === hovI
-            const pulse = 0.5 + 0.5 * Math.sin(frame * 0.018 + i * 0.8 + j * 0.5)
-            if (near) {
-              const c = RGB[nodes[hovI].k]
-              ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},0.5)`
-              ctx.lineWidth = 1.6
-            } else {
-              ctx.strokeStyle = `rgba(37,99,235,${(pulse * 0.10 + 0.03).toFixed(3)})`
+      // ambient range lines only while nothing is hovered — on hover the real
+      // engine relations take over so the true graph is what you see
+      if (hovI < 0) {
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y
+            const d = Math.sqrt(dx * dx + dy * dy)
+            if (d < CD) {
+              const pulse = 0.5 + 0.5 * Math.sin(frame * 0.018 + i * 0.8 + j * 0.5)
+              ctx.strokeStyle = `rgba(37,99,235,${(pulse * 0.06 + 0.02).toFixed(3)})`
               ctx.lineWidth = 0.7
+              ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke()
             }
-            ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke()
           }
+        }
+      }
+
+      // real engine relations (data hand-off edges from the deal-lens engine)
+      const idx = new Map<string, number>()
+      nodes.forEach((nd, i) => idx.set(DIMENSIONS[nd.k][nd.di].id, i))
+      const linked = new Set<number>()
+      for (let e = 0; e < DIM_EDGES.length; e++) {
+        const ia = idx.get(DIM_EDGES[e][0]), ib = idx.get(DIM_EDGES[e][1])
+        if (ia == null || ib == null) continue
+        const A = nodes[ia], B = nodes[ib]
+        const near = ia === hovI || ib === hovI
+        if (hovI >= 0 && !near) continue
+        if (near) linked.add(ia === hovI ? ib : ia)
+        const c = RGB[A.k]
+        if (near) { ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},0.85)`; ctx.lineWidth = 2 }
+        else {
+          const pulse = 0.5 + 0.5 * Math.sin(frame * 0.015 + e * 0.7)
+          ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${(0.10 + pulse * 0.08).toFixed(3)})`
+          ctx.lineWidth = 1
+        }
+        ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke()
+        if (near) {
+          const t = (frame * 0.012 + e * 0.37) % 1
+          ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},0.95)`
+          ctx.beginPath(); ctx.arc(A.x + (B.x - A.x) * t, A.y + (B.y - A.y) * t, 3, 0, Math.PI * 2); ctx.fill()
         }
       }
 
@@ -206,32 +229,47 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       ctx.fillText('DIMENSIONS', CX, CY + (W < 600 ? 11 : 13))
       ctx.restore()
 
-      // nodes
+      // nodes — HITL observation cards render hollow with a dashed ring so
+      // anyone can see which dimensions never enter the score
       nodes.forEach((nd, i) => {
         const isH = i === hovI
+        const isLinked = linked.has(i)
         const hot = nd.k === act
         const c = COL[nd.k]
-        const baseAlpha = hot ? 1 : 0.42
-        const dotR = isH ? nd.r * 1.3 : nd.r
+        const isObs = DIM_OBS[DIMENSIONS[nd.k][nd.di].id]
+        const baseAlpha = isLinked ? 1 : hot ? 1 : 0.42
+        const dotR = isH ? nd.r * 1.3 : isLinked ? nd.r * 1.15 : nd.r
         // soft halo
-        ctx.globalAlpha = isH ? 0.34 : hot ? 0.18 : 0.09
+        ctx.globalAlpha = isH ? 0.34 : isLinked ? 0.26 : hot ? 0.18 : 0.09
         ctx.fillStyle = c
-        ctx.beginPath(); ctx.arc(nd.x, nd.y, isH ? nd.r * 2.8 : nd.r * 1.9, 0, Math.PI * 2); ctx.fill()
+        ctx.beginPath(); ctx.arc(nd.x, nd.y, isH ? nd.r * 2.8 : isLinked ? nd.r * 2.3 : nd.r * 1.9, 0, Math.PI * 2); ctx.fill()
         // dot
         ctx.globalAlpha = isH ? 1 : baseAlpha
         if (isH) { ctx.shadowColor = c; ctx.shadowBlur = 20 }
-        ctx.fillStyle = isH ? '#fff' : c
-        ctx.beginPath(); ctx.arc(nd.x, nd.y, dotR, 0, Math.PI * 2); ctx.fill()
-        if (isH) { ctx.shadowBlur = 0; ctx.lineWidth = 3; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(nd.x, nd.y, dotR, 0, Math.PI * 2); ctx.stroke() }
-        // subtle inner sheen on every dot for a glossier look
-        else if (hot) { ctx.globalAlpha = 0.5; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(nd.x - dotR * 0.3, nd.y - dotR * 0.3, dotR * 0.32, 0, Math.PI * 2); ctx.fill() }
+        if (isObs) {
+          ctx.fillStyle = '#fff'
+          ctx.beginPath(); ctx.arc(nd.x, nd.y, dotR, 0, Math.PI * 2); ctx.fill()
+          ctx.setLineDash([3, 3]); ctx.lineWidth = isH ? 2.4 : 1.6; ctx.strokeStyle = c
+          ctx.beginPath(); ctx.arc(nd.x, nd.y, dotR, 0, Math.PI * 2); ctx.stroke()
+          ctx.setLineDash([])
+          ctx.fillStyle = c
+          ctx.beginPath(); ctx.arc(nd.x, nd.y, dotR * 0.34, 0, Math.PI * 2); ctx.fill()
+        } else {
+          ctx.fillStyle = isH ? '#fff' : c
+          ctx.beginPath(); ctx.arc(nd.x, nd.y, dotR, 0, Math.PI * 2); ctx.fill()
+          if (isH || isLinked) { ctx.shadowBlur = 0; ctx.lineWidth = isH ? 3 : 2; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(nd.x, nd.y, dotR, 0, Math.PI * 2); ctx.stroke() }
+          // subtle inner sheen on every dot for a glossier look
+          else if (hot) { ctx.globalAlpha = 0.5; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(nd.x - dotR * 0.3, nd.y - dotR * 0.3, dotR * 0.32, 0, Math.PI * 2); ctx.fill() }
+        }
+        ctx.shadowBlur = 0
         ctx.globalAlpha = 1
       })
 
       // hovered label
       if (hovI >= 0) {
         const nd = nodes[hovI]
-        const label = live.current.lang === 'en' ? DIMENSIONS[nd.k][nd.di].en : DIMENSIONS[nd.k][nd.di].zh
+        const dim = DIMENSIONS[nd.k][nd.di]
+        const label = (live.current.lang === 'en' ? dim.en : dim.zh) + (DIM_OBS[dim.id] ? (live.current.lang === 'en' ? ' · in-person' : ' · 見面驗證') : '')
         ctx.font = `600 13px "Inter","Noto Sans TC",sans-serif`
         const tw = ctx.measureText(label).width
         const px = Math.min(Math.max(nd.x, tw / 2 + 14), W - tw / 2 - 14)

@@ -4,6 +4,7 @@ import { Reveal } from './lib/Reveal'
 import { useLenis, scrollToId } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
 import { DimsNetwork } from './lib/DimsNetwork'
+import { DIM_OBS } from './dimsGraph'
 import { Aurora } from './lib/Aurora'
 import { Celestial, CelStars, EarthBody, MoonBody, SunBody, MiniSystem } from './lib/Celestial'
 import { DrawArcs, ParallaxRings } from './lib/Ambient'
@@ -300,6 +301,7 @@ function DimsSection() {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none" /></svg>
                   {tag}
                 </span>
+                {d && DIM_OBS[d.id] && <span className="dim-obs-tag">{lang === 'en' ? 'Verified in person · not scored' : '見面驗證 · 不入分'}</span>}
               </div>
               <div className="dim-detail-name">{name}</div>
               <div className="dim-detail-desc">{desc}</div>
@@ -558,8 +560,7 @@ function StatsBand() {
     { v: 2, plus: false },
   ]
   return (
-    <section className="statsband sec-dark">
-      <HeroNetwork variant="ambient-dark" />
+    <div className="statsband-embed">
       <div className="wrap statsband-in">
         {items.map((it, i) => (
           <div className="stat-cell" key={i}>
@@ -568,7 +569,7 @@ function StatsBand() {
           </div>
         ))}
       </div>
-    </section>
+    </div>
   )
 }
 
@@ -759,11 +760,10 @@ export default function Home({ onAnalyze, onInsight }: { onAnalyze: () => void; 
 
       <BeforeAfter />
 
-      <StatsBand />
-
       <section id="cta" className="sec sec-dark cta-sec">
         <div className="cta-glow" aria-hidden />
         <HeroNetwork variant="ambient-dark" />
+        <StatsBand />
         <div className="wrap">
           <Reveal>
             <div className="cta">

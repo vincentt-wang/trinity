@@ -105,7 +105,7 @@ export const COPY = {
       ],
     },
     dims: {
-      eyebrow: 'The 60 dimensions', h2: 'Every score is a solid algorithm', lead: 'Sixty dimensions, three lenses. Explore the network.',
+      eyebrow: 'The 60 dimensions', h2: 'Every score is a solid algorithm', lead: 'Sixty dimensions, three lenses. Forty-five score straight from your materials; the dashed fifteen are verified in person, never auto-scored.',
       sub: 'weighted dimensions, scored across three lenses', dimsWord: 'dimensions',
       lensMeta: {
         e: { label: 'Desirability', q: 'Is the need real, sharp and shared by enough people to pay?' },
@@ -603,7 +603,7 @@ export const COPY = {
       ],
     },
     dims: {
-      eyebrow: '60 個維度', h2: '每個分數都是扎實的演算法', lead: '六十個維度，三個透鏡。動手探索。',
+      eyebrow: '60 個維度', h2: '每個分數都是扎實的演算法', lead: '六十個維度，三個透鏡。45 個直接由你的材料計分；虛線的 15 個要見面驗證，永遠不會被自動打分。',
       sub: '個加權維度，分屬三個透鏡', dimsWord: '個維度',
       lensMeta: {
         e: { label: '欲求性', q: '需求是否真實、夠尖銳，且夠多人願意付錢。' },

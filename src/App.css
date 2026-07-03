@@ -89,6 +89,7 @@
 .dim-chipnum{flex:none;min-width:34px;height:26px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:var(--acc,var(--earth));color:#fff;font-family:var(--font-disp);font-weight:700;font-size:1rem;letter-spacing:.03em}
 .dim-lens-tag{display:inline-flex;align-items:center;gap:6px;font-size:1rem;font-weight:600;color:var(--acc,var(--earth));white-space:nowrap}
 .dim-lens-tag svg{width:16px;height:16px;flex:none}
+.dim-obs-tag{display:inline-flex;align-items:center;font-size:.82rem;font-weight:600;color:#b45309;background:rgba(217,119,6,.1);border:1px dashed rgba(217,119,6,.45);border-radius:8px;padding:2px 9px;margin-left:8px;white-space:nowrap}
 .dim-detail-name{margin-top:10px;font-family:var(--font-disp);font-weight:700;color:var(--ink);font-size:1.16rem;line-height:1.25;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dim-detail-desc{margin-top:6px;font-size:1.02rem;color:var(--ink-soft);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .dim-ask{margin-top:auto;padding:9px 12px;border-left:3px solid var(--acc,var(--earth));background:color-mix(in srgb,var(--acc,var(--earth)) 7%,#fff);border-radius:0 8px 8px 0;font-size:1rem;line-height:1.5;color:var(--ink-soft)}
@@ -345,7 +346,7 @@ footer .wrap{position:relative;z-index:1}
 @media(max-width:860px){.ba-arrow{transform:rotate(90deg)}}
 
 /* stats band */
-.statsband{min-height:0;padding:clamp(48px,7vh,84px) 0;background:#0b0e1f}
+.statsband-embed{position:relative;z-index:1;padding-bottom:clamp(44px,8vh,90px)}
 .statsband-in{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
 @media(max-width:760px){.statsband-in{grid-template-columns:repeat(2,1fr);gap:36px 16px}}
 .stat-cell{display:flex;flex-direction:column;align-items:center;gap:8px}
@@ -830,7 +831,7 @@ footer .wrap{position:relative;z-index:1}
 .amb-ring{position:absolute;border-radius:50%;will-change:transform}
 .amb-ring.r1{width:46vw;height:46vw;right:-14%;top:-20%;border:1.5px solid rgba(37,99,235,.11)}
 .amb-ring.r2{width:32vw;height:32vw;left:-9%;bottom:-16%;border:1.5px dashed rgba(124,58,237,.13)}
-.statsband{position:relative;overflow:hidden}
+
 .statsband .hero-net{opacity:.55}
 .statsband-in{position:relative;z-index:1}
 
