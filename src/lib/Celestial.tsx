@@ -95,70 +95,100 @@ export function MiniSystem({ r }: { r: number }) {
   )
 }
 
-/** Full-bleed galaxy backdrop: a soft milky-way haze (CSS, behind) plus a
- * dense star field weighted toward a diagonal band, so the scene reads as a
- * corner of a galaxy rather than empty white. Tinted stars pick up the three
- * lens colours. Fills its positioned parent edge to edge (no frame). */
+// The Milky Way IS the 60 dimensions: 21 Desirability (blue) + 21 Feasibility
+// (slate) + 18 Viability (amber), laid out as three colour arcs sweeping along
+// a diagonal galactic band. Each is a glowing star; a haze of fainter dust
+// fills between them. Together they read as a galaxy whose light is the engine's
+// sixty scored dimensions.
+const DIM_BAND: { g: 'e' | 'm' | 's'; n: number }[] = [
+  { g: 'e', n: 21 }, { g: 'm', n: 21 }, { g: 's', n: 18 },
+]
+
+/** Full-bleed galaxy backdrop. Fills its positioned parent edge to edge. */
 export function CelStars() {
-  const stars = useMemo(() => {
+  const { dims, dust } = useMemo(() => {
     let s = 42
     const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647 }
-    return Array.from({ length: 168 }, (_, i) => {
-      // ~58% of stars cluster along a diagonal milky-way band (top-right to
-      // bottom-left); the rest scatter across the whole field.
+    // a gently curved band from lower-left to upper-right
+    const bandY = (t: number) => 720 - t * 540 + Math.sin(t * Math.PI) * -70
+    const total = DIM_BAND.reduce((a, b) => a + b.n, 0)
+    const dims: { id: number; x: number; y: number; r: number; d: number; g: string }[] = []
+    let k = 0
+    for (const seg of DIM_BAND) {
+      for (let j = 0; j < seg.n; j++) {
+        const t = (k + 0.5) / total
+        const jitter = (rnd() - 0.5) * 0.9
+        const x = 90 + t * 1440 + jitter * 120
+        const y = bandY(t) + (rnd() - 0.5) * 190
+        dims.push({ id: k, x: Math.round(x), y: Math.round(y), r: +(2.4 + rnd() * 2.4).toFixed(2), d: +(rnd() * 5).toFixed(2), g: seg.g })
+        k++
+      }
+    }
+    // faint dust between the dimension stars, weighted onto the band
+    const dust = Array.from({ length: 150 }, (_, i) => {
       let x = rnd() * 1600
       let y = rnd() * 900
-      const inBand = rnd() < 0.58
-      if (inBand) {
-        x = rnd() * 1600
-        y = 760 - x * 0.46 + (rnd() - 0.5) * 250
-      }
-      const tv = rnd()
-      const tint = tv < 0.12 ? 'e' : tv > 0.9 ? 's' : tv > 0.82 ? 'm' : ''
-      return {
-        id: i,
-        x: Math.round(x),
-        y: Math.round(Math.max(-20, Math.min(920, y))),
-        r: +((inBand ? 0.5 : 0.7) + rnd() * (inBand ? 1.1 : 1.6)).toFixed(2),
-        d: +(rnd() * 6).toFixed(2),
-        big: !inBand && rnd() > 0.86,
-        tint,
-      }
+      if (rnd() < 0.6) { const t = rnd(); x = t * 1600; y = bandY(t) + (rnd() - 0.5) * 260 }
+      return { id: i, x: Math.round(x), y: Math.round(Math.max(-20, Math.min(920, y))), r: +(0.5 + rnd() * 1.1).toFixed(2), d: +(rnd() * 6).toFixed(2) }
     })
+    return { dims, dust }
   }, [])
   return (
     <svg
       viewBox="0 0 1600 900"
       preserveAspectRatio="xMidYMid slice"
       aria-hidden
+      className="cel-galaxy-svg"
       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
     >
-      <g className="cel-stars">
-        {stars.map((st) => (
-          <circle
-            key={st.id}
-            className={`cel-star${st.tint ? ' ' + st.tint : ''}${st.big ? ' big' : ''}`}
-            cx={st.x}
-            cy={st.y}
-            r={st.r}
-            style={{ animationDelay: `${st.d}s` }}
-          />
+      <defs>
+        {(['e', 'm', 's'] as const).map((g) => (
+          <radialGradient key={g} id={`dimglow-${g}`} cx="50%" cy="50%">
+            <stop offset="0" className={`dg-c ${g}`} />
+            <stop offset="1" className={`dg-t ${g}`} />
+          </radialGradient>
+        ))}
+      </defs>
+      <g className="cel-dust">
+        {dust.map((st) => (
+          <circle key={st.id} className="cel-star" cx={st.x} cy={st.y} r={st.r} style={{ animationDelay: `${st.d}s` }} />
+        ))}
+      </g>
+      <g className="cel-dims">
+        {dims.map((st) => (
+          <g key={st.id} className={`cel-dim ${st.g}`} style={{ animationDelay: `${st.d}s` }}>
+            <circle className="cel-dim-glow" cx={st.x} cy={st.y} r={st.r * 4.6} fill={`url(#dimglow-${st.g})`} />
+            <circle className="cel-dim-core" cx={st.x} cy={st.y} r={st.r} />
+          </g>
         ))}
       </g>
     </svg>
   )
 }
 
+// each body wakes from dim to full colour + glow as the scroll reaches it,
+// then stays lit; windows end just before that body's camera close-up
+const glowAt = (p: number, a: number, b: number) => smoothstep(Math.max(0, Math.min(1, (p - a) / (b - a))))
+const bodyGlow = (p: number) => ({
+  e: glowAt(p, 0.02, 0.15),
+  m: glowAt(p, 0.24, 0.36),
+  s: glowAt(p, 0.46, 0.58),
+})
+
 export function Celestial({ focus, cam: camMv }: { focus: CelFocus; cam?: MotionValue<number> }) {
   const earthG = useRef<SVGGElement>(null)
   const moonG = useRef<SVGGElement>(null)
   const camG = useRef<SVGGElement>(null)
+  const earthLit = useRef<SVGGElement>(null)
+  const moonLit = useRef<SVGGElement>(null)
+  const sunLit = useRef<SVGGElement>(null)
   const focusRef = useRef(focus)
   focusRef.current = focus
   const camMvRef = useRef(camMv)
   camMvRef.current = camMv
 
   const reduced = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
+  const setG = (el: SVGGElement | null, g: number) => el && el.style.setProperty('--g', g.toFixed(3))
 
   // reduced motion: no orbits, camera cuts instantly to the focused body
   useEffect(() => {
@@ -168,6 +198,7 @@ export function Celestial({ focus, cam: camMv }: { focus: CelFocus; cam?: Motion
     const t = focus === 'earth' ? e : focus === 'moon' ? m : focus === 'sun' ? SUN : { x: VC, y: VC }
     const s = ZOOM[focus]
     camG.current?.setAttribute('transform', `translate(${VC} ${VC}) scale(${s}) translate(${-t.x} ${-t.y})`)
+    setG(earthLit.current, 1); setG(moonLit.current, 1); setG(sunLit.current, 1)
   }, [focus, reduced])
 
   useEffect(() => {
@@ -191,16 +222,29 @@ export function Celestial({ focus, cam: camMv }: { focus: CelFocus; cam?: Motion
       const posOf = (b: CelFocus) =>
         b === 'earth' ? e : b === 'moon' ? { x: e.x + mx, y: e.y + my } : b === 'sun' ? SUN : { x: VC, y: VC }
 
-      // continuous camera target: interpolate between the two keyframes that
-      // straddle the current scroll progress — no discrete focus, no reset.
-      const p = Math.max(0, Math.min(1, camMvRef.current?.get() ?? 0))
-      let i = 0
-      while (i < CAM_KF.length - 2 && p > CAM_KF[i + 1].at) i++
-      const a = CAM_KF[i], b2 = CAM_KF[i + 1]
-      const tt = smoothstep(Math.max(0, Math.min(1, (p - a.at) / (b2.at - a.at))))
-      const pa = posOf(a.b), pb = posOf(b2.b)
-      const tgt = { x: lerp(pa.x, pb.x, tt), y: lerp(pa.y, pb.y, tt) }
-      const zoomTgt = lerp(a.z, b2.z, tt)
+      // camera target + per-body glow
+      const mv = camMvRef.current
+      let tgt: { x: number; y: number }, zoomTgt: number
+      if (!mv) {
+        // static (mobile): rest on the whole system, everything lit
+        const f = focusRef.current
+        tgt = posOf(f); zoomTgt = ZOOM[f]
+        setG(earthLit.current, 1); setG(moonLit.current, 1); setG(sunLit.current, 1)
+      } else {
+        // continuous camera: interpolate between the two keyframes straddling
+        // the current scroll progress — no discrete focus, no reset.
+        const p = Math.max(0, Math.min(1, mv.get()))
+        // progressive reveal: each body lights up as the scroll reaches it
+        const g = bodyGlow(p)
+        setG(earthLit.current, g.e); setG(moonLit.current, g.m); setG(sunLit.current, g.s)
+        let i = 0
+        while (i < CAM_KF.length - 2 && p > CAM_KF[i + 1].at) i++
+        const a = CAM_KF[i], b2 = CAM_KF[i + 1]
+        const tt = smoothstep(Math.max(0, Math.min(1, (p - a.at) / (b2.at - a.at))))
+        const pa = posOf(a.b), pb = posOf(b2.b)
+        tgt = { x: lerp(pa.x, pb.x, tt), y: lerp(pa.y, pb.y, tt) }
+        zoomTgt = lerp(a.z, b2.z, tt)
+      }
 
       // light critically-damped follow smooths orbital micro-motion while the
       // scroll-tied target keeps the push-in locked to the wheel.
@@ -216,13 +260,13 @@ export function Celestial({ focus, cam: camMv }: { focus: CelFocus; cam?: Motion
     return () => cancelAnimationFrame(raf)
   }, [reduced])
 
-  const cls = (body: CelFocus, base: string) =>
-    `cel-body ${base}${focus === body || focus === 'all' ? ' lit' : ''}${focus !== body && focus !== 'all' ? ' dim' : ''}`
-
   return (
     <svg className={`cel-scene${focus === 'all' ? ' all' : ''}`} viewBox="0 0 560 560" width="100%" height="100%" aria-hidden style={{ overflow: 'visible' }}>
       <defs>
         <radialGradient id="cel-corona" cx="50%" cy="50%"><stop offset="0" stopColor="rgba(245,158,11,.34)" /><stop offset=".7" stopColor="rgba(245,158,11,.08)" /><stop offset="1" stopColor="rgba(245,158,11,0)" /></radialGradient>
+        <radialGradient id="celh-e" cx="50%" cy="50%"><stop offset="0" stopColor="#3b82f6" stopOpacity=".6" /><stop offset="1" stopColor="#3b82f6" stopOpacity="0" /></radialGradient>
+        <radialGradient id="celh-m" cx="50%" cy="50%"><stop offset="0" stopColor="#94a3b8" stopOpacity=".55" /><stop offset="1" stopColor="#94a3b8" stopOpacity="0" /></radialGradient>
+        <radialGradient id="celh-s" cx="50%" cy="50%"><stop offset="0" stopColor="#fbbf24" stopOpacity=".6" /><stop offset="1" stopColor="#fbbf24" stopOpacity="0" /></radialGradient>
       </defs>
 
       {/* camera rig: everything inside flies with the zoom */}
@@ -231,13 +275,13 @@ export function Celestial({ focus, cam: camMv }: { focus: CelFocus; cam?: Motion
         <circle className="cel-orbitpath" cx={SUN.x} cy={SUN.y} r="174" />
 
         {/* Sun · Viability */}
-        <g className={cls('sun', 's')}>
+        <g ref={sunLit} className="cel-body s">
+          <circle className="cel-halo" cx={SUN.x} cy={SUN.y} r="132" fill="url(#celh-s)" />
           <circle cx={SUN.x} cy={SUN.y} r="118" fill="url(#cel-corona)">
             <animate attributeName="r" values="112;126;112" dur="5.2s" repeatCount="indefinite" />
             <animate attributeName="opacity" values=".8;1;.8" dur="5.2s" repeatCount="indefinite" />
           </circle>
           <circle className="cel-pulse" cx={SUN.x} cy={SUN.y} r="62" stroke="#d97706" />
-          <circle className="cel-halo" cx={SUN.x} cy={SUN.y} r="72" fill="#d97706" />
           <g transform={`translate(${SUN.x} ${SUN.y})`}><SunBody r={48} idp="celS" /></g>
           <circle cx={SUN.x} cy={SUN.y} r="54" fill="none" stroke="rgba(217,119,6,.35)" strokeWidth="1">
             <animate attributeName="r" values="54;60;54" dur="3.6s" repeatCount="indefinite" />
@@ -248,16 +292,16 @@ export function Celestial({ focus, cam: camMv }: { focus: CelFocus; cam?: Motion
         {/* Earth system (rAF moves this group along the sun orbit) */}
         <g ref={earthG} transform="translate(388 168)">
           <circle className="cel-orbitpath moonpath" cx="0" cy="0" r="46" />
-          <g className={cls('earth', 'e')}>
+          <g ref={earthLit} className="cel-body e">
+            <circle className="cel-halo" cx="0" cy="0" r="52" fill="url(#celh-e)" />
             <circle className="cel-pulse" cx="0" cy="0" r="26" stroke="#2563eb" />
-            <circle className="cel-halo" cx="0" cy="0" r="32" fill="#2563eb" />
             <EarthBody r={17} idp="celE" />
           </g>
           {/* Moon (rAF moves this group around Earth, faster) */}
           <g ref={moonG} transform="translate(38 26)">
-            <g className={cls('moon', 'm')}>
+            <g ref={moonLit} className="cel-body m">
+              <circle className="cel-halo" cx="0" cy="0" r="30" fill="url(#celh-m)" />
               <circle className="cel-pulse" cx="0" cy="0" r="14" stroke="#475569" />
-              <circle className="cel-halo" cx="0" cy="0" r="19" fill="#475569" />
               <MoonBody r={8.5} idp="celM" />
             </g>
           </g>

@@ -91,6 +91,8 @@ function CelestialSection() {
   const [step, setStep] = useState(0)
   useMotionValueEvent(scrollYProgress, 'change', (v) => setStep(celStepAt(v)))
   const reduced = useReducedMotion()
+  // the galaxy (the 60 dimensions) blooms as the camera pulls back to the whole system
+  const gal = useTransform(scrollYProgress, [0.42, 0.82], [0.5, 1])
 
   const [narrow, setNarrow] = useState(false)
   useEffect(() => {
@@ -103,8 +105,10 @@ function CelestialSection() {
 
   if (narrow) {
     return (
-      <section id="celestial" className="cel-scrolly">
+      <section id="celestial" className="cel-scrolly sec-dark">
         <div className="wrap cel-mstage">
+          <div className="cel-galaxy" aria-hidden />
+          <CelStars />
           <div className="eyebrow">{c.kicker}</div>
           <h2 className="cel-title">{c.title}</h2>
           <div className="cel-viz"><Celestial focus="all" /></div>
@@ -124,9 +128,9 @@ function CelestialSection() {
 
   const b = c.bodies[step]
   return (
-    <section id="celestial" className="cel-scrolly">
+    <section id="celestial" className="cel-scrolly sec-dark">
       <div ref={ref} className="cel-track">
-        <div className="cel-stage">
+        <motion.div className="cel-stage" style={{ ['--gal' as string]: reduced ? 1 : gal }}>
           <div className="cel-galaxy" aria-hidden />
           <CelStars />
           <CelProgress progress={scrollYProgress} active={step} />
@@ -151,7 +155,7 @@ function CelestialSection() {
               </motion.div>
             </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )
@@ -325,12 +329,19 @@ function DimsSection() {
   )
 }
 
+// Module-level latch: the plate entrance is a one-shot. In dev, StrictMode
+// double-mounts the component, and reloading while already scrolled onto the
+// stack would otherwise replay the 6-plate spring a second time. Latching here
+// survives that remount so the cascade only ever plays once.
+let stackEntered = false
+
 function StackSection() {
   const { lang } = useLang()
   const c = COPY[lang].stack
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
   const [active, setActive] = useState(0)
+  const [entered, setEntered] = useState(stackEntered)
   const n = c.layers.length
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     setActive(Math.min(n - 1, Math.max(0, Math.floor(p * n))))
@@ -355,7 +366,14 @@ function StackSection() {
             ))}
           </div>
           <div className="stack-iso" aria-hidden>
-            <motion.div className="stack-iso-tilt" initial="hide" whileInView="show" viewport={{ once: true, margin: '-15% 0px' }} variants={{ show: { transition: { staggerChildren: 0.09, staggerDirection: -1 } } }}>
+            <motion.div
+              className="stack-iso-tilt"
+              initial={entered ? 'show' : 'hide'}
+              whileInView={entered ? undefined : 'show'}
+              onViewportEnter={() => { stackEntered = true; setEntered(true) }}
+              viewport={{ once: true, margin: '-15% 0px' }}
+              variants={{ show: { transition: { staggerChildren: 0.09, staggerDirection: -1 } } }}
+            >
               <div className="iso-ground" />
               {/* 01 sits on top; analysis drills downward — passed layers lift away above */}
               {c.layers.map((s, i) => (
