@@ -9,7 +9,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "deploy": "npm run build && gh-pages -d dist",
-    "deploy:cf": "DEPLOY_TARGET=cf vite build && wrangler pages deploy dist --project-name=trinity"
+    "deploy:cf": "DEPLOY_TARGET=cf vite build && npx wrangler@latest pages deploy dist --project-name=trinity"
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.42",
