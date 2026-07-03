@@ -284,49 +284,29 @@ footer .wrap{position:relative;z-index:1}
 @media(max-width:880px){.stack{grid-template-columns:1fr;gap:34px}}
 .stack-list{display:flex;flex-direction:column;gap:4px}
 .stack-item{display:grid;grid-template-columns:54px 1fr;gap:16px;align-items:start;text-align:left;background:none;border:0;cursor:pointer;padding:16px 18px;border-radius:14px;font:inherit;transition:background .3s var(--ease),box-shadow .3s,transform .3s}
-.stack-item.on{background:var(--bg-card);box-shadow:var(--shadow)}
-.stack-n{font-family:var(--font-disp);font-weight:700;font-size:1.5rem;line-height:1;color:var(--line-strong);transition:.3s}
-.stack-item.on .stack-n{background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stack-item.on{background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.stack-n{font-family:var(--font-disp);font-weight:700;font-size:1.5rem;line-height:1;color:rgba(180,192,230,.42);transition:.3s}
+.stack-item.on .stack-n{background:linear-gradient(120deg,#7db3ff,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
 .stack-tx{display:flex;flex-direction:column}
-.stack-h{font-family:var(--font-disp);font-weight:600;font-size:1.24rem;color:var(--ink);line-height:1.2}
-.stack-p{font-size:1.02rem;color:var(--ink-soft);line-height:1.5;max-height:0;opacity:0;overflow:hidden;transition:max-height .4s var(--ease),opacity .35s,margin-top .4s}
+.stack-h{font-family:var(--font-disp);font-weight:600;font-size:1.24rem;color:#eef2ff;line-height:1.2}
+.stack-p{font-size:1.02rem;color:#aab4dc;line-height:1.5;max-height:0;opacity:0;overflow:hidden;transition:max-height .4s var(--ease),opacity .35s,margin-top .4s}
 .stack-item.on .stack-p{max-height:80px;opacity:1;margin-top:7px}
-/* isometric exploded layer stack */
-.stack-iso{position:relative;height:520px;perspective:1500px;perspective-origin:50% 38%}
-.stack-iso-tilt{position:absolute;inset:0;transform-style:preserve-3d;transform:translateY(56px) rotateX(57deg) rotateZ(-40deg)}
-.iso-wrap{position:absolute;left:50%;top:50%;width:320px;height:214px;margin:-107px 0 0 -160px;transform-style:preserve-3d;will-change:transform}
-.iso-ground{position:absolute;left:50%;top:50%;width:400px;height:290px;margin:-145px 0 0 -200px;border-radius:40px;
-  background:radial-gradient(closest-side,rgba(14,18,48,.14),rgba(14,18,48,0) 72%);transform:translateZ(-46px)}
-.iso-plate{position:absolute;inset:0;border-radius:26px;cursor:pointer;
-  background:rgba(255,255,255,.62);border:1.5px solid rgba(14,18,48,.13);
-  box-shadow:0 2px 0 rgba(14,18,48,.06);
-  display:flex;align-items:flex-end;justify-content:flex-start;padding:18px 22px;
-  transition:background .38s var(--ease),border-color .38s,box-shadow .38s,transform .38s var(--ease),opacity .38s;
-  transform:translateZ(0)}
-.iso-plate .iso-n{font-family:var(--font-disp);font-weight:700;font-size:1.6rem;line-height:1;color:rgba(14,18,48,.34);transition:color .38s}
-.iso-plate.above{transform:translateZ(88px);background:rgba(255,255,255,.26);border-color:rgba(14,18,48,.07)}
-.iso-plate.above .iso-n{color:rgba(14,18,48,.18)}
-.iso-plate.on{transform:translateZ(26px) scale(1.03);border-color:transparent;
-  box-shadow:0 30px 60px -18px var(--iso-glow,rgba(37,99,235,.55)),0 0 0 1px rgba(255,255,255,.35) inset}
-.iso-plate.p0{--iso-glow:rgba(37,99,235,.55)}
-.iso-plate.p1{--iso-glow:rgba(71,85,105,.5)}
-.iso-plate.p2{--iso-glow:rgba(217,119,6,.5)}
-.iso-plate.p3{--iso-glow:rgba(79,70,229,.55)}
-.iso-plate.p4{--iso-glow:rgba(124,58,237,.5)}
-.iso-plate.p5{--iso-glow:rgba(37,99,235,.5)}
-.iso-plate.on .iso-n{color:#fff}
-.iso-plate.on::after{content:'';position:absolute;inset:0;border-radius:26px;
-  background:linear-gradient(115deg,rgba(255,255,255,.34),rgba(255,255,255,0) 46%)}
-.iso-plate.on.p0{background:linear-gradient(120deg,#2563eb,#4f46e5)}
-.iso-plate.on.p1{background:linear-gradient(120deg,#475569,#64748b)}
-.iso-plate.on.p2{background:linear-gradient(120deg,#d97706,#f59e0b)}
-.iso-plate.on.p3{background:linear-gradient(120deg,#4f46e5,#7c3aed)}
-.iso-plate.on.p4{background:linear-gradient(120deg,#2563eb,#7c3aed)}
-.iso-plate.on.p5{background:linear-gradient(120deg,#475569,#2563eb)}
-@media(max-width:880px){
-  .stack-iso{height:350px}
-  .stack-iso-tilt{transform:translateY(46px) scale(.74) rotateX(57deg) rotateZ(-40deg)}
-}
+/* the six layers as a small constellation of orbs on an orbit trail */
+.stack-sky{position:relative;height:540px;width:100%}
+.stack-sky svg{position:absolute;inset:0}
+.orbit-line{fill:none;stroke:rgba(170,185,240,.22);stroke-width:1.5;stroke-dasharray:2 8;stroke-linecap:round}
+.sorb{transition:opacity .4s var(--ease)}
+.sorb:not(.on){opacity:.42}
+.sorb-halo{opacity:0;transition:opacity .45s var(--ease)}
+.sorb.on .sorb-halo{opacity:1}
+.sorb-body{transition:r .35s var(--ease)}
+.sorb.on .sorb-body{r:24}
+.sorb-ring{fill:none;stroke:rgba(255,255,255,.6);stroke-width:1.5;opacity:0;transform-box:fill-box;transform-origin:center}
+.sorb.on .sorb-ring{opacity:1;animation:sorbring 2.6s var(--ease) infinite}
+@keyframes sorbring{0%{transform:scale(.85);opacity:.6}70%{transform:scale(1.5);opacity:0}100%{transform:scale(1.5);opacity:0}}
+.sorb-n{font-family:var(--font-disp);font-weight:700;font-size:15px;fill:rgba(255,255,255,.9);pointer-events:none}
+.sorb:not(.on) .sorb-n{fill:rgba(255,255,255,.62)}
+@media(max-width:880px){.stack-sky{height:420px}}
 
 /* ============ Phase B: why / before-after / stats ============ */
 .cards.c4{grid-template-columns:repeat(4,1fr)}
@@ -440,9 +420,9 @@ footer .wrap{position:relative;z-index:1}
 @media(max-width:780px){.galaxy{max-width:340px}}
 
 /* ============ The Trinity stack: pinned scroll-tied ============ */
-.stack-scrolly{position:relative;background:var(--bg-soft)}
-/* blend the dark engine section above into the light stack */
-.stack-scrolly::before{content:"";position:absolute;top:0;left:0;right:0;height:190px;z-index:2;pointer-events:none;background:linear-gradient(#0a0e1f,rgba(243,245,251,0))}
+.stack-scrolly{position:relative;background:radial-gradient(120% 92% at 76% 42%,#1a2144 0%,#0e1330 42%,#080b1c 100%)}
+/* engine (dark) into stack (dark): just even out the two dark tones */
+.stack-scrolly::before{content:"";position:absolute;top:0;left:0;right:0;height:150px;z-index:2;pointer-events:none;background:linear-gradient(#0b0e1f,rgba(8,11,28,0))}
 .stack-track{position:relative;z-index:1;height:250vh}
 .stack-stage{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:96px 0}
 @media(max-width:880px){
@@ -485,6 +465,8 @@ footer .wrap{position:relative;z-index:1}
 
 /* ============ Dims: full-bleed network section ============ */
 .dims-sec{position:relative;overflow:hidden}
+/* blend the dark stack section above into the light dimensions section */
+.dims-sec::before{content:"";position:absolute;top:0;left:0;right:0;height:180px;z-index:3;pointer-events:none;background:linear-gradient(#080b1c,rgba(243,245,251,0))}
 .dims-net-layer{position:absolute;top:0;right:0;bottom:0;width:64vw;z-index:0}
 .dims-overlay{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:30px;min-height:74vh;pointer-events:none}
 .dims-copy{max-width:30rem}
