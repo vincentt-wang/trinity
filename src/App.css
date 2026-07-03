@@ -814,28 +814,20 @@ footer .wrap{position:relative;z-index:1}
 .cel-row .cel-cap-label{font-size:.9rem}
 /* scene */
 .cel-scene{display:block;width:100%;height:100%}
-/* nebula haze along the galactic band: lens-tinted clouds glowing on deep space */
-.cel-galaxy{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:var(--gal);
+/* very faint nebula wash along the galactic band — just enough tint, not a glow */
+.cel-galaxy{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:calc(.55*var(--gal));
   background:
-    radial-gradient(46% 40% at 22% 74%, rgba(59,130,246,.20), transparent 70%),
-    radial-gradient(42% 38% at 52% 50%, rgba(148,163,184,.13), transparent 72%),
-    radial-gradient(46% 42% at 80% 26%, rgba(245,158,11,.17), transparent 70%),
-    linear-gradient(118deg, transparent 26%, rgba(129,140,248,.10) 50%, transparent 74%)}
-/* dust between the dimension-stars */
-.cel-galaxy-svg{opacity:var(--gal)}
-.cel-star{fill:#c7d2fe;animation:celtwinkle 5.5s ease-in-out infinite}
-@keyframes celtwinkle{0%,100%{opacity:.12}50%{opacity:.4}}
-/* the 60 dimension-stars: coloured cores + soft glow, brighter than dust */
-.cel-dims{opacity:calc(.35 + .65*var(--gal))}
-.cel-dim{animation:dimtwinkle 6s ease-in-out infinite}
-@keyframes dimtwinkle{0%,100%{opacity:.62}50%{opacity:1}}
-.cel-dim-core{fill:#fff}
-.cel-dim.e .cel-dim-core{fill:#93c5fd}
-.cel-dim.m .cel-dim-core{fill:#e2e8f0}
-.cel-dim.s .cel-dim-core{fill:#fde68a}
-.dg-c.e{stop-color:#60a5fa;stop-opacity:.85}.dg-t.e{stop-color:#60a5fa;stop-opacity:0}
-.dg-c.m{stop-color:#cbd5e1;stop-opacity:.7}.dg-t.m{stop-color:#cbd5e1;stop-opacity:0}
-.dg-c.s{stop-color:#fcd34d;stop-opacity:.85}.dg-t.s{stop-color:#fcd34d;stop-opacity:0}
+    radial-gradient(46% 40% at 22% 74%, rgba(59,130,246,.09), transparent 72%),
+    radial-gradient(46% 42% at 80% 26%, rgba(245,158,11,.08), transparent 72%),
+    linear-gradient(118deg, transparent 30%, rgba(129,140,248,.045) 50%, transparent 70%)}
+/* the galaxy is dots of light drifting + blinking like fireflies */
+.cel-galaxy-svg{opacity:calc(.6 + .4*var(--gal))}
+.ff{transform-box:view-box;animation:firefly var(--tw,6s) ease-in-out infinite;will-change:transform,opacity}
+@keyframes firefly{0%,100%{opacity:var(--o0);transform:translate(0,0)}50%{opacity:var(--o1);transform:translate(var(--dx),var(--dy))}}
+.cel-star{fill:#c7d2fe}
+.cel-dim.e{fill:#7db3ff}
+.cel-dim.m{fill:#d8e0f0}
+.cel-dim.s{fill:#fcd34d}
 .cel-orbitpath{fill:none;stroke:rgba(200,210,245,.22);stroke-dasharray:3 7;opacity:.7;transition:opacity .5s}
 .cel-orbitpath.moonpath{stroke-dasharray:2 5;opacity:.5}
 .cel-scene.all .cel-orbitpath{opacity:1}
@@ -844,7 +836,7 @@ footer .wrap{position:relative;z-index:1}
 .cel-halo{opacity:calc(.95*var(--g,0))}
 .cel-pulse{fill:none;stroke-width:2;opacity:calc(.5*var(--g,0));transform-box:fill-box;transform-origin:center;animation:celpulse 2.4s var(--ease) infinite}
 @keyframes celpulse{0%{transform:scale(.72);opacity:calc(.5*var(--g,0))}75%{transform:scale(1.55);opacity:0}100%{transform:scale(1.55);opacity:0}}
-@media(prefers-reduced-motion:reduce){.cel-star,.cel-dim{animation:none}.cel-pulse{animation:none}}
+@media(prefers-reduced-motion:reduce){.ff{animation:none;opacity:var(--o1)}.cel-pulse{animation:none}}
 /* body-based scroll progress (right side of the pinned stage) */
 .celprog{position:absolute;right:clamp(26px,4.5vw,64px);top:50%;transform:translateY(-50%);height:46vh;width:30px;z-index:5}
 .celprog-track{position:absolute;left:calc(50% - 1px);top:0;bottom:0;width:2px;border-radius:99px;background:rgba(200,210,245,.18)}

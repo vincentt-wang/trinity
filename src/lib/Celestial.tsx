@@ -104,32 +104,46 @@ const DIM_BAND: { g: 'e' | 'm' | 's'; n: number }[] = [
   { g: 'e', n: 21 }, { g: 'm', n: 21 }, { g: 's', n: 18 },
 ]
 
-/** Full-bleed galaxy backdrop. Fills its positioned parent edge to edge. */
+// one drifting, blinking firefly: its own slow float offset (dx/dy), period
+// (tw), phase (delay) and faint→peak opacity swing (o0/o1). Style vars drive
+// the shared `firefly` keyframe so every dot moves and pulses independently.
+type Fly = { id: number; x: number; y: number; r: number; g?: string; style: Record<string, string> }
+
+/** Full-bleed galaxy backdrop: dots of light — the 60 dimensions and finer
+ * dust — drifting and blinking like fireflies. Fills its parent edge to edge. */
 export function CelStars() {
   const { dims, dust } = useMemo(() => {
     let s = 42
     const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647 }
+    // each dot's own slow float offset (dx/dy), period (tw), phase and
+    // faint→peak opacity swing (o0/o1) — drives the shared `firefly` keyframe
+    const flyStyle = (faint: boolean): Record<string, string> => ({
+      '--dx': `${((rnd() - 0.5) * 26).toFixed(1)}px`,
+      '--dy': `${((rnd() - 0.5) * 26).toFixed(1)}px`,
+      '--tw': `${(4 + rnd() * 6).toFixed(1)}s`,
+      '--o0': (faint ? 0.03 + rnd() * 0.06 : 0.1 + rnd() * 0.1).toFixed(3),
+      '--o1': (faint ? 0.16 + rnd() * 0.12 : 0.42 + rnd() * 0.24).toFixed(3),
+      animationDelay: `-${(rnd() * 10).toFixed(1)}s`,
+    })
     // a gently curved band from lower-left to upper-right
     const bandY = (t: number) => 720 - t * 540 + Math.sin(t * Math.PI) * -70
     const total = DIM_BAND.reduce((a, b) => a + b.n, 0)
-    const dims: { id: number; x: number; y: number; r: number; d: number; g: string }[] = []
+    const dims: Fly[] = []
     let k = 0
     for (const seg of DIM_BAND) {
       for (let j = 0; j < seg.n; j++) {
         const t = (k + 0.5) / total
-        const jitter = (rnd() - 0.5) * 0.9
-        const x = 90 + t * 1440 + jitter * 120
+        const x = 90 + t * 1440 + (rnd() - 0.5) * 108
         const y = bandY(t) + (rnd() - 0.5) * 190
-        dims.push({ id: k, x: Math.round(x), y: Math.round(y), r: +(2.4 + rnd() * 2.4).toFixed(2), d: +(rnd() * 5).toFixed(2), g: seg.g })
+        dims.push({ id: k, x: Math.round(x), y: Math.round(y), r: +(1.3 + rnd() * 1.3).toFixed(2), g: seg.g, style: flyStyle(false) })
         k++
       }
     }
-    // faint dust between the dimension stars, weighted onto the band
-    const dust = Array.from({ length: 150 }, (_, i) => {
+    const dust: Fly[] = Array.from({ length: 120 }, (_, i) => {
       let x = rnd() * 1600
       let y = rnd() * 900
       if (rnd() < 0.6) { const t = rnd(); x = t * 1600; y = bandY(t) + (rnd() - 0.5) * 260 }
-      return { id: i, x: Math.round(x), y: Math.round(Math.max(-20, Math.min(920, y))), r: +(0.5 + rnd() * 1.1).toFixed(2), d: +(rnd() * 6).toFixed(2) }
+      return { id: i, x: Math.round(x), y: Math.round(Math.max(-20, Math.min(920, y))), r: +(0.5 + rnd() * 0.9).toFixed(2), style: flyStyle(true) }
     })
     return { dims, dust }
   }, [])
@@ -141,25 +155,14 @@ export function CelStars() {
       className="cel-galaxy-svg"
       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
     >
-      <defs>
-        {(['e', 'm', 's'] as const).map((g) => (
-          <radialGradient key={g} id={`dimglow-${g}`} cx="50%" cy="50%">
-            <stop offset="0" className={`dg-c ${g}`} />
-            <stop offset="1" className={`dg-t ${g}`} />
-          </radialGradient>
-        ))}
-      </defs>
       <g className="cel-dust">
         {dust.map((st) => (
-          <circle key={st.id} className="cel-star" cx={st.x} cy={st.y} r={st.r} style={{ animationDelay: `${st.d}s` }} />
+          <circle key={st.id} className="ff cel-star" cx={st.x} cy={st.y} r={st.r} style={st.style} />
         ))}
       </g>
       <g className="cel-dims">
         {dims.map((st) => (
-          <g key={st.id} className={`cel-dim ${st.g}`} style={{ animationDelay: `${st.d}s` }}>
-            <circle className="cel-dim-glow" cx={st.x} cy={st.y} r={st.r * 4.6} fill={`url(#dimglow-${st.g})`} />
-            <circle className="cel-dim-core" cx={st.x} cy={st.y} r={st.r} />
-          </g>
+          <circle key={st.id} className={`ff cel-dim ${st.g}`} cx={st.x} cy={st.y} r={st.r} style={st.style} />
         ))}
       </g>
     </svg>
