@@ -140,14 +140,14 @@ function CelestialSection() {
           </div>
           <div className="cel-viz"><Celestial focus={CEL_FOCI[step]} cam={reduced ? undefined : scrollYProgress} /></div>
           <div className="cel-caption">
-            <AnimatePresence initial={false}>
+            <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={step}
                 className={`cel-cap ${b.k}`}
-                initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={reduced ? { opacity: 0 } : { opacity: 0, y: -16 }}
-                transition={{ duration: reduced ? 0 : 0.5, ease: CEL_EASE }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, y: -12 }}
+                transition={{ duration: reduced ? 0 : 0.22, ease: CEL_EASE }}
               >
                 <div className="cel-cap-label">{b.label}</div>
                 <h3 className="cel-cap-h"><CelHeadline text={b.h} /></h3>
