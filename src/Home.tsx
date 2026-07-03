@@ -4,7 +4,7 @@ import { Reveal } from './lib/Reveal'
 import { useLenis, scrollToId } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
 import { DimsNetwork } from './lib/DimsNetwork'
-import { DIM_OBS } from './dimsGraph'
+import { DIM_OBS, DIM_EDGES } from './dimsGraph'
 import { Aurora } from './lib/Aurora'
 import { Celestial, CelStars, EarthBody, MoonBody, SunBody, MiniSystem } from './lib/Celestial'
 import { DrawArcs, ParallaxRings } from './lib/Ambient'
@@ -22,6 +22,10 @@ const LOGO = (
 )
 
 const LENS_KEYS = ['e', 'm', 's'] as const
+
+/* id -> dimension lookup for the relation chips on the detail card */
+const DIM_LOOKUP: Record<string, { k: 'e' | 'm' | 's'; zh: string; en: string }> = {}
+for (const lk of LENS_KEYS) for (const d of DIMENSIONS[lk]) DIM_LOOKUP[d.id] = { k: lk, zh: d.zh, en: d.en }
 const LENS_ICON = (
   <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" /></svg>
 )
@@ -301,10 +305,24 @@ function DimsSection() {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none" /></svg>
                   {tag}
                 </span>
-                {d && DIM_OBS[d.id] && <span className="dim-obs-tag">{lang === 'en' ? 'Verified in person · not scored' : '見面驗證 · 不入分'}</span>}
+                {d && DIM_OBS[d.id] && <span className="dim-obs-tag">{lang === 'en' ? 'In person' : '見面驗證'}</span>}
               </div>
               <div className="dim-detail-name">{name}</div>
               <div className="dim-detail-desc">{desc}</div>
+              {d && (() => {
+                const rels = DIM_EDGES.filter(([a, b]) => a === d.id || b === d.id).slice(0, 4)
+                if (!rels.length) return null
+                return (
+                  <div className="dim-rels">
+                    {rels.map(([a, b]) => {
+                      const oid = a === d.id ? b : a
+                      const o = DIM_LOOKUP[oid]
+                      if (!o) return null
+                      return <span key={oid} className={`dim-rel ${o.k}`}>{a === d.id ? '→' : '←'} {lang === 'en' ? o.en : o.zh}</span>
+                    })}
+                  </div>
+                )
+              })()}
               {ask && <div className="dim-ask"><span className="dim-ask-t"><AskText t={ask} /></span></div>}
             </motion.div>
           </AnimatePresence>

@@ -85,15 +85,21 @@
 /* canon-card style detail card: fixed size, lens-colored top border + number chip + ask block */
 .dim-detail{margin-top:24px;padding:16px 20px;border-radius:16px;background:#fff;border:1px solid var(--line);border-top:4px solid var(--acc,var(--earth));box-shadow:var(--shadow);width:25rem;max-width:100%;height:264px;overflow:hidden;display:flex;flex-direction:column}
 .dim-detail-in{display:flex;flex-direction:column;flex:1;min-height:0}
-.dim-detail-head{display:flex;align-items:center;gap:10px;min-width:0}
+.dim-detail-head{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:nowrap}
+.dim-detail-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dim-rels{display:flex;gap:6px;margin-top:9px;flex-wrap:nowrap;overflow:hidden}
+.dim-rel{flex:0 0 auto;font-size:.8rem;font-weight:600;padding:3px 10px;border-radius:8px;white-space:nowrap;max-width:11rem;overflow:hidden;text-overflow:ellipsis}
+.dim-rel.e{background:rgba(37,99,235,.1);color:#1d4ed8}
+.dim-rel.m{background:rgba(71,85,105,.12);color:#334155}
+.dim-rel.s{background:rgba(217,119,6,.12);color:#b45309}
 .dim-chipnum{flex:none;min-width:34px;height:26px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:var(--acc,var(--earth));color:#fff;font-family:var(--font-disp);font-weight:700;font-size:1rem;letter-spacing:.03em}
 .dim-lens-tag{display:inline-flex;align-items:center;gap:6px;font-size:1rem;font-weight:600;color:var(--acc,var(--earth));white-space:nowrap}
 .dim-lens-tag svg{width:16px;height:16px;flex:none}
-.dim-obs-tag{display:inline-flex;align-items:center;font-size:.82rem;font-weight:600;color:#b45309;background:rgba(217,119,6,.1);border:1px dashed rgba(217,119,6,.45);border-radius:8px;padding:2px 9px;margin-left:8px;white-space:nowrap}
+.dim-obs-tag{display:inline-flex;align-items:center;flex:0 0 auto;margin-left:auto;font-size:.8rem;font-weight:600;color:#b45309;background:rgba(217,119,6,.1);border:1px dashed rgba(217,119,6,.45);border-radius:8px;padding:3px 11px;white-space:nowrap}
 .dim-detail-name{margin-top:10px;font-family:var(--font-disp);font-weight:700;color:var(--ink);font-size:1.16rem;line-height:1.25;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dim-detail-desc{margin-top:6px;font-size:1.02rem;color:var(--ink-soft);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .dim-ask{margin-top:auto;padding:9px 12px;border-left:3px solid var(--acc,var(--earth));background:color-mix(in srgb,var(--acc,var(--earth)) 7%,#fff);border-radius:0 8px 8px 0;font-size:1rem;line-height:1.5;color:var(--ink-soft)}
-.dim-ask-t{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.dim-ask-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .dim-ask strong{color:var(--acc,var(--earth));font-weight:700}
 .dimgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:9px}
 .dimchip{font:inherit;text-align:left;width:100%;font-size:1rem;color:var(--ink-soft);padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s,border-color .2s,background .2s,color .2s}

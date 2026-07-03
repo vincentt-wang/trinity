@@ -37,11 +37,13 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
     let CX = 0, CY = 0, sunX = 0, sunY = 0
 
     type Node = { k: LensK; di: number; ring: number; angle: number; x: number; y: number; r: number; stickX: number | null; stickY: number | null; ret: boolean; retFromX: number; retFromY: number; retF: number }
-    // Ring radii are proportional to lens size: s has 23 dims (outer), e 21 (middle), m 16 (inner).
+    // Ring order follows the engine's reasoning order, inside out:
+    // Desirability (e) innermost — everything starts from demand — then
+    // Feasibility (m), with Viability (s) as the outermost ring.
     const RINGS = [
       { k: 's' as LensK, speed: 0.0011, tilt: 0.30, dir: 1, R: 0, Ry: 0 },
-      { k: 'e' as LensK, speed: 0.0015, tilt: -0.22, dir: -1, R: 0, Ry: 0 },
-      { k: 'm' as LensK, speed: 0.0019, tilt: 0.26, dir: 1, R: 0, Ry: 0 },
+      { k: 'm' as LensK, speed: 0.0015, tilt: -0.22, dir: -1, R: 0, Ry: 0 },
+      { k: 'e' as LensK, speed: 0.0019, tilt: 0.26, dir: 1, R: 0, Ry: 0 },
     ]
     let nodes: Node[] = []
 
@@ -52,7 +54,7 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       CX = W / 2; CY = H / 2
       const base = Math.min(W, H) * 0.46
-      RINGS[0].R = base * 1.0; RINGS[1].R = base * 0.74; RINGS[2].R = base * 0.48
+      RINGS[0].R = base * 1.0; RINGS[1].R = base * 0.74; RINGS[2].R = base * 0.5
       RINGS.forEach((r) => { r.Ry = r.R })
       nodes = []
       RINGS.forEach((ring, ri) => {
