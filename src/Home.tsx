@@ -326,73 +326,11 @@ function DimsSection() {
   )
 }
 
-// Module-level latch: the orb entrance is a one-shot. In dev, StrictMode
+// Module-level latch: the plate entrance is a one-shot. In dev, StrictMode
 // double-mounts the component, and reloading while already scrolled onto the
 // stack would otherwise replay the entrance spring a second time. Latching here
 // survives that remount so the cascade only ever plays once.
 let stackEntered = false
-
-/* The six stack layers as a small constellation — orbs of light on an orbit
- * trail, continuing the galaxy's language. The active layer lights up. */
-const STACK_ORBS = [
-  { a: '#7db3ff', b: '#2563eb' },
-  { a: '#aab6c8', b: '#475569' },
-  { a: '#fcd34d', b: '#d97706' },
-  { a: '#a5b4fc', b: '#4f46e5' },
-  { a: '#c4b5fd', b: '#7c3aed' },
-  { a: '#67c9ff', b: '#2563eb' },
-]
-const stackOrbPos = (i: number) => ({ x: 170 + Math.sin(i * 1.15 + 0.5) * 84, y: 56 + i * 90 })
-
-function StackOrbit({ active, onPick, entered, onEnter }: { active: number; onPick: (i: number) => void; entered: boolean; onEnter: () => void }) {
-  const pts = STACK_ORBS.map((_, i) => stackOrbPos(i))
-  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(1)} ${p.y}`).join(' ')
-  return (
-    <div className="stack-sky" aria-hidden>
-      <svg viewBox="0 0 340 570" width="100%" height="100%" style={{ overflow: 'visible' }}>
-        <defs>
-          {STACK_ORBS.map((o, i) => (
-            <radialGradient key={`g${i}`} id={`sorb-g${i}`} cx="38%" cy="32%">
-              <stop offset="0" stopColor={o.a} /><stop offset="1" stopColor={o.b} />
-            </radialGradient>
-          ))}
-          {STACK_ORBS.map((o, i) => (
-            <radialGradient key={`h${i}`} id={`sorb-h${i}`} cx="50%" cy="50%">
-              <stop offset="0" stopColor={o.a} stopOpacity=".55" /><stop offset="1" stopColor={o.a} stopOpacity="0" />
-            </radialGradient>
-          ))}
-        </defs>
-        <path className="orbit-line" d={line} />
-        <motion.g
-          initial={entered ? 'show' : 'hide'}
-          whileInView={entered ? undefined : 'show'}
-          onViewportEnter={onEnter}
-          viewport={{ once: true, margin: '-15% 0px' }}
-          variants={{ show: { transition: { staggerChildren: 0.08 } } }}
-        >
-          {STACK_ORBS.map((_, i) => {
-            const p = pts[i]
-            const on = active === i
-            return (
-              <motion.g
-                key={i}
-                className={`sorb${on ? ' on' : ''}`}
-                variants={{ hide: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 130, damping: 16 } } }}
-                onMouseEnter={() => onPick(i)}
-                style={{ cursor: 'pointer' }}
-              >
-                <circle className="sorb-halo" cx={p.x} cy={p.y} r={46} fill={`url(#sorb-h${i})`} />
-                <circle className="sorb-ring" cx={p.x} cy={p.y} r={28} />
-                <circle className="sorb-body" cx={p.x} cy={p.y} r={20} fill={`url(#sorb-g${i})`} />
-                <text className="sorb-n" x={p.x} y={p.y} dominantBaseline="central" textAnchor="middle">{String(i + 1).padStart(2, '0')}</text>
-              </motion.g>
-            )
-          })}
-        </motion.g>
-      </svg>
-    </div>
-  )
-}
 
 function StackSection() {
   const { lang } = useLang()
@@ -406,10 +344,11 @@ function StackSection() {
     setActive(Math.min(n - 1, Math.max(0, Math.floor(p * n))))
   })
   return (
-    <section id="stack" className="stack-scrolly sec-dark">
+    <section id="stack" className="stack-scrolly sec-soft">
+      <Aurora tone="mixed" />
       <div ref={ref} className="stack-track">
         <div className="stack-stage wrap">
-        <VScrollRail progress={scrollYProgress} steps={6} active={active} dark />
+        <VScrollRail progress={scrollYProgress} steps={6} active={active} />
         <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div>
         <div className="stack">
           <div className="stack-list">
@@ -423,7 +362,31 @@ function StackSection() {
               </button>
             ))}
           </div>
-          <StackOrbit active={active} onPick={setActive} entered={entered} onEnter={() => { stackEntered = true; setEntered(true) }} />
+          <div className="stack-iso" aria-hidden>
+            <motion.div
+              className="stack-iso-tilt"
+              initial={entered ? 'show' : 'hide'}
+              whileInView={entered ? undefined : 'show'}
+              onViewportEnter={() => { stackEntered = true; setEntered(true) }}
+              viewport={{ once: true, margin: '-15% 0px' }}
+              variants={{ show: { transition: { staggerChildren: 0.09, staggerDirection: -1 } } }}
+            >
+              <div className="iso-ground" />
+              {/* 01 sits on top; analysis drills downward — passed layers lift away above */}
+              {c.layers.map((s, i) => (
+                <motion.div
+                  key={s.n}
+                  className="iso-wrap"
+                  style={{ z: (c.layers.length - 1 - i) * 54 }}
+                  variants={{ hide: { opacity: 0, y: 110 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 110, damping: 17 } } }}
+                >
+                  <div className={`iso-plate p${i} ${active === i ? 'on' : i < active ? 'above' : ''}`} onMouseEnter={() => setActive(i)}>
+                    <span className="iso-n">{s.n}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
         </div>
       </div>
@@ -791,11 +754,11 @@ export default function Home({ onAnalyze, onInsight }: { onAnalyze: () => void; 
 
       <CelestialSection />
 
+      <DimsSection />
+
       <EngineScrolly />
 
       <StackSection />
-
-      <DimsSection />
 
       <FitSection />
 
