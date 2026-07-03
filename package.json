@@ -8,8 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "npm run build && gh-pages -d dist",
-    "deploy:cf": "DEPLOY_TARGET=cf vite build && npx wrangler@latest pages deploy dist --project-name=trinity"
+    "deploy": "DEPLOY_TARGET=cf vite build && npx wrangler@latest pages deploy dist --project-name=trinity",
+    "deploy:cf": "DEPLOY_TARGET=cf vite build && npx wrangler@latest pages deploy dist --project-name=trinity",
+    "deploy:ghredirect": "npx gh-pages -d gh-redirect --dotfiles"
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.42",
