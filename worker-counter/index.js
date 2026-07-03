@@ -9,7 +9,7 @@
  *  - one increment per IP per hour
  *  - global cap of 25 increments per UTC day; over the cap the count freezes
  */
-const ORIGINS = ['https://vincentt-wang.github.io', 'http://localhost:5173']
+const ORIGINS = ['https://trinity.easeai.com.tw', 'https://trinity-7x1.pages.dev', 'https://vincentt-wang.github.io', 'http://localhost:5173']
 const DAILY_CAP = 25
 const cors = (o) => ({
   'Access-Control-Allow-Origin': ORIGINS.includes(o) ? o : ORIGINS[0],
