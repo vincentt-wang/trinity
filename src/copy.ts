@@ -183,7 +183,7 @@ export const COPY = {
             'The result on this page is a sample. Your real read is prepared by hand by the Trinity Check analyst team and emailed within 24 hours.',
             'The engine derives your Desirability, Feasibility and Viability scores. You never score yourself.',
             'This is an independent opinion for information only. It is not investment, legal or financial advice.',
-            'Your information is kept confidential by the analyst team, never sold, retained up to 12 months, and deletable anytime via vincent@easeai.com.tw.',
+            'Your information is kept confidential by the analyst team, never sold, retained up to 12 months, and deletable anytime via {email}.',
           ],
           tracks: {
             title: 'Who sees your idea',
@@ -681,7 +681,7 @@ export const COPY = {
             '本頁的結果是範例。你真正的判讀由 Trinity Check 分析團隊親手準備，並在 24 小時內寄到你的信箱。',
             '欲求性、可行性、存續性的分數由引擎推導，你不需要為自己評分。',
             '這是一份獨立意見，僅供參考，不構成任何投資、法律或財務建議。',
-            '你的資料由分析團隊保密處理、絕不販售、保存最長 12 個月，可隨時來信 vincent@easeai.com.tw 要求刪除。',
+            '你的資料由分析團隊保密處理、絕不販售、保存最長 12 個月，可隨時來信 {email} 要求刪除。',
           ],
           tracks: {
             title: '誰會看到你的點子',

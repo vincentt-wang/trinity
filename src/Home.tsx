@@ -46,8 +46,9 @@ function VScrollRail({ progress, steps, active, dark }: { progress: MotionValue<
 /* ---------- Celestial Trinity: the brand story, scroll-driven camera ---------- */
 const CEL_EASE = [0.2, 0.7, 0.2, 1] as const
 const CEL_FOCI = ['earth', 'moon', 'sun', 'all'] as const
-const CEL_STEPS = [0, 0.27, 0.53, 0.79, 1] as const
-const celStepAt = (v: number) => (v < 0.27 ? 0 : v < 0.53 ? 1 : v < 0.79 ? 2 : 3)
+// caption switch points sit near the midpoint of each camera fly-between
+// (close-ups land at ~0.17 earth / 0.36 moon / 0.58 sun / 0.82 all)
+const celStepAt = (v: number) => (v < 0.27 ? 0 : v < 0.47 ? 1 : v < 0.7 ? 2 : 3)
 
 /* the bodies themselves as the section's scroll-progress indicator */
 const CELPROG = [
@@ -91,15 +92,6 @@ function CelestialSection() {
   useMotionValueEvent(scrollYProgress, 'change', (v) => setStep(celStepAt(v)))
   const reduced = useReducedMotion()
 
-  /* progress within the current step (0..1): drives the camera push-in and
-   * the subtitle's scroll-tied drift, so every scrolled pixel shows on screen */
-  const celLocal = useTransform(scrollYProgress, (v) => {
-    const i = celStepAt(v)
-    return Math.min(1, Math.max(0, (v - CEL_STEPS[i]) / (CEL_STEPS[i + 1] - CEL_STEPS[i])))
-  })
-  const capScale = useTransform(celLocal, [0, 1], [0.88, 1.12])
-  const capY = useTransform(celLocal, [0, 1], [22, -24])
-
   const [narrow, setNarrow] = useState(false)
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 920px)')
@@ -135,29 +127,30 @@ function CelestialSection() {
     <section id="celestial" className="cel-scrolly">
       <div ref={ref} className="cel-track">
         <div className="cel-stage">
+          <div className="cel-galaxy" aria-hidden />
           <CelStars />
           <CelProgress progress={scrollYProgress} active={step} />
           <div className="cel-head">
             <div className="eyebrow">{c.kicker}</div>
             <h2 className="cel-title">{c.title}</h2>
           </div>
-          <div className="cel-viz"><Celestial focus={CEL_FOCI[step]} drive={reduced ? undefined : celLocal} /></div>
-          <motion.div className="cel-caption" style={reduced ? undefined : { scale: capScale, y: capY }}>
-            <AnimatePresence mode="wait">
+          <div className="cel-viz"><Celestial focus={CEL_FOCI[step]} cam={reduced ? undefined : scrollYProgress} /></div>
+          <div className="cel-caption">
+            <AnimatePresence initial={false}>
               <motion.div
                 key={step}
                 className={`cel-cap ${b.k}`}
-                initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 26 }}
+                initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: -18 }}
-                transition={{ duration: reduced ? 0 : 0.45, ease: CEL_EASE }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, y: -16 }}
+                transition={{ duration: reduced ? 0 : 0.5, ease: CEL_EASE }}
               >
                 <div className="cel-cap-label">{b.label}</div>
                 <h3 className="cel-cap-h"><CelHeadline text={b.h} /></h3>
                 <p className="cel-cap-s">{b.s}</p>
               </motion.div>
             </AnimatePresence>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

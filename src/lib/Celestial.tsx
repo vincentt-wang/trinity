@@ -28,6 +28,23 @@ const EA0 = -0.9
 const MA0 = 0.6
 const earthAt = (a: number) => ({ x: SUN.x + 174 * Math.cos(a), y: SUN.y + 174 * Math.sin(a) })
 
+/* Continuous camera keyframes along the section's overall scroll progress
+ * (0..1). The camera center + zoom are interpolated smoothly BETWEEN these,
+ * so every scrolled pixel maps to one uninterrupted push-in — no per-step
+ * reset, no zoom snap at boundaries. Each key names a live body whose real
+ * orbital position is resolved each frame. */
+type CamKey = { at: number; b: CelFocus; z: number }
+const CAM_KF: CamKey[] = [
+  { at: 0.00, b: 'earth', z: 2.15 },
+  { at: 0.17, b: 'earth', z: 3.05 },
+  { at: 0.36, b: 'moon', z: 3.35 },
+  { at: 0.58, b: 'sun', z: 1.95 },
+  { at: 0.82, b: 'all', z: 1.02 },
+  { at: 1.00, b: 'all', z: 0.92 },
+]
+const smoothstep = (t: number) => t * t * (3 - 2 * t)
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+
 /* ---------- Body renderers ----------
  * Shared between the orrery and the section's body-progress indicator.
  * Each draws a clean radial-gradient disc at local (0,0) with radius r;
@@ -78,18 +95,36 @@ export function MiniSystem({ r }: { r: number }) {
   )
 }
 
-/** Full-bleed star backdrop: fills its positioned parent edge to edge (no frame). */
+/** Full-bleed galaxy backdrop: a soft milky-way haze (CSS, behind) plus a
+ * dense star field weighted toward a diagonal band, so the scene reads as a
+ * corner of a galaxy rather than empty white. Tinted stars pick up the three
+ * lens colours. Fills its positioned parent edge to edge (no frame). */
 export function CelStars() {
   const stars = useMemo(() => {
     let s = 42
     const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647 }
-    return Array.from({ length: 84 }, (_, i) => ({
-      id: i,
-      x: Math.round(rnd() * 1600),
-      y: Math.round(rnd() * 900),
-      r: +(0.7 + rnd() * 1.3).toFixed(2),
-      d: +(rnd() * 6).toFixed(2),
-    }))
+    return Array.from({ length: 168 }, (_, i) => {
+      // ~58% of stars cluster along a diagonal milky-way band (top-right to
+      // bottom-left); the rest scatter across the whole field.
+      let x = rnd() * 1600
+      let y = rnd() * 900
+      const inBand = rnd() < 0.58
+      if (inBand) {
+        x = rnd() * 1600
+        y = 760 - x * 0.46 + (rnd() - 0.5) * 250
+      }
+      const tv = rnd()
+      const tint = tv < 0.12 ? 'e' : tv > 0.9 ? 's' : tv > 0.82 ? 'm' : ''
+      return {
+        id: i,
+        x: Math.round(x),
+        y: Math.round(Math.max(-20, Math.min(920, y))),
+        r: +((inBand ? 0.5 : 0.7) + rnd() * (inBand ? 1.1 : 1.6)).toFixed(2),
+        d: +(rnd() * 6).toFixed(2),
+        big: !inBand && rnd() > 0.86,
+        tint,
+      }
+    })
   }, [])
   return (
     <svg
@@ -100,21 +135,28 @@ export function CelStars() {
     >
       <g className="cel-stars">
         {stars.map((st) => (
-          <circle key={st.id} className="cel-star" cx={st.x} cy={st.y} r={st.r} style={{ animationDelay: `${st.d}s` }} />
+          <circle
+            key={st.id}
+            className={`cel-star${st.tint ? ' ' + st.tint : ''}${st.big ? ' big' : ''}`}
+            cx={st.x}
+            cy={st.y}
+            r={st.r}
+            style={{ animationDelay: `${st.d}s` }}
+          />
         ))}
       </g>
     </svg>
   )
 }
 
-export function Celestial({ focus, drive }: { focus: CelFocus; drive?: MotionValue<number> }) {
+export function Celestial({ focus, cam: camMv }: { focus: CelFocus; cam?: MotionValue<number> }) {
   const earthG = useRef<SVGGElement>(null)
   const moonG = useRef<SVGGElement>(null)
   const camG = useRef<SVGGElement>(null)
   const focusRef = useRef(focus)
   focusRef.current = focus
-  const driveRef = useRef(drive)
-  driveRef.current = drive
+  const camMvRef = useRef(camMv)
+  camMvRef.current = camMv
 
   const reduced = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
 
@@ -133,7 +175,7 @@ export function Celestial({ focus, drive }: { focus: CelFocus; drive?: MotionVal
     let raf = 0
     const t0 = performance.now()
     let last = t0
-    const cam = { x: VC, y: VC, s: 1 }
+    const cam = { x: VC, y: VC, s: 2.15 }
     const loop = (t: number) => {
       raf = requestAnimationFrame(loop)
       const s = (t - t0) / 1000
@@ -145,16 +187,26 @@ export function Celestial({ focus, drive }: { focus: CelFocus; drive?: MotionVal
       earthG.current?.setAttribute('transform', `translate(${e.x.toFixed(2)} ${e.y.toFixed(2)})`)
       moonG.current?.setAttribute('transform', `translate(${mx.toFixed(2)} ${my.toFixed(2)})`)
 
-      // camera: chase the focused body's live position with a damped lerp
-      const f = focusRef.current
-      const tgt = f === 'earth' ? e : f === 'moon' ? { x: e.x + mx, y: e.y + my } : f === 'sun' ? SUN : { x: VC, y: VC }
+      // live world position of each possible camera target
+      const posOf = (b: CelFocus) =>
+        b === 'earth' ? e : b === 'moon' ? { x: e.x + mx, y: e.y + my } : b === 'sun' ? SUN : { x: VC, y: VC }
+
+      // continuous camera target: interpolate between the two keyframes that
+      // straddle the current scroll progress — no discrete focus, no reset.
+      const p = Math.max(0, Math.min(1, camMvRef.current?.get() ?? 0))
+      let i = 0
+      while (i < CAM_KF.length - 2 && p > CAM_KF[i + 1].at) i++
+      const a = CAM_KF[i], b2 = CAM_KF[i + 1]
+      const tt = smoothstep(Math.max(0, Math.min(1, (p - a.at) / (b2.at - a.at))))
+      const pa = posOf(a.b), pb = posOf(b2.b)
+      const tgt = { x: lerp(pa.x, pb.x, tt), y: lerp(pa.y, pb.y, tt) }
+      const zoomTgt = lerp(a.z, b2.z, tt)
+
+      // light critically-damped follow smooths orbital micro-motion while the
+      // scroll-tied target keeps the push-in locked to the wheel.
       const dt = Math.min((t - last) / 1000, 0.05)
       last = t
-      const k = 1 - Math.exp(-3.4 * dt)
-      // scroll drive: keep pushing in through a body's step (pull back on 'all'),
-      // so the planet visibly grows/shrinks with every scrolled pixel
-      const lv = driveRef.current?.get() ?? 0.5
-      const zoomTgt = ZOOM[f] * (f === 'all' ? 1.18 - 0.28 * lv : 0.76 + 0.52 * lv)
+      const k = 1 - Math.exp(-14 * dt)
       cam.x += (tgt.x - cam.x) * k
       cam.y += (tgt.y - cam.y) * k
       cam.s += (zoomTgt - cam.s) * k

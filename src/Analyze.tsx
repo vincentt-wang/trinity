@@ -70,7 +70,9 @@ function AzAmbient({ phase }: { phase: Phase }) {
 }
 
 // HITL mini-loop: submissions email here; Vincent runs deal-lens by hand, then automates later.
-const FORM_TO = 'vincent@easeai.com.tw'
+// Address is base64-encoded so scrapers that regex the bundle for e-mails can't harvest it;
+// it is decoded only at submit time. Swap for a formsubmit alias when available for full cover.
+const FORM_TO = atob('dmluY2VudEBlYXNlYWkuY29tLnR3')
 const COLS = { e: '#2563eb', m: '#475569', s: '#d97706' } as const
 const SCORES = { e: 72, m: 64, s: 58 } as const
 const ORDER = ['e', 'm', 's'] as const
@@ -249,7 +251,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
               <div className="az-decl-h">{intro.declTitle}</div>
               <ul>
                 {intro.decl.map((d, i) => (
-                  <li key={i}><span className="az-decl-ic">{CHECK}</span><span>{d}</span></li>
+                  <li key={i}><span className="az-decl-ic">{CHECK}</span><span>{d.replace('{email}', FORM_TO)}</span></li>
                 ))}
               </ul>
             </motion.div>
