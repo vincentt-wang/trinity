@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { DIMENSIONS } from '../copy'
-import { DIM_OBS, DIM_EDGES } from '../dimsGraph'
+import { DIM_MEET, DIM_EDGES } from '../dimsGraph'
 import type { Lang } from '../i18n'
 
 type LensK = 'e' | 'm' | 's'
@@ -231,14 +231,15 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       ctx.fillText('DIMENSIONS', CX, CY + (W < 600 ? 11 : 13))
       ctx.restore()
 
-      // nodes — HITL observation cards render hollow with a dashed ring so
-      // anyone can see which dimensions never enter the score
+      // nodes: the 4 in-person deep-dive cards render hollow with a dashed ring.
+      // They score normally like every other card, but always carry a follow-up
+      // probe into the founder meeting (v6 semantics).
       nodes.forEach((nd, i) => {
         const isH = i === hovI
         const isLinked = linked.has(i)
         const hot = nd.k === act
         const c = COL[nd.k]
-        const isObs = DIM_OBS[DIMENSIONS[nd.k][nd.di].id]
+        const isObs = DIM_MEET[DIMENSIONS[nd.k][nd.di].id]
         const baseAlpha = isLinked ? 1 : hot ? 1 : 0.42
         const dotR = isH ? nd.r * 1.3 : isLinked ? nd.r * 1.15 : nd.r
         // soft halo
@@ -271,7 +272,7 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
       if (hovI >= 0) {
         const nd = nodes[hovI]
         const dim = DIMENSIONS[nd.k][nd.di]
-        const label = (live.current.lang === 'en' ? dim.en : dim.zh) + (DIM_OBS[dim.id] ? (live.current.lang === 'en' ? ' · in-person' : ' · 見面驗證') : '')
+        const label = (live.current.lang === 'en' ? dim.en : dim.zh) + (DIM_MEET[dim.id] ? (live.current.lang === 'en' ? ' · deep dive' : ' · 深掘') : '')
         ctx.font = `600 13px "Inter","Noto Sans TC",sans-serif`
         const tw = ctx.measureText(label).width
         const px = Math.min(Math.max(nd.x, tw / 2 + 14), W - tw / 2 - 14)

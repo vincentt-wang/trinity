@@ -4,7 +4,7 @@ import { Reveal } from './lib/Reveal'
 import { useLenis, scrollToId } from './lib/useLenis'
 import { HeroNetwork } from './lib/HeroNetwork'
 import { DimsNetwork } from './lib/DimsNetwork'
-import { DIM_OBS, DIM_EDGES } from './dimsGraph'
+import { DIM_MEET, DIM_EDGES } from './dimsGraph'
 import { Aurora } from './lib/Aurora'
 import { Celestial, CelStars, EarthBody, MoonBody, SunBody, MiniSystem } from './lib/Celestial'
 import { DrawArcs, ParallaxRings } from './lib/Ambient'
@@ -305,7 +305,7 @@ function DimsSection() {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none" /></svg>
                   {tag}
                 </span>
-                {d && DIM_OBS[d.id] && <span className="dim-obs-tag">{lang === 'en' ? 'In person' : '見面驗證'}</span>}
+                {d && DIM_MEET[d.id] && <span className="dim-obs-tag">{lang === 'en' ? 'In-person deep dive' : '見面深掘'}</span>}
               </div>
               <div className="dim-detail-name">{name}</div>
               <div className="dim-detail-desc">{desc}</div>
