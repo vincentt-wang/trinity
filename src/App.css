@@ -139,7 +139,7 @@
 /* engine — Sui-style pinned scroll narrative */
 .engine-scrolly{background:#0b0e1f;color:#c7cdec;position:relative}
 /* short clean fade: light dimensions section above into the dark engine */
-.engine-scrolly::before{content:"";position:absolute;top:0;left:0;right:0;height:88px;z-index:3;pointer-events:none;background:linear-gradient(var(--bg-soft),rgba(11,14,31,0))}
+.engine-scrolly::before{content:"";position:absolute;top:0;left:0;right:0;height:26px;z-index:3;pointer-events:none;background:linear-gradient(var(--bg-soft),rgba(11,14,31,0))}
 .scrolly-track{height:240vh;position:relative}
 .scrolly-stage{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,80px);align-items:center}
 @media(max-width:920px){.scrolly-track{height:auto}.scrolly-stage{position:relative;height:auto;grid-template-columns:1fr;gap:40px;padding:120px 0}}
@@ -163,7 +163,7 @@
 /* CTA full-bleed dark */
 .cta-sec{position:relative}
 /* blend the light section above into the dark CTA */
-.cta-sec::before{content:"";position:absolute;top:0;left:0;right:0;height:90px;z-index:1;pointer-events:none;background:linear-gradient(var(--bg-soft),rgba(11,14,31,0))}
+.cta-sec::before{content:"";position:absolute;top:0;left:0;right:0;height:26px;z-index:1;pointer-events:none;background:linear-gradient(var(--bg-soft),rgba(11,14,31,0))}
 .cta-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 50% at 50% 60%,rgba(96,165,250,.28),rgba(124,58,237,.16) 40%,transparent 72%);animation:ctapulse 7s ease-in-out infinite}
 @keyframes ctapulse{0%,100%{opacity:.7}50%{opacity:1}}
 .cta{text-align:center;max-width:46ch;margin-inline:auto;position:relative}
@@ -282,8 +282,13 @@ footer .wrap{position:relative;z-index:1}
 }
 
 /* ============ The Trinity stack (Innovation, engineered) ============ */
-.stack{margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);align-items:center}
-@media(max-width:880px){.stack{grid-template-columns:1fr;gap:34px}}
+.stack{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);align-items:start}
+@media(max-width:880px){.stack{grid-template-columns:1fr;gap:34px;align-items:center}}
+/* stack lead stays on one line (was orphaning the last word) */
+.stack-stage .sec-head{max-width:none}
+.stack-stage .sec-head h2{max-width:14ch}
+.stack-stage .sec-head .lead{max-width:none;white-space:nowrap}
+@media(max-width:880px){.stack-stage .sec-head .lead{white-space:normal}}
 .stack-list{display:flex;flex-direction:column;gap:4px}
 .stack-item{display:grid;grid-template-columns:54px 1fr;gap:16px;align-items:start;text-align:left;background:none;border:0;cursor:pointer;padding:16px 18px;border-radius:14px;font:inherit;transition:background .3s var(--ease),box-shadow .3s,transform .3s}
 .stack-item.on{background:var(--bg-card);box-shadow:var(--shadow)}
@@ -372,13 +377,15 @@ footer .wrap{position:relative;z-index:1}
 .hero{background-size:170% 170%;animation:aurora 22s ease-in-out infinite}
 @keyframes aurora{0%,100%{background-position:0% 0%}50%{background-position:100% 55%}}
 
-.paths{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:50px}
+.paths{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:50px;align-items:stretch}
 @media(max-width:860px){.paths{grid-template-columns:1fr}}
-.path{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:9px;padding:30px 30px 28px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);cursor:pointer;font:inherit;color:#fff;position:relative;transition:transform .3s var(--ease),background .3s,border-color .3s}
+/* Stagger wraps each card in a div; make the wrapper stretch so all cards match */
+.paths > *{display:flex}
+.path{flex:1;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:9px;padding:30px 30px 28px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);cursor:pointer;font:inherit;color:#fff;position:relative;transition:transform .3s var(--ease),background .3s,border-color .3s}
 .path:hover{transform:translateY(-5px);background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.26)}
 .path.primary{background:linear-gradient(135deg,rgba(96,165,250,.24),rgba(124,58,237,.2));border-color:rgba(147,197,253,.5)}
-.path-h{font-family:var(--font-disp);font-weight:700;font-size:1.32rem;color:#fff;padding-right:30px}
-.path-p{font-size:1.02rem;color:#aab2d8;line-height:1.5;max-width:30ch}
+.path-h{font-family:var(--font-disp);font-weight:700;font-size:1.32rem;color:#fff;padding-right:30px;white-space:nowrap}
+.path-p{font-size:1.02rem;color:#aab2d8;line-height:1.5;max-width:34ch;text-wrap:balance}
 .path-go{position:absolute;top:26px;right:26px;color:#93c5fd;transition:transform .3s var(--ease)}
 .path:hover .path-go{transform:translateX(6px)}
 
@@ -448,7 +455,7 @@ footer .wrap{position:relative;z-index:1}
 /* ============ The Trinity stack: pinned scroll-tied ============ */
 .stack-scrolly{position:relative;background:var(--bg-soft)}
 /* short clean fade: dark engine above into the light stack */
-.stack-scrolly::before{content:"";position:absolute;top:0;left:0;right:0;height:88px;z-index:2;pointer-events:none;background:linear-gradient(#0b0e1f,rgba(243,245,251,0))}
+.stack-scrolly::before{content:"";position:absolute;top:0;left:0;right:0;height:26px;z-index:2;pointer-events:none;background:linear-gradient(#0b0e1f,rgba(243,245,251,0))}
 .stack-track{position:relative;z-index:1;height:250vh}
 .stack-stage{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:96px 0}
 @media(max-width:880px){
@@ -492,7 +499,7 @@ footer .wrap{position:relative;z-index:1}
 /* ============ Dims: full-bleed network section ============ */
 .dims-sec{position:relative;overflow:hidden}
 /* short clean fade: deep-space celestial above into the light dimensions section */
-.dims-sec::before{content:"";position:absolute;top:0;left:0;right:0;height:90px;z-index:3;pointer-events:none;background:linear-gradient(#070a18,rgba(243,245,251,0))}
+.dims-sec::before{content:"";position:absolute;top:0;left:0;right:0;height:26px;z-index:3;pointer-events:none;background:linear-gradient(#070a18,rgba(243,245,251,0))}
 .dims-net-layer{position:absolute;top:0;right:0;bottom:0;width:64vw;z-index:0}
 .dims-overlay{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:30px;min-height:74vh;pointer-events:none}
 .dims-copy{max-width:30rem}
@@ -788,7 +795,7 @@ footer .wrap{position:relative;z-index:1}
 /* deep-space section: the Milky Way here IS the 60 dimensions */
 .cel-scrolly{position:relative;overflow:clip;--gal:.7}
 /* soften the seam where the light section above meets deep space */
-.cel-scrolly::before{content:"";position:absolute;top:0;left:0;right:0;height:84px;z-index:3;pointer-events:none;
+.cel-scrolly::before{content:"";position:absolute;top:0;left:0;right:0;height:26px;z-index:3;pointer-events:none;
   background:linear-gradient(var(--bg),rgba(18,23,52,0))}
 .cel-track{position:relative;z-index:1;height:400vh}
 .cel-stage{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;
@@ -809,7 +816,7 @@ footer .wrap{position:relative;z-index:1}
 .cel-cap.e strong,.cel-row.e strong{color:#7db3ff}
 .cel-cap.m strong,.cel-row.m strong{color:#dbe3f4}
 .cel-cap.s strong,.cel-row.s strong{color:#fcd34d}
-.cel-cap.a strong,.cel-row.a strong{background:linear-gradient(96deg,#bcd8ff 0%,#ffffff 50%,#ffe28f 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 10px rgba(150,180,255,.5))}
+.cel-cap.a strong,.cel-row.a strong{background:linear-gradient(96deg,#8fc3ff 0%,#ffffff 46%,#ffd873 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:none}
 /* mobile: static scene + stacked compact rows, no pin */
 .cel-mstage{position:relative;overflow:hidden;padding:110px 0;text-align:center}
 .cel-mstage > *{position:relative;z-index:1}
