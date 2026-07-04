@@ -300,7 +300,7 @@ const COPY: Record<L, Copy> = {
     title: '創業原則卡',
     sub: 'Innovation Trinity · 60 張原則卡',
     tagline: '把 300 頁的創業工作坊，蒸餾成 60 張你隨手能抽的原則卡。',
-    share: '複製這頁連結',
+    share: '分享這頁連結',
     shareCopied: '已複製連結',
     drawH: '抽一張，讓原則說話',
     drawSub: '腦力激盪卡住的時候抽一張，用它的判準對照你手上的問題。翻到背面，看判準、範例、常見誤解與動手練習。',
@@ -335,7 +335,7 @@ const COPY: Record<L, Copy> = {
     title: 'The Principle Deck',
     sub: 'Innovation Trinity · 60 Principle Cards',
     tagline: '300 pages of the venture workshop, distilled into 60 principle cards you can pull anytime.',
-    share: 'Copy link to this page',
+    share: 'Share this page',
     shareCopied: 'Link copied',
     drawH: 'Pull a card, let the principle speak',
     drawSub: 'Stuck in a brainstorm? Pull one and test its criterion against the problem in front of you. Flip it over for the rule, a real example, the common misread, and a hands-on drill.',
@@ -420,14 +420,6 @@ export default function Materials() {
           <h1 className="mat-title">{c.title}</h1>
           <div className="mat-sub">{LOGO}<span>{c.sub}</span></div>
           <p className="mat-tag">{c.tagline}</p>
-          <button className="mat-share" onClick={share}>
-            {copied ? (
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-            ) : (
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7" /><path d="M16 6l-4-4-4 4M12 2v13" /></svg>
-            )}
-            {copied ? c.shareCopied : c.share}
-          </button>
         </motion.div>
 
         {/* Draw — the interactive lightbox */}
@@ -505,6 +497,17 @@ export default function Materials() {
             </>
           )}
         </section>
+
+        <div className="mat-share-row">
+          <button className="mat-share" onClick={share}>
+            {copied ? (
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+            ) : (
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7" /><path d="M16 6l-4-4-4 4M12 2v13" /></svg>
+            )}
+            {copied ? c.shareCopied : c.share}
+          </button>
+        </div>
 
         <div className="mat-disc">{c.disc}</div>
       </div>
