@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode, type CSSPropertie
 import { motion } from 'framer-motion'
 import { useLang } from './i18n'
 import { Nav } from './lib/Nav'
+import { urlFor } from './router'
 import { TCARDS, TD_CAT, type TCard } from './canonCards'
 
 const WAITLIST_URL = 'https://trinity-counter.comicbnb.workers.dev/waitlist'
@@ -89,32 +90,39 @@ function MiniFront({ card, lang }: { card: TCard; lang: L }) {
   )
 }
 
-/* the hero: a hand of 60 cards fanning open — backs on the wings, three real fronts in the middle */
+/* the hero: a hand of 60 cards fanning open — backs on the wings, three real fronts in the middle.
+   opens wide on load, then fans out even further on hover. */
 const FAN_PICK = { s: TCARDS.find((c) => c.k === 'S')!, d: TCARDS.find((c) => c.k === 'D')!, v: TCARDS.find((c) => c.k === 'V')! }
+const FAN_BASE = [-36, -18, 0, 18, 36]
+const FAN_OPEN = [-56, -28, 0, 28, 56]
 function HeroFan({ lang }: { lang: L }) {
   const reduce = REDUCED
-  const items = [
-    { key: 'bl', ang: -30, node: <div className="mat-hb"><CardBack small /></div> },
-    { key: 'd', ang: -15, node: <MiniFront card={FAN_PICK.d} lang={lang} /> },
-    { key: 's', ang: 0, node: <MiniFront card={FAN_PICK.s} lang={lang} /> },
-    { key: 'v', ang: 15, node: <MiniFront card={FAN_PICK.v} lang={lang} /> },
-    { key: 'br', ang: 30, node: <div className="mat-hb"><CardBack small /></div> },
+  const [open, setOpen] = useState(false)
+  const nodes = [
+    <div className="mat-hb"><CardBack small /></div>,
+    <MiniFront card={FAN_PICK.d} lang={lang} />,
+    <MiniFront card={FAN_PICK.s} lang={lang} />,
+    <MiniFront card={FAN_PICK.v} lang={lang} />,
+    <div className="mat-hb"><CardBack small /></div>,
   ]
   return (
-    <div className="mat-herofan">
+    <div className="mat-herofan" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <div className="mat-halo" aria-hidden />
-      {items.map((it, i) => (
-        <motion.div
-          key={it.key}
-          className="mat-fancard"
-          initial={reduce ? { rotate: it.ang, opacity: 1 } : { rotate: 0, y: 26, opacity: 0, scale: 0.92 }}
-          animate={{ rotate: it.ang, y: 0, opacity: 1, scale: 1 }}
-          transition={{ delay: reduce ? 0 : 0.12 + i * 0.08, type: 'spring', stiffness: 130, damping: 15 }}
-          style={{ zIndex: 6 - Math.abs(it.ang) / 15 } as CSSProperties}
-        >
-          {it.node}
-        </motion.div>
-      ))}
+      {nodes.map((node, i) => {
+        const ang = reduce ? FAN_BASE[i] : (open ? FAN_OPEN[i] : FAN_BASE[i])
+        return (
+          <motion.div
+            key={i}
+            className="mat-fancard"
+            initial={reduce ? { rotate: FAN_BASE[i], opacity: 1 } : { rotate: 0, y: 30, opacity: 0, scale: 0.9 }}
+            animate={{ rotate: ang, y: open ? -10 : 0, opacity: 1, scale: open ? 1.03 : 1 }}
+            transition={{ type: 'spring', stiffness: 140, damping: 15, delay: reduce ? 0 : 0.1 + i * 0.07 }}
+            style={{ zIndex: 6 - Math.abs(FAN_BASE[i]) / 18 } as CSSProperties}
+          >
+            {node}
+          </motion.div>
+        )
+      })}
     </div>
   )
 }
@@ -276,6 +284,7 @@ function DeckDraw({ lang, cta }: { lang: L; cta: { draw: string; reveal: string;
 /* ── page copy ── */
 type Copy = {
   back: string; badge: string; title: string; sub: string; tagline: string
+  share: string; shareCopied: string
   drawH: string; drawSub: string
   cta: { draw: string; reveal: string; again: string; empty: string }
   whatH: string; what: { t: string; d: string }[]
@@ -291,6 +300,8 @@ const COPY: Record<L, Copy> = {
     title: '創業原則卡',
     sub: 'Innovation Trinity · 60 張原則卡',
     tagline: '把 300 頁的創業工作坊，蒸餾成 60 張你隨手能抽的原則卡。',
+    share: '複製這頁連結',
+    shareCopied: '已複製連結',
     drawH: '抽一張，讓原則說話',
     drawSub: '腦力激盪卡住的時候抽一張，用它的判準對照你手上的問題。翻到背面，看判準、範例、常見誤解與動手練習。',
     cta: { draw: '抽一張', reveal: '翻到背面', again: '再抽一張', empty: '從牌堆抽一張' },
@@ -324,6 +335,8 @@ const COPY: Record<L, Copy> = {
     title: 'The Principle Deck',
     sub: 'Innovation Trinity · 60 Principle Cards',
     tagline: '300 pages of the venture workshop, distilled into 60 principle cards you can pull anytime.',
+    share: 'Copy link to this page',
+    shareCopied: 'Link copied',
     drawH: 'Pull a card, let the principle speak',
     drawSub: 'Stuck in a brainstorm? Pull one and test its criterion against the problem in front of you. Flip it over for the rule, a real example, the common misread, and a hands-on drill.',
     cta: { draw: 'Draw a card', reveal: 'Flip it over', again: 'Draw another', empty: 'Draw from the deck' },
@@ -368,6 +381,15 @@ export default function Materials() {
   }, [lang])
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const share = async () => {
+    const url = urlFor('materials')
+    try {
+      if (navigator.share) { await navigator.share({ title: c.title, url }); return }
+      await navigator.clipboard.writeText(url)
+    } catch { /* clipboard blocked — the button still flips to confirm */ }
+    setCopied(true); window.setTimeout(() => setCopied(false), 2200)
+  }
   const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
   const join = () => {
     if (!valid) return
@@ -398,6 +420,14 @@ export default function Materials() {
           <h1 className="mat-title">{c.title}</h1>
           <div className="mat-sub">{LOGO}<span>{c.sub}</span></div>
           <p className="mat-tag">{c.tagline}</p>
+          <button className="mat-share" onClick={share}>
+            {copied ? (
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+            ) : (
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7" /><path d="M16 6l-4-4-4 4M12 2v13" /></svg>
+            )}
+            {copied ? c.shareCopied : c.share}
+          </button>
         </motion.div>
 
         {/* Draw — the interactive lightbox */}

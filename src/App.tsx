@@ -6,34 +6,22 @@ import Analyze from './Analyze'
 import Insight from './Insight'
 import Materials from './Materials'
 import { LangProvider } from './i18n'
-
-type View = 'home' | 'analyze' | 'insight' | 'materials'
-const SUBVIEWS = ['analyze', 'insight', 'materials']
-const viewFromHash = (): View => {
-  const h = location.hash.replace(/^#\/?/, '')
-  return SUBVIEWS.includes(h) ? (h as View) : 'home'
-}
+import { viewFromLocation, routeTo, type View } from './router'
 
 const EASE = [0.2, 0.7, 0.2, 1] as const
 
 export default function App() {
-  // view is mirrored in the URL hash so refresh / back-forward keep the page
-  const [view, setView] = useState<View>(viewFromHash)
+  // view lives in the URL path (/, /analyze, /insight, /deck) so every page is shareable + indexable
+  const [view, setView] = useState<View>(viewFromLocation)
 
   useEffect(() => {
-    const onHash = () => setView(viewFromHash())
-    window.addEventListener('hashchange', onHash)
-    return () => window.removeEventListener('hashchange', onHash)
+    const sync = () => setView(viewFromLocation())
+    window.addEventListener('popstate', sync)
+    window.addEventListener('trinity:route', sync)
+    return () => { window.removeEventListener('popstate', sync); window.removeEventListener('trinity:route', sync) }
   }, [])
   useEffect(() => {
-    if (view === 'home') {
-      // clear only a sub-view hash; leave home section anchors (#celestial…) alone
-      if (viewFromHash() !== 'home') history.replaceState(null, '', location.pathname + location.search)
-    } else {
-      if (location.hash !== '#' + view) location.hash = view
-      // a sub-page always opens at the top, regardless of where the last view was scrolled
-      window.scrollTo(0, 0)
-    }
+    if (view !== 'home') window.scrollTo(0, 0) // a sub-page always opens at the top
   }, [view])
 
   return (
@@ -47,7 +35,7 @@ export default function App() {
           exit={{ opacity: 0, x: -80 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <Home onAnalyze={() => setView('analyze')} onInsight={() => setView('insight')} onMaterials={() => setView('materials')} />
+          <Home onAnalyze={() => routeTo('analyze')} onInsight={() => routeTo('insight')} onMaterials={() => routeTo('materials')} />
         </motion.div>
       )}
       {view === 'materials' && (
@@ -80,7 +68,7 @@ export default function App() {
           exit={{ opacity: 0, x: 80 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <Insight onBack={() => setView('home')} onAnalyze={() => setView('analyze')} />
+          <Insight onBack={() => routeTo('home')} onAnalyze={() => routeTo('analyze')} />
         </motion.div>
       )}
     </AnimatePresence>
