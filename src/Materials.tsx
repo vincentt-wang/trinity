@@ -1,14 +1,15 @@
-import { useMemo, useState, type ReactNode, type CSSProperties } from 'react'
+import { useMemo, useRef, useState, type ReactNode, type CSSProperties } from 'react'
 import { motion } from 'framer-motion'
 import { useLang } from './i18n'
 import { TCARDS, TD_CAT, type TCard } from './canonCards'
 
-const WAITLIST_TO = 'vincent@easeai.com.tw'
+const WAITLIST_URL = 'https://trinity-counter.comicbnb.workers.dev/waitlist'
 
 const EARTH = '#2563eb'
 const MOON = '#475569'
 const SUN = '#d97706'
 const EASE = [0.2, 0.7, 0.2, 1] as const
+const REDUCED = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /* Eclipse-stack logo — the Trinity CIS mark (earth / moon / sun on one axis) */
 const LOGO = (
@@ -18,7 +19,7 @@ const LOGO = (
     <circle cx="16" cy="8" r="3" fill={SUN} />
   </svg>
 )
-/* Dark-card variant of the same mark (cosmic palette, matches the printed deck) */
+/* Dark-card variant of the mark (cosmic palette, matches the printed deck) */
 const CARD_LOGO = (w = 40, h = 43) => (
   <svg viewBox="0 0 32 34" width={w} height={h} aria-hidden>
     <line x1="16" y1="4" x2="16" y2="30" stroke="#67e8f9" strokeWidth=".8" opacity=".35" />
@@ -62,7 +63,17 @@ type L = 'en' | 'zh'
 const pileName = (k: string, lang: L) => (lang === 'en' ? TD_CAT[k][1] : TD_CAT[k][0])
 const pileColor = (k: string) => TD_CAT[k][2]
 
-/* ── the card faces ── */
+/* the printed card back — used for the deck pile and the hero product shot */
+function CardBack({ small }: { small?: boolean }) {
+  return (
+    <div className="cardback">
+      {CARD_LOGO(small ? 34 : 46, small ? 36 : 49)}
+      <div className="cardback-wm">TRINITY</div>
+    </div>
+  )
+}
+
+/* the two faces of a dealt card */
 function CardFace({ c, lang }: { c: TCard; lang: L }) {
   const en = lang === 'en'
   const col = pileColor(c.k)
@@ -75,7 +86,6 @@ function CardFace({ c, lang }: { c: TCard; lang: L }) {
     ) : null
   return (
     <div className="td-inner-faces" style={{ '--tc': col } as CSSProperties}>
-      {/* front */}
       <div className="td-face td-front">
         <div className="td-cat">{c.k} · {pileName(c.k, lang)}</div>
         {CARD_LOGO(40, 43)}
@@ -83,7 +93,6 @@ function CardFace({ c, lang }: { c: TCard; lang: L }) {
         <div className="td-pun">{punchLines(en ? c.pe || c.p : c.p)}</div>
         <div className="td-wm">TRINITY</div>
       </div>
-      {/* back */}
       <div className="td-face td-backface">
         <div className="td-bhead">
           <span className="td-bid">{c.k}{c.n}</span>
@@ -104,87 +113,117 @@ function CardFace({ c, lang }: { c: TCard; lang: L }) {
   )
 }
 
-/* ── draw engine (ports the workshop s_trinity_draw) ── */
-function DeckDraw({ lang }: { lang: L }) {
-  const first = useMemo(() => TCARDS[Math.floor(Math.random() * TCARDS.length)], [])
-  const [cur, setCur] = useState<TCard>(first)
-  const [drawn, setDrawn] = useState<string[]>([first.id])
+/* ── draw engine: deck → draw → reveal → draw again ── */
+function DeckDraw({ lang, cta }: { lang: L; cta: { draw: string; reveal: string; again: string; empty: string } }) {
+  const [cur, setCur] = useState<TCard | null>(null)
+  const [drawn, setDrawn] = useState<string[]>([])
   const [flipped, setFlipped] = useState(false)
   const [seq, setSeq] = useState(0)
+  const [tilt, setTilt] = useState({ rx: 0, ry: 0 })
+  const tiltRef = useRef<HTMLDivElement>(null)
 
   const draw = () => {
     let pool = TCARDS.filter((c) => !drawn.includes(c.id))
     let next = drawn
     if (!pool.length) { pool = TCARDS.slice(); next = [] }
     const c = pool[Math.floor(Math.random() * pool.length)]
-    setCur(c); setDrawn([...next, c.id]); setFlipped(false); setSeq((s) => s + 1)
+    setCur(c); setDrawn([...next, c.id]); setFlipped(false); setSeq((s) => s + 1); setTilt({ rx: 0, ry: 0 })
   }
   const pick = (id: string) => {
     const c = TCARDS.find((x) => x.id === id)
     if (!c) return
-    setCur(c); setDrawn((d) => [...d.filter((x) => x !== id), id]); setFlipped(false); setSeq((s) => s + 1)
+    setCur(c); setDrawn((d) => [...d.filter((x) => x !== id), id]); setFlipped(false); setSeq((s) => s + 1); setTilt({ rx: 0, ry: 0 })
   }
+  const primary = () => {
+    if (!cur) return draw()
+    if (!flipped) return setFlipped(true)
+    return draw()
+  }
+  const primaryLabel = !cur ? cta.draw : !flipped ? cta.reveal : cta.again
 
-  const col = pileColor(cur.k)
+  const onMove = (e: React.MouseEvent) => {
+    if (REDUCED || !tiltRef.current) return
+    const r = tiltRef.current.getBoundingClientRect()
+    const px = (e.clientX - r.left) / r.width - 0.5
+    const py = (e.clientY - r.top) / r.height - 0.5
+    setTilt({ rx: -py * 11, ry: px * 13 })
+  }
+  const onLeave = () => setTilt({ rx: 0, ry: 0 })
+
+  const col = cur ? pileColor(cur.k) : MOON
   const sibs = useMemo(
-    () => TCARDS.filter((x) => x.k === cur.k && x.id !== cur.id)
-      .sort((a, b) => Math.abs(+a.n - +cur.n) - Math.abs(+b.n - +cur.n)).slice(0, 2),
+    () => cur ? TCARDS.filter((x) => x.k === cur.k && x.id !== cur.id)
+      .sort((a, b) => Math.abs(+a.n - +cur.n) - Math.abs(+b.n - +cur.n)).slice(0, 2) : [],
     [cur],
   )
-  const pileCount = TCARDS.filter((x) => x.k === cur.k).length
+  const pileCount = cur ? TCARDS.filter((x) => x.k === cur.k).length : 0
   const hist = drawn.slice(0, -1).slice(-8).reverse()
 
   return (
     <div className="td-draw">
-      <div className="td-stage">
-        {/* deck pile */}
-        <button className="td-deckpile" onClick={draw} aria-label={lang === 'en' ? 'Draw a card' : '抽卡'}>
+      <div className={`td-stage${cur ? ' dealt' : ''}`}>
+        {/* deck pile — the physical stack, always the source */}
+        <button className="td-deckpile" onClick={draw} aria-label={cta.draw}>
           <div className="td-back td-b3" />
           <div className="td-back td-b2" />
           <div className="td-back td-b1">
-            {CARD_LOGO(44, 47)}
-            <div className="td-back-wm">TRINITY</div>
+            <CardBack />
             <div className="td-back-count">{TCARDS.length - drawn.length}</div>
           </div>
         </button>
 
-        {/* dealt card — key=seq replays the deal animation on each draw */}
-        <div key={seq} className={`td-flip deal${flipped ? ' on' : ''}`} onClick={() => setFlipped((f) => !f)}>
-          <CardFace c={cur} lang={lang} />
-        </div>
+        {/* dealt card — key=seq replays the deal on each draw */}
+        {cur && (
+          <div key={seq} className="td-flip deal" style={{ '--tc': col } as CSSProperties}>
+            <div
+              ref={tiltRef}
+              className="td-tilt"
+              style={{ transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)` }}
+              onMouseMove={onMove}
+              onMouseLeave={onLeave}
+              onClick={() => setFlipped((f) => !f)}
+            >
+              <div className={`td-inner-faces${flipped ? ' flipped' : ''}`}>
+                <CardFace c={cur} lang={lang} />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* related in the same pile */}
-        <div className="td-rel">
-          <div className="td-rel-h" style={{ color: col }}>
-            {cur.k} · {pileName(cur.k, lang)} ×{pileCount}
+        {cur && (
+          <div className="td-rel">
+            <div className="td-rel-h" style={{ color: col }}>{cur.k} · {pileName(cur.k, lang)} ×{pileCount}</div>
+            {sibs.map((s, i) => (
+              <button
+                key={s.id}
+                className="td-relchip"
+                style={{ '--tc': col, animationDelay: `${0.15 + i * 0.12}s` } as CSSProperties}
+                onClick={() => pick(s.id)}
+              >
+                <b>{s.k}{s.n}</b>{lang === 'en' ? s.cne : s.cn}
+              </button>
+            ))}
           </div>
-          {sibs.map((s, i) => (
-            <button
-              key={s.id}
-              className="td-relchip"
-              style={{ '--tc': col, animationDelay: `${0.15 + i * 0.12}s` } as CSSProperties}
-              onClick={() => pick(s.id)}
-            >
-              <b>{s.k}{s.n}</b>{lang === 'en' ? s.cne : s.cn}
-            </button>
-          ))}
-        </div>
+        )}
       </div>
 
       <div className="td-ctrl">
-        <button className="td-btn" onClick={draw}>{lang === 'en' ? 'Draw a card' : '隨機抽卡'}</button>
+        <button className="td-btn" onClick={primary}>{primaryLabel}</button>
       </div>
 
-      <div className="td-hist">
-        {hist.map((id) => {
-          const x = TCARDS.find((t) => t.id === id)!
-          return (
-            <button key={id} className="td-histchip" style={{ '--tc': pileColor(x.k) } as CSSProperties} onClick={() => pick(id)}>
-              <b>{x.k}{x.n}</b>{lang === 'en' ? x.cne : x.cn}
-            </button>
-          )
-        })}
-      </div>
+      {hist.length > 0 && (
+        <div className="td-hist">
+          {hist.map((id) => {
+            const x = TCARDS.find((t) => t.id === id)!
+            return (
+              <button key={id} className="td-histchip" style={{ '--tc': pileColor(x.k) } as CSSProperties} onClick={() => pick(id)}>
+                <b>{x.k}{x.n}</b>{lang === 'en' ? x.cne : x.cn}
+              </button>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -193,11 +232,12 @@ function DeckDraw({ lang }: { lang: L }) {
 type Copy = {
   back: string; badge: string; title: string; sub: string; tagline: string
   drawH: string; drawSub: string
+  cta: { draw: string; reveal: string; again: string; empty: string }
   whatH: string; what: { t: string; d: string }[]
   pilesH: string; pilesSub: string
   inH: string; incl: { t: string; d: string }[]
-  priceH: string; priceBig: string; priceNote: string; cta: string; ctaNote: string
-  disc: string
+  priceH: string; priceBig: string; priceNote: string; notify: string; notifyNote: string
+  sentH: string; sentBody: string; disc: string
 }
 const COPY: Record<L, Copy> = {
   zh: {
@@ -207,7 +247,8 @@ const COPY: Record<L, Copy> = {
     sub: 'Innovation Trinity · 60 張原則卡',
     tagline: '把 300 頁的創業工作坊，蒸餾成 60 張你隨手能抽的原則卡。',
     drawH: '抽一張，讓原則說話',
-    drawSub: '腦力激盪卡住的時候抽一張，用它的判準對照你手上的問題。點卡片翻到背面，看判準、範例、常見誤解與動手練習。',
+    drawSub: '腦力激盪卡住的時候抽一張，用它的判準對照你手上的問題。翻到背面，看判準、範例、常見誤解與動手練習。',
+    cta: { draw: '抽一張', reveal: '翻到背面', again: '再抽一張', empty: '從牌堆抽一張' },
     whatH: '這是什麼',
     what: [
       { t: '一副判斷卡', d: 'D 欲求性、F 可行性、V 存續性，加上策略與成長，五疊共 60 張。抽一張對照你的專案，或攤成三元牌陣做健檢。' },
@@ -226,8 +267,10 @@ const COPY: Record<L, Copy> = {
     priceH: '定價',
     priceBig: '即將公布',
     priceNote: '實體卡牌正在最後打磨與印製，定價與開賣時間即將公布。',
-    cta: '通知我',
-    ctaNote: '開賣時第一批通知你',
+    notify: '加入名單',
+    notifyNote: '開賣時第一批寄信通知你，只用來通知這副卡。',
+    sentH: '已加入名單',
+    sentBody: '開賣第一時間就寄信通知你。',
     disc: '這是預告頁，尚未正式開賣。',
   },
   en: {
@@ -237,7 +280,8 @@ const COPY: Record<L, Copy> = {
     sub: 'Innovation Trinity · 60 Principle Cards',
     tagline: '300 pages of the venture workshop, distilled into 60 principle cards you can pull anytime.',
     drawH: 'Pull a card, let the principle speak',
-    drawSub: 'Stuck in a brainstorm? Pull one and test its criterion against the problem in front of you. Tap the card to flip it — rule, example, common misread, and a hands-on drill.',
+    drawSub: 'Stuck in a brainstorm? Pull one and test its criterion against the problem in front of you. Flip it over for the rule, a real example, the common misread, and a hands-on drill.',
+    cta: { draw: 'Draw a card', reveal: 'Flip it over', again: 'Draw another', empty: 'Draw from the deck' },
     whatH: 'What it is',
     what: [
       { t: 'A deck for judgment', d: 'Desirability, Feasibility, Viability, plus strategy and growth: five piles, 60 cards. Pull one against your project, or lay a Trinity spread for a health check.' },
@@ -256,8 +300,10 @@ const COPY: Record<L, Copy> = {
     priceH: 'Price',
     priceBig: 'Announcing soon',
     priceNote: 'The physical deck is in final polish and print. Price and launch date will be announced shortly.',
-    cta: 'Notify me',
-    ctaNote: "You'll be in the first batch we tell",
+    notify: 'Join the list',
+    notifyNote: "We'll email you first when it opens — only about this deck.",
+    sentH: "You're on the list",
+    sentBody: "We'll email you the moment it opens.",
     disc: 'This is a preview page. Not yet on sale.',
   },
 }
@@ -272,10 +318,11 @@ export default function Materials({ onBack }: { onBack: () => void }) {
   const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
   const join = () => {
     if (!valid) return
-    fetch(`https://formsubmit.co/ajax/${WAITLIST_TO}`, {
+    // durable collection: worker stores the signup in KV (deduped by email)
+    fetch(WAITLIST_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ _subject: 'Principle Deck · waitlist signup', email, source: 'trinity /materials waitlist' }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, lang }),
     }).catch(() => {})
     setSent(true)
   }
@@ -289,21 +336,26 @@ export default function Materials({ onBack }: { onBack: () => void }) {
       <button className="mat-lang" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
 
       <div className="wrap mat-wrap">
-        {/* Hero */}
+        {/* Hero — product shot: a lit fan of card backs is the thesis */}
         <motion.div className="mat-hero" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE }}>
+          <div className="mat-herofan" aria-hidden>
+            <div className="mat-halo" />
+            <div className="mat-hb hb-l"><CardBack /></div>
+            <div className="mat-hb hb-r"><CardBack /></div>
+            <div className="mat-hb hb-c"><CardBack /></div>
+          </div>
           <div className="mat-badge">{c.badge}</div>
-          <div className="mat-logo">{LOGO}</div>
           <h1 className="mat-title">{c.title}</h1>
-          <div className="mat-sub">{c.sub}</div>
+          <div className="mat-sub">{LOGO}<span>{c.sub}</span></div>
           <p className="mat-tag">{c.tagline}</p>
         </motion.div>
 
-        {/* Draw a card — the star, on a dark cosmic stage so the deck's CIS reads true */}
+        {/* Draw — the interactive lightbox */}
         <section className="mat-stage">
           <div className="mat-stage-glow" aria-hidden />
           <h2 className="mat-stage-h">{c.drawH}</h2>
           <p className="mat-stage-sub">{c.drawSub}</p>
-          <DeckDraw lang={lang} />
+          <DeckDraw lang={lang} cta={c.cta} />
         </section>
 
         {/* What it is */}
@@ -319,7 +371,7 @@ export default function Materials({ onBack }: { onBack: () => void }) {
           </div>
         </section>
 
-        {/* Piles */}
+        {/* Piles — the five suits legend */}
         <section className="mat-sec">
           <h2 className="mat-h2">{c.pilesH}</h2>
           <p className="mat-sec-sub">{c.pilesSub}</p>
@@ -350,7 +402,7 @@ export default function Materials({ onBack }: { onBack: () => void }) {
           </div>
         </section>
 
-        {/* Price / coming soon */}
+        {/* Price / waitlist */}
         <section className="mat-price">
           <div className="mat-price-h">{c.priceH}</div>
           <div className="mat-price-big">{c.priceBig}</div>
@@ -358,15 +410,18 @@ export default function Materials({ onBack }: { onBack: () => void }) {
           {sent ? (
             <motion.div className="mat-sent" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }}>
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#0e9f6e" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-              <span>{lang === 'en' ? "You're on the list — we'll email you first when it opens." : '你已在名單上，開賣第一時間寄信通知你。'}</span>
+              <div>
+                <div className="mat-sent-h">{c.sentH}</div>
+                <div className="mat-sent-b">{c.sentBody}</div>
+              </div>
             </motion.div>
           ) : (
             <>
               <div className="mat-notify">
                 <input className="mat-input" type="email" placeholder="you@email.com" aria-label="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') join() }} />
-                <button className="btn btn-primary" disabled={!valid} onClick={join}>{c.cta}</button>
+                <button className="btn btn-primary" disabled={!valid} onClick={join}>{c.notify}</button>
               </div>
-              <div className="mat-cta-note">{c.ctaNote}</div>
+              <div className="mat-cta-note">{c.notifyNote}</div>
             </>
           )}
         </section>

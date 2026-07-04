@@ -1,93 +1,93 @@
 {
- "total": 51.06,
+ "total": 27.42,
  "beats": [
   {
    "i": 0,
-   "vo": "You have an idea. But is it actually investable?",
+   "vo": "Your idea. Is it actually investable?",
    "screen": "your idea\nis it *investable*?",
    "visual": "hook",
    "start": 0.0,
-   "dur": 4.08
+   "dur": 2.78
   },
   {
    "i": 1,
-   "vo": "Most founders just guess. They pitch friends, and mistake politeness for proof.",
+   "vo": "Most founders just guess.",
    "screen": "most founders\njust *guess*",
    "visual": "statement",
-   "start": 4.08,
-   "dur": 5.52
+   "start": 2.78,
+   "dur": 1.79
   },
   {
    "i": 2,
-   "vo": "Trinity reads your idea the way real investors actually think. Three lenses.",
+   "vo": "Trinity thinks like a real investor. Three lenses.",
    "screen": "the way real\n*investors* think",
    "visual": "lensintro",
-   "start": 9.59,
-   "dur": 5.76
+   "start": 4.57,
+   "dur": 3.39
   },
   {
    "i": 3,
-   "vo": "Desirability. Does anyone truly want it?",
+   "vo": "Desirability. Does anyone want it?",
    "screen": "*Desirability*\ndoes anyone want it?",
    "visual": "lens_e",
-   "start": 15.35,
-   "dur": 3.64
+   "start": 7.96,
+   "dur": 2.63
   },
   {
    "i": 4,
-   "vo": "Feasibility. Can you actually build it?",
+   "vo": "Feasibility. Can you build it?",
    "screen": "*Feasibility*\ncan you build it?",
    "visual": "lens_m",
-   "start": 18.99,
-   "dur": 3.26
+   "start": 10.59,
+   "dur": 2.22
   },
   {
    "i": 5,
-   "vo": "Viability. Will it fund itself, and last?",
+   "vo": "Viability. Will it last?",
    "screen": "*Viability*\nwill it last?",
    "visual": "lens_s",
-   "start": 22.25,
-   "dur": 3.81
+   "start": 12.81,
+   "dur": 2.16
   },
   {
    "i": 6,
-   "vo": "Each lens scored blind, across sixty dimensions. No single story inflates the rest.",
+   "vo": "Sixty dimensions, scored blind.",
    "screen": "*60* dimensions\nscored blind",
    "visual": "numcard",
-   "start": 26.06,
-   "dur": 6.67
+   "start": 14.97,
+   "dur": 2.23
   },
   {
    "i": 7,
-   "vo": "Then they cross-link, and converge into one honest verdict.",
+   "vo": "Cross-linked into one verdict.",
    "screen": "cross-link into\n*one verdict*",
    "visual": "converge",
-   "start": 32.73,
-   "dur": 4.39
+   "start": 17.2,
+   "dur": 2.08
   },
   {
    "i": 8,
-   "vo": "Your stage, and the exact investors to talk to next, across the US and Taiwan.",
+   "vo": "Your stage, your investors. US and Taiwan.",
    "screen": "your stage · your *investors*\nUS + Taiwan",
    "visual": "fit",
-   "start": 37.11,
-   "dur": 5.2
+   "start": 19.28,
+   "dur": 3.14
   },
   {
    "i": 9,
-   "vo": "Feed your idea to the engine. Your first read is free.",
+   "vo": "Your first read is free.",
    "screen": "your first read\nis *free*",
    "visual": "cta",
-   "start": 42.32,
-   "dur": 4.22
+   "start": 22.42,
+   "dur": 1.66
   },
   {
    "i": 10,
-   "vo": "Trinity. From an idea, to an investable startup.",
+   "vo": "Trinity. From idea to investable.",
    "screen": "TRINITY",
    "visual": "endcard",
-   "start": 46.54,
-   "dur": 3.72
+   "start": 24.08,
+   "dur": 2.54
   }
  ]
 }
