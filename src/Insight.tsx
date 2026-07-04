@@ -7,7 +7,7 @@ import { CountUp, MaskLines } from './lib/anim'
 import { useLang, type Lang } from './i18n'
 import { Nav } from './lib/Nav'
 import { COPY } from './copy'
-import { ARTICLE_PROSE } from './insightArticles'
+import { ARTICLE_PROSE, type ProseSection } from './insightArticles'
 
 const EASE = [0.2, 0.7, 0.2, 1] as const
 const EARTH = '#2563eb'
@@ -426,15 +426,18 @@ function StateDot({ s, color }: { s: LS; color: string }) {
 
 /* ===== the six detail bodies ===== */
 
-function Detail1({ d, sh }: { d: Det['d1']; sh: Shared }) {
+function Detail1({ d, sh, prose }: { d: Det['d1']; sh: Shared; prose: ProseSection[] }) {
   const [vals, setVals] = useState([85, 40, 62])
   const names = [sh.lens.d, sh.lens.f, sh.lens.v]
   const v = verdictOf(stateOf(vals[0]), stateOf(vals[1]), stateOf(vals[2]))
   const weak = names[vals.indexOf(Math.min(...vals))]
   return (
     <>
+      {prose[0] && <ProseSec s={prose[0]} />}
       <Sec label={sh.scenario} cap={d.scenarioCap}><SvgBlindLenses ideaLabel={d.ideaLabel} names={names} /></Sec>
+      {prose[1] && <ProseSec s={prose[1]} />}
       <Sec label={sh.analysis} cap={d.chartCap}><SvgRadar names={names} /></Sec>
+      {prose[2] && <ProseSec s={prose[2]} />}
       <Tool label={sh.tool} title={d.toolTitle} note={d.toolNote}>
         <div className="id-sliders">
           {vals.map((val, i) => (
@@ -456,18 +459,21 @@ function Detail1({ d, sh }: { d: Det['d1']; sh: Shared }) {
   )
 }
 
-function Detail2({ d, sh, points }: { d: Det['d2']; sh: Shared; points: string[] }) {
+function Detail2({ d, sh, points, prose }: { d: Det['d2']; sh: Shared; points: string[]; prose: ProseSection[] }) {
   const [pi, setPi] = useState(0)
   const names = [sh.lens.d, sh.lens.f, sh.lens.v]
   return (
     <>
+      {prose[0] && <ProseSec s={prose[0]} />}
       <Sec label={sh.scenario} cap={d.scenarioCap}>
         <SvgPipeline />
         <ul className="insight-list id-steps">
           {points.map((p) => <li key={p}>{p}</li>)}
         </ul>
       </Sec>
+      {prose[1] && <ProseSec s={prose[1]} />}
       <Sec label={sh.analysis} cap={d.chartCap}><SvgCrossLinks names={names} /></Sec>
+      {prose[2] && <ProseSec s={prose[2]} />}
       <Tool label={sh.tool} title={d.toolTitle} note={d.toolNote}>
         <Chips items={d.presets.map((p) => p.label)} sel={pi} onSel={setPi} />
         <div className="id-read">{d.presets[pi].read}</div>
@@ -476,14 +482,16 @@ function Detail2({ d, sh, points }: { d: Det['d2']; sh: Shared; points: string[]
   )
 }
 
-function Detail3({ d, sh, table }: { d: Det['d3']; sh: Shared; table: Table | null }) {
+function Detail3({ d, sh, table, prose }: { d: Det['d3']; sh: Shared; table: Table | null; prose: ProseSection[] }) {
   const [st, setSt] = useState<LS[]>(['p', 'v', 'p'])
   const names = [sh.lens.d, sh.lens.f, sh.lens.v]
   const cycle = (i: number) => setSt(st.map((s, j) => (j === i ? (s === 'p' ? 'v' : s === 'v' ? 'f' : 'p') : s)) as LS[])
   const v = verdictOf(st[0], st[1], st[2])
   return (
     <>
+      {prose[0] && <ProseSec s={prose[0]} />}
       <Sec label={sh.scenario} cap={d.scenarioCap}><SvgGate names={names} /></Sec>
+      {prose[1] && <ProseSec s={prose[1]} />}
       <Reveal>
         <section className="id-sec">
           <div className="id-label">{sh.analysis}</div>
@@ -491,6 +499,7 @@ function Detail3({ d, sh, table }: { d: Det['d3']; sh: Shared; table: Table | nu
           <p className="id-cap">{d.chartCap}</p>
         </section>
       </Reveal>
+      {prose[2] && <ProseSec s={prose[2]} />}
       <Tool label={sh.tool} title={d.toolTitle} note={d.toolNote}>
         <div className="id-chips">
           {names.map((n, i) => (
@@ -507,13 +516,16 @@ function Detail3({ d, sh, table }: { d: Det['d3']; sh: Shared; table: Table | nu
   )
 }
 
-function Detail4({ d, sh }: { d: Det['d4']; sh: Shared }) {
+function Detail4({ d, sh, prose }: { d: Det['d4']; sh: Shared; prose: ProseSection[] }) {
   const [si, setSi] = useState(0)
   const names = [sh.lens.d, sh.lens.f, sh.lens.v]
   return (
     <>
+      {prose[0] && <ProseSec s={prose[0]} />}
       <Sec label={sh.scenario} cap={d.scenarioCap}><SvgTimeline labels={d.stages.map((s) => s.label)} /></Sec>
+      {prose[1] && <ProseSec s={prose[1]} />}
       <Sec label={sh.analysis} cap={d.chartCap}><SvgStageBars stages={d.chartStages} names={names} /></Sec>
+      {prose[2] && <ProseSec s={prose[2]} />}
       <Tool label={sh.tool} title={d.toolTitle} note={d.toolNote}>
         <Chips items={d.stages.map((s) => s.label)} sel={si} onSel={setSi} />
         <div className="id-duo">
@@ -531,12 +543,15 @@ function Detail4({ d, sh }: { d: Det['d4']; sh: Shared }) {
   )
 }
 
-function Detail5({ d, sh }: { d: Det['d5']; sh: Shared }) {
+function Detail5({ d, sh, prose }: { d: Det['d5']; sh: Shared; prose: ProseSection[] }) {
   const [si, setSi] = useState(1)
   return (
     <>
+      {prose[0] && <ProseSec s={prose[0]} />}
       <Sec label={sh.scenario} cap={d.scenarioCap}><SvgSpectrum founderLabel={d.founderLabel} spectrum={d.spectrum} /></Sec>
+      {prose[1] && <ProseSec s={prose[1]} />}
       <Sec label={sh.analysis} cap={d.chartCap}><SvgHeatmap rows={d.heatRows} cols={d.heatCols} sel={si} /></Sec>
+      {prose[2] && <ProseSec s={prose[2]} />}
       <Tool label={sh.tool} title={d.toolTitle} note={d.toolNote}>
         <Chips items={d.heatCols} sel={si} onSel={setSi} />
         <div className="id-cell id-doors-cell">
@@ -551,7 +566,7 @@ function Detail5({ d, sh }: { d: Det['d5']; sh: Shared }) {
   )
 }
 
-function Detail6({ d, sh, lang }: { d: Det['d6']; sh: Shared; lang: Lang }) {
+function Detail6({ d, sh, lang, prose }: { d: Det['d6']; sh: Shared; lang: Lang; prose: ProseSection[] }) {
   const [exp, setExp] = useState(5)
   const [pen, setPen] = useState(5)
   const [arpu, setArpu] = useState(12000)
@@ -568,8 +583,11 @@ function Detail6({ d, sh, lang }: { d: Det['d6']; sh: Shared; lang: Lang }) {
   ]
   return (
     <>
+      {prose[0] && <ProseSec s={prose[0]} />}
       <Sec label={sh.scenario} cap={d.scenarioCap}><SvgPyramid pyr={d.pyr} /></Sec>
+      {prose[1] && <ProseSec s={prose[1]} />}
       <Sec label={sh.analysis} cap={d.chartCap}><SvgLognormal /></Sec>
+      {prose[2] && <ProseSec s={prose[2]} />}
       <Tool label={sh.tool} title={d.toolTitle} note={d.toolNote}>
         <div className="id-sliders">
           {rows.map((r, i) => (
@@ -836,13 +854,15 @@ function ArticleDetail({ c, idx, lang, onList, onAnalyze, onOpen }: { c: Ins; id
   const det = c.details
   const sh = det.shared
   const ctas = [det.d1.ctaLine, det.d2.ctaLine, det.d3.ctaLine, det.d4.ctaLine, det.d5.ctaLine, det.d6.ctaLine]
+  // prose is woven THROUGH the figures (scenario → analysis → interactive tool), not dumped after
+  const pr = p?.sections ?? []
   let body: ReactNode = null
-  if (idx === 0) body = <Detail1 d={det.d1} sh={sh} />
-  else if (idx === 1) body = <Detail2 d={det.d2} sh={sh} points={a.points} />
-  else if (idx === 2) body = <Detail3 d={det.d3} sh={sh} table={a.table} />
-  else if (idx === 3) body = <Detail4 d={det.d4} sh={sh} />
-  else if (idx === 4) body = <Detail5 d={det.d5} sh={sh} />
-  else body = <Detail6 d={det.d6} sh={sh} lang={lang} />
+  if (idx === 0) body = <Detail1 d={det.d1} sh={sh} prose={pr} />
+  else if (idx === 1) body = <Detail2 d={det.d2} sh={sh} points={a.points} prose={pr} />
+  else if (idx === 2) body = <Detail3 d={det.d3} sh={sh} table={a.table} prose={pr} />
+  else if (idx === 3) body = <Detail4 d={det.d4} sh={sh} prose={pr} />
+  else if (idx === 4) body = <Detail5 d={det.d5} sh={sh} prose={pr} />
+  else body = <Detail6 d={det.d6} sh={sh} lang={lang} prose={pr} />
 
   return (
     <article className="insight-detail" data-lens={lensOf(a.lens)}>
@@ -860,13 +880,7 @@ function ArticleDetail({ c, idx, lang, onList, onAnalyze, onOpen }: { c: Ins; id
         {p?.standfirst && <p className="if-standfirst">{p.standfirst}</p>}
         <p className="id-lead">{a.body}</p>
       </header>
-      {p?.sections?.map((s, i) => <ProseSec key={i} s={s} />)}
-      <Reveal>
-        <section className="id-sec">
-          <div className="id-label">{sh.figures}</div>
-          {body}
-        </section>
-      </Reveal>
+      {body}
       <ReadNext c={c} idx={idx} onOpen={onOpen} />
       <Reveal>
         <div className="id-cta">

@@ -344,19 +344,12 @@ function DimsSection() {
   )
 }
 
-// Module-level latch: the plate entrance is a one-shot. In dev, StrictMode
-// double-mounts the component, and reloading while already scrolled onto the
-// stack would otherwise replay the entrance spring a second time. Latching here
-// survives that remount so the cascade only ever plays once.
-let stackEntered = false
-
 function StackSection() {
   const { lang } = useLang()
   const c = COPY[lang].stack
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
   const [active, setActive] = useState(0)
-  const [entered, setEntered] = useState(stackEntered)
   const n = c.layers.length
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     setActive(Math.min(n - 1, Math.max(0, Math.floor(p * n))))
@@ -383,10 +376,9 @@ function StackSection() {
           <div className="stack-iso" aria-hidden>
             <motion.div
               className="stack-iso-tilt"
-              initial={entered ? 'show' : 'hide'}
-              whileInView={entered ? undefined : 'show'}
-              onViewportEnter={() => { stackEntered = true; setEntered(true) }}
-              viewport={{ once: true, margin: '-15% 0px' }}
+              initial="hide"
+              whileInView="show"
+              viewport={{ margin: '-15% 0px' }}
               variants={{ show: { transition: { staggerChildren: 0.09, staggerDirection: -1 } } }}
             >
               <div className="iso-ground" />

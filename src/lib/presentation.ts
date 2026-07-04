@@ -57,6 +57,10 @@ function buildSteps(): Step[] {
 let idx = 0
 let manual = false
 
+/* After a menu jump / any programmatic scroll, force the next keypress to
+ * resync to the nearest slide instead of resuming from the stale old index. */
+export function presentationResync() { manual = true }
+
 function nearestIdx(steps: Step[]): number {
   const y = window.scrollY
   let best = 0, bd = Infinity
