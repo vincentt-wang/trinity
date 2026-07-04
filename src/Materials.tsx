@@ -265,7 +265,7 @@ const COPY: Record<L, Copy> = {
 const PILES = ['S', 'D', 'F', 'V', 'G']
 
 export default function Materials({ onBack }: { onBack: () => void }) {
-  const { lang } = useLang()
+  const { lang, setLang } = useLang()
   const c = COPY[lang]
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
@@ -286,6 +286,7 @@ export default function Materials({ onBack }: { onBack: () => void }) {
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5m6-6l-6 6 6 6" /></svg>
         {c.back}
       </button>
+      <button className="mat-lang" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
 
       <div className="wrap mat-wrap">
         {/* Hero */}
