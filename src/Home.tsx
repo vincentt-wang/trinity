@@ -263,12 +263,15 @@ function DimsSection() {
   const c = COPY[lang].dims
   const [k, setK] = useState<DimK>('e')
   const [hov, setHov] = useState<{ k: DimK; d: Dim } | null>(null)
+  // a lens change fires an expanding glow ripple in the network (not on hover)
+  const [pulse, setPulse] = useState<{ n: number; k: DimK }>({ n: 0, k: 'e' })
+  const pulseTo = (nk: DimK) => { setK(nk); setPulse((p) => ({ n: p.n + 1, k: nk })) }
   // presentation nav: let ArrowDown step D → F → V before leaving this section
   const kRef = useRef<DimK>(k)
   kRef.current = k
   useEffect(() => {
     const order: DimK[] = ['e', 'm', 's']
-    registerDims({ count: 3, get: () => order.indexOf(kRef.current), set: (i) => setK(order[i]) })
+    registerDims({ count: 3, get: () => order.indexOf(kRef.current), set: (i) => pulseTo(order[i]) })
     return () => registerDims(null)
   }, [])
   const meta = c.lensMeta[k]
@@ -284,7 +287,12 @@ function DimsSection() {
   return (
     <section id="dims" className="sec sec-soft dims-sec">
       <div className="dims-net-layer">
-        <DimsNetwork activeLens={k} lang={lang} onHover={(h) => { setHov(h); if (h) setK(h.k) }} onPick={setK} />
+        <DimsNetwork activeLens={k} lang={lang} onHover={(h) => { setHov(h); if (h) setK(h.k) }} onPick={pulseTo} />
+        {pulse.n > 0 && (
+          <div key={pulse.n} className="dims-ripple" style={{ ['--rc' as string]: DIM_VAR[pulse.k] }} aria-hidden>
+            <span /><span /><span />
+          </div>
+        )}
       </div>
       <div className="wrap dims-overlay">
         <div className="dims-copy">
@@ -293,7 +301,7 @@ function DimsSection() {
           </Reveal>
           <div className="lenstabs lenstabs-row">
             {DIM_KEYS.map((x) => (
-              <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => setK(x)}>
+              <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => pulseTo(x)}>
                 <span className="lenstab-dot" /> {c.lensMeta[x].label} <em>{DIMENSIONS[x].length}</em>
               </button>
             ))}
@@ -510,6 +518,14 @@ const WHY_META = [
 function WhyFounders() {
   const { lang } = useLang()
   const c = COPY[lang].why
+  // the four reasons take turns lighting up so the grid never sits static
+  const reduce = useReducedMotion()
+  const [lit, setLit] = useState(-1)
+  useEffect(() => {
+    if (reduce) return
+    const id = setInterval(() => setLit((g) => (g + 1) % 4), 1700)
+    return () => clearInterval(id)
+  }, [reduce])
   return (
     <section className="sec why" id="why">
       <div className="why-bg" aria-hidden><span className="why-blob b1" /><span className="why-blob b2" /><span className="why-blob b3" /></div>
@@ -518,7 +534,7 @@ function WhyFounders() {
         <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
         <Stagger className="cards c4">
           {c.cards.map((w, i) => (
-            <div className="card" key={i}>
+            <div className={`card why-card${lit === i ? ' why-lit' : ''}`} style={{ ['--wc' as string]: DIM_VAR[WHY_META[i].k] }} key={i}>
               <div className={`ic ${WHY_META[i].k}`}>
                 <svg fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">{WHY_META[i].icon}</svg>
               </div>
@@ -723,12 +739,14 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
   const navDark = useNavTheme()
   const heroMag = useMagnetic<HTMLButtonElement>()
   const active = useActiveSection(['engine', 'stack', 'dims', 'fit'])
+  const [menuOpen, setMenuOpen] = useState(false)
+  const go = (fn: () => void) => { setMenuOpen(false); fn() }
 
   return (
     <>
-      <nav className={`nav${navDark ? ' on-dark' : ''}`}>
+      <nav className={`nav${navDark ? ' on-dark' : ''}${menuOpen ? ' menu-open' : ''}`}>
         <div className="nav-in">
-          <a className="brand" href="#top">{LOGO} TRINITY</a>
+          <a className="brand" href="#top" onClick={() => setMenuOpen(false)}>{LOGO} TRINITY</a>
           <div className="nav-links nav-center">
             <a className={active === 'engine' ? 'on' : ''} href="#engine" onClick={(e) => { e.preventDefault(); scrollToId('#engine') }}>{c.nav.howItWorks}</a>
             <a className={active === 'stack' ? 'on' : ''} href="#stack" onClick={(e) => { e.preventDefault(); scrollToId('#stack') }}>{c.nav.stack}</a>
@@ -739,8 +757,20 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
           </div>
           <div className="nav-cta">
             <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
-            <button className="btn btn-primary" onClick={onAnalyze}>{c.nav.cta}</button>
+            <button className="btn btn-primary nav-analyze" onClick={onAnalyze}>{c.nav.cta}</button>
+            <button className={`nav-burger${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen((o) => !o)} aria-label="Menu" aria-expanded={menuOpen}>
+              <span /><span /><span />
+            </button>
           </div>
+        </div>
+        <div className={`nav-mobile${menuOpen ? ' open' : ''}`}>
+          <a href="#engine" onClick={(e) => { e.preventDefault(); go(() => scrollToId('#engine')) }}>{c.nav.howItWorks}</a>
+          <a href="#stack" onClick={(e) => { e.preventDefault(); go(() => scrollToId('#stack')) }}>{c.nav.stack}</a>
+          <a href="#dims" onClick={(e) => { e.preventDefault(); go(() => scrollToId('#dims')) }}>{c.nav.dims}</a>
+          <a href="#fit" onClick={(e) => { e.preventDefault(); go(() => scrollToId('#fit')) }}>{c.nav.fit}</a>
+          <a href="#insight" onClick={(e) => { e.preventDefault(); go(onInsight) }}>{c.nav.insight}</a>
+          <a href="#materials" onClick={(e) => { e.preventDefault(); go(onMaterials) }}>{c.nav.deck}</a>
+          <button className="nav-mobile-cta" onClick={() => go(onAnalyze)}>{c.nav.cta}</button>
         </div>
       </nav>
 
@@ -788,23 +818,15 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
               <p>{c.cta.p}</p>
             </div>
           </Reveal>
-          <Stagger className="paths">
-            <button className="path primary" onClick={onAnalyze}>
-              <span className="path-h">{c.cta.paths[0].h}</span>
-              <span className="path-p">{c.cta.paths[0].p}</span>
-              <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
-            </button>
-            <a className="path" href="#engine" onClick={(e) => { e.preventDefault(); scrollToId('#engine') }}>
-              <span className="path-h">{c.cta.paths[1].h}</span>
-              <span className="path-p">{c.cta.paths[1].p}</span>
-              <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
-            </a>
-            <a className="path" href="#fit" onClick={(e) => { e.preventDefault(); scrollToId('#fit') }}>
-              <span className="path-h">{c.cta.paths[2].h}</span>
-              <span className="path-p">{c.cta.paths[2].p}</span>
-              <span className="path-go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></span>
-            </a>
-          </Stagger>
+          <Reveal delay={0.12}>
+            <div className="cta-final">
+              <button className="cta-mega" onClick={onAnalyze}>
+                <span className="cta-mega-glow" aria-hidden />
+                <span className="cta-mega-label">{c.nav.cta}</span>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
+              </button>
+            </div>
+          </Reveal>
         </div>
       </section>
 

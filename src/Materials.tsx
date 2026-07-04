@@ -4,6 +4,7 @@ import { useLang } from './i18n'
 import { TCARDS, TD_CAT, type TCard } from './canonCards'
 
 const WAITLIST_URL = 'https://trinity-counter.comicbnb.workers.dev/waitlist'
+const NOTIFY_TO = 'vincent@easeai.com.tw'
 
 const EARTH = '#2563eb'
 const MOON = '#475569'
@@ -157,7 +158,7 @@ function DeckDraw({ lang, cta }: { lang: L; cta: { draw: string; reveal: string;
     [cur],
   )
   const pileCount = cur ? TCARDS.filter((x) => x.k === cur.k).length : 0
-  const hist = drawn.slice(0, -1).slice(-8).reverse()
+  const hist = drawn.slice(0, -1).slice(-6).reverse()
 
   return (
     <div className="td-draw">
@@ -212,18 +213,17 @@ function DeckDraw({ lang, cta }: { lang: L; cta: { draw: string; reveal: string;
         <button className="td-btn" onClick={primary}>{primaryLabel}</button>
       </div>
 
-      {hist.length > 0 && (
-        <div className="td-hist">
-          {hist.map((id) => {
-            const x = TCARDS.find((t) => t.id === id)!
-            return (
-              <button key={id} className="td-histchip" style={{ '--tc': pileColor(x.k) } as CSSProperties} onClick={() => pick(id)}>
-                <b>{x.k}{x.n}</b>{lang === 'en' ? x.cne : x.cn}
-              </button>
-            )
-          })}
-        </div>
-      )}
+      {/* fixed-height strip so the section frame never changes size */}
+      <div className="td-hist">
+        {hist.map((id) => {
+          const x = TCARDS.find((t) => t.id === id)!
+          return (
+            <button key={id} className="td-histchip" style={{ '--tc': pileColor(x.k) } as CSSProperties} onClick={() => pick(id)}>
+              <b>{x.k}{x.n}</b>{lang === 'en' ? x.cne : x.cn}
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -323,6 +323,12 @@ export default function Materials({ onBack }: { onBack: () => void }) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, lang }),
+    }).catch(() => {})
+    // also email Vincent so a signup lands in the inbox, not just the store
+    fetch(`https://formsubmit.co/ajax/${NOTIFY_TO}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ _subject: 'Principle Deck · waitlist signup', email, lang, source: 'trinity /materials' }),
     }).catch(() => {})
     setSent(true)
   }
