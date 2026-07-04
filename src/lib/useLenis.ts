@@ -30,3 +30,13 @@ export function scrollToId(sel: string) {
   if (_lenis) _lenis.scrollTo(el, { offset: -72, duration: 1.3 })
   else el.scrollIntoView({ behavior: 'smooth' })
 }
+
+export function getLenis() {
+  return _lenis
+}
+
+/** Smooth-scroll to an absolute Y (used by keyboard presentation nav). */
+export function scrollToY(y: number, duration = 0.85) {
+  if (_lenis) _lenis.scrollTo(Math.max(0, y), { duration })
+  else window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' })
+}

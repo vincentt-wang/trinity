@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform, useReducedMotion, type MotionValue } from 'framer-motion'
 import { Reveal } from './lib/Reveal'
 import { useLenis, scrollToId } from './lib/useLenis'
+import { usePresentation, registerDims } from './lib/presentation'
 import { HeroNetwork } from './lib/HeroNetwork'
 import { DimsNetwork } from './lib/DimsNetwork'
 import { DIM_MEET, DIM_EDGES } from './dimsGraph'
@@ -113,8 +114,8 @@ function CelestialSection() {
             {c.bodies.map((b) => (
               <div key={b.k} className={`cel-row ${b.k}`}>
                 <div className="cel-cap-label">{b.label}</div>
-                <h3 className="cel-row-h"><CelHeadline text={b.h} /></h3>
-                <p className="cel-row-s">{b.s}</p>
+                <h3 className="cel-row-name">{(c.lensName as Record<string, string>)[b.k]}</h3>
+                <p className="cel-row-s"><CelHeadline text={b.h} /></p>
               </div>
             ))}
           </div>
@@ -147,8 +148,8 @@ function CelestialSection() {
                 transition={{ duration: reduced ? 0 : 0.22, ease: CEL_EASE }}
               >
                 <div className="cel-cap-label">{b.label}</div>
-                <h3 className="cel-cap-h"><CelHeadline text={b.h} /></h3>
-                <p className="cel-cap-s">{b.s}</p>
+                <h3 className="cel-cap-name">{(c.lensName as Record<string, string>)[b.k]}</h3>
+                <p className="cel-cap-s"><CelHeadline text={b.h} /></p>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -262,6 +263,14 @@ function DimsSection() {
   const c = COPY[lang].dims
   const [k, setK] = useState<DimK>('e')
   const [hov, setHov] = useState<{ k: DimK; d: Dim } | null>(null)
+  // presentation nav: let ArrowDown step D → F → V before leaving this section
+  const kRef = useRef<DimK>(k)
+  kRef.current = k
+  useEffect(() => {
+    const order: DimK[] = ['e', 'm', 's']
+    registerDims({ count: 3, get: () => order.indexOf(kRef.current), set: (i) => setK(order[i]) })
+    return () => registerDims(null)
+  }, [])
   const meta = c.lensMeta[k]
   const accent = hov ? DIM_VAR[hov.k] : DIM_VAR[k]
   const d = hov?.d ?? null
@@ -378,7 +387,7 @@ function StackSection() {
                   key={s.n}
                   className="iso-wrap"
                   style={{ z: (c.layers.length - 1 - i) * 54 }}
-                  variants={{ hide: { opacity: 0, y: 110 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 110, damping: 17 } } }}
+                  variants={{ hide: { opacity: 0, y: 60 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 120, damping: 20 } } }}
                 >
                   <div className={`iso-plate p${i} ${active === i ? 'on' : i < active ? 'above' : ''}`} onMouseEnter={() => setActive(i)}>
                     <span className="iso-n">{s.n}</span>
@@ -502,7 +511,7 @@ function WhyFounders() {
   const { lang } = useLang()
   const c = COPY[lang].why
   return (
-    <section className="sec why">
+    <section className="sec why" id="why">
       <div className="why-bg" aria-hidden><span className="why-blob b1" /><span className="why-blob b2" /><span className="why-blob b3" /></div>
       <ParallaxRings />
       <div className="wrap">
@@ -529,7 +538,7 @@ function BeforeAfter() {
   const c = COPY[lang].ba
   const EASE = [0.2, 0.7, 0.2, 1] as const
   return (
-    <section className="sec sec-soft">
+    <section className="sec sec-soft" id="ba">
       <Aurora tone="warm" />
       <DrawArcs />
       <div className="wrap">
@@ -609,7 +618,7 @@ const CHAN_ICONS = [
   <><rect x="9" y="3.5" width="6" height="10.5" rx="3" /><path d="M5.5 11.5a6.5 6.5 0 0013 0" /><path d="M12 18v2.8" /></>,
 ]
 
-function Footer({ onAnalyze, onInsight }: { onAnalyze: () => void; onInsight: () => void }) {
+function Footer({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; onInsight: () => void; onMaterials: () => void }) {
   const { lang } = useLang()
   const c = COPY[lang]
   const f = c.foot
@@ -638,7 +647,7 @@ function Footer({ onAnalyze, onInsight }: { onAnalyze: () => void; onInsight: ()
             <div className="foot-h">{f.learn}</div>
             <div className="foot-list">
               <span className="flink" aria-disabled="true">{f.workshop}<span className="fpill">{f.soon}</span></span>
-              <span className="flink" aria-disabled="true">{f.materials}<span className="fpill">{f.soon}</span></span>
+              <button className="flink real" onClick={onMaterials}>{f.materials}<span className="fpill">{f.soon}</span></button>
               <button className="flink real" onClick={onInsight}>
                 {f.insight}
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
@@ -706,8 +715,9 @@ function useNavTheme() {
   return dark
 }
 
-export default function Home({ onAnalyze, onInsight }: { onAnalyze: () => void; onInsight: () => void }) {
+export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; onInsight: () => void; onMaterials: () => void }) {
   useLenis()
+  usePresentation()
   const { lang, setLang } = useLang()
   const c = COPY[lang]
   const navDark = useNavTheme()
@@ -797,7 +807,7 @@ export default function Home({ onAnalyze, onInsight }: { onAnalyze: () => void; 
         </div>
       </section>
 
-      <Footer onAnalyze={onAnalyze} onInsight={onInsight} />
+      <Footer onAnalyze={onAnalyze} onInsight={onInsight} onMaterials={onMaterials} />
     </>
   )
 }

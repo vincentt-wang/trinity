@@ -143,13 +143,14 @@ export const COPY = {
     },
     celestial: {
       kicker: 'Why these three lenses',
-      title: 'The trinity is older than business',
+      title: 'One idea must pass three tests at once',
       bodies: [
-        { k: 'e', label: 'Earth · Desirability', h: 'Demand lives **where people live**.', s: 'First question: does anyone on Earth truly want this?' },
-        { k: 'm', label: 'Moon · Feasibility', h: 'The Moon makes life **workable**.', s: 'A steadied axis, a rhythm of tides: that is feasibility.' },
-        { k: 's', label: 'Sun · Viability', h: 'Cut the energy input, **everything stops**.', s: 'Does your venture have its own sun, or is it burning stored fuel?' },
-        { k: 'a', label: 'One system', h: 'Three bodies, **one system**.', s: 'Remove any one and it all goes dark. So the engine scores all three, blind.' },
+        { k: 'e', label: 'Earth', h: 'Is the pain real, sharp, and shared by **enough people to pay**? That is the market saying yes.', s: '' },
+        { k: 'm', label: 'Moon', h: 'Can this team **build it, ship it, and prove it** — on time, with real evidence, not just a demo?', s: '' },
+        { k: 's', label: 'Sun', h: 'Does it **survive and compound** — margins, moat, unit economics that actually hold up?', s: '' },
+        { k: 'a', label: 'All three', h: 'Miss any one and it **all goes dark**. So the engine scores all three at once, blind to each other.', s: '' },
       ],
+      lensName: { e: 'Desirability', m: 'Feasibility', s: 'Viability', a: 'One system' },
     },
     stats: { labels: ['startups analyzed', 'dimensions scored', 'independent lenses', 'markets mapped · US + TW'] },
     cta: {
@@ -572,7 +573,7 @@ export const COPY = {
     },
   },
   zh: {
-    nav: { howItWorks: '運作原理', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', insight: '引擎解析', cta: '分析我的點子' },
+    nav: { howItWorks: '運作原理', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', insight: '洞察觀點', cta: '分析我的點子' },
     hero: { eyebrow: '創新三元 · 可行性引擎', titleA: '從一個點子', titleB: '到值得投資的', titleHl: '新創', lead: '把你的點子餵給 Trinity 引擎，看它在 60 個維度上真正的位置，以及下一步該找誰談。', ctaPrimary: '分析我的點子', ctaGhost: '看它怎麼運作' },
     lenses: {
       eyebrow: '引擎怎麼思考', h2: '三個透鏡，三個問題', lead: '一家值得投資的新創，需要三件事同時成立。少一個，引擎會告訴你。',
@@ -641,13 +642,14 @@ export const COPY = {
     },
     celestial: {
       kicker: '為什麼是這三個透鏡',
-      title: '三元比商業更古老',
+      title: '一個點子，要同時通過三關',
       bodies: [
-        { k: 'e', label: '地球 · 欲求性', h: '需求，只存在**有人**的地方。', s: '第一問：地球上真的有人要它嗎？' },
-        { k: 'm', label: '月亮 · 可行性', h: '月亮讓生命**行得通**。', s: '穩住地軸、推動潮汐：穩定與節律，就是可行性。' },
-        { k: 's', label: '太陽 · 存續性', h: '能量一停，**一切熄滅**。', s: '太陽燒了 46 億年。你的新創有自己的太陽，還是只在燒庫存？' },
-        { k: 'a', label: '一個系統', h: '三顆星球，**一個系統**。', s: '拿掉任何一顆，全部熄滅。所以引擎三透鏡同時、盲評。' },
+        { k: 'e', label: '地球', h: '這個痛夠痛、**夠多人願意付錢**嗎？欲求性，就是市場點頭說要。', s: '' },
+        { k: 'm', label: '月亮', h: '這個團隊真的**做得出來、交得出來**，還拿得出證據，而不只是 demo 嗎？', s: '' },
+        { k: 's', label: '太陽', h: '這門生意**活得下去、還能複利**嗎？毛利、護城河、單位經濟撐得住嗎？', s: '' },
+        { k: 'a', label: '三位一體', h: '缺一顆，全部熄滅。所以引擎**三個透鏡同時、盲評**，互不參照。', s: '' },
       ],
+      lensName: { e: '欲求性', m: '可行性', s: '存續性', a: '一個系統' },
     },
     stats: { labels: ['家新創已分析', '個維度評分', '個獨立透鏡', '個市場 · 美國＋台灣'] },
     cta: {
@@ -662,7 +664,7 @@ export const COPY = {
     foot: {
       channels: '頻道', learn: '學習', start: '開始', soon: '即將',
       chans: ['Instagram', 'YouTube', 'Podcast'],
-      workshop: '工作坊', materials: '教材購買', insight: '引擎解析文章',
+      workshop: '工作坊', materials: '教材購買', insight: '洞察觀點文章',
       startLine: '丟進一個點子，拿回三個裁決。第一輪免費。',
       analyze: '分析我的點子',
     },
