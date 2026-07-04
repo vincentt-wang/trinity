@@ -74,7 +74,7 @@ export const DIMENSIONS: Record<'e' | 'm' | 's', Dim[]> = {
 
 export const COPY = {
   en: {
-    nav: { howItWorks: 'How it works', stack: 'The stack', dims: 'The 60 dimensions', fit: 'Where you fit', insight: 'Insight', cta: 'Analyze my idea' },
+    nav: { howItWorks: 'How it works', stack: 'The stack', dims: 'The 60 dimensions', fit: 'Where you fit', insight: 'Insight', deck: 'The deck', cta: 'Analyze my idea' },
     hero: { eyebrow: 'Innovation Trinity · Feasibility Engine', titleA: 'From an idea to', titleB: 'an ', titleHl: 'investable startup', lead: 'Feed your idea to the Trinity engine. See where it really stands across 60 dimensions, and exactly who to talk to next.', ctaPrimary: 'Analyze my idea', ctaGhost: 'See how it works' },
     lenses: {
       eyebrow: 'How the engine thinks', h2: 'Three lenses, three questions', lead: 'An investable startup needs three things to hold at once. Miss one and the engine tells you.',
@@ -573,7 +573,7 @@ export const COPY = {
     },
   },
   zh: {
-    nav: { howItWorks: '運作原理', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', insight: '洞察觀點', cta: '分析我的點子' },
+    nav: { howItWorks: '運作原理', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', insight: '洞察觀點', deck: '原則卡', cta: '分析我的點子' },
     hero: { eyebrow: '創新三元 · 可行性引擎', titleA: '從一個點子', titleB: '到值得投資的', titleHl: '新創', lead: '把你的點子餵給 Trinity 引擎，看它在 60 個維度上真正的位置，以及下一步該找誰談。', ctaPrimary: '分析我的點子', ctaGhost: '看它怎麼運作' },
     lenses: {
       eyebrow: '引擎怎麼思考', h2: '三個透鏡，三個問題', lead: '一家值得投資的新創，需要三件事同時成立。少一個，引擎會告訴你。',

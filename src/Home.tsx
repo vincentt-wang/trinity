@@ -735,6 +735,7 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
             <a className={active === 'dims' ? 'on' : ''} href="#dims" onClick={(e) => { e.preventDefault(); scrollToId('#dims') }}>{c.nav.dims}</a>
             <a className={active === 'fit' ? 'on' : ''} href="#fit" onClick={(e) => { e.preventDefault(); scrollToId('#fit') }}>{c.nav.fit}</a>
             <a href="#insight" onClick={(e) => { e.preventDefault(); onInsight() }}>{c.nav.insight}</a>
+            <a href="#materials" onClick={(e) => { e.preventDefault(); onMaterials() }}>{c.nav.deck}</a>
           </div>
           <div className="nav-cta">
             <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
