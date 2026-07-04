@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState, type ReactNode, type CSSProperties } from 'react'
 import { motion } from 'framer-motion'
 import { useLang } from './i18n'
+import { Nav } from './lib/Nav'
 import { TCARDS, TD_CAT, type TCard } from './canonCards'
 
 const WAITLIST_URL = 'https://trinity-counter.comicbnb.workers.dev/waitlist'
@@ -310,8 +311,8 @@ const COPY: Record<L, Copy> = {
 
 const PILES = ['S', 'D', 'F', 'V', 'G']
 
-export default function Materials({ onBack }: { onBack: () => void }) {
-  const { lang, setLang } = useLang()
+export default function Materials() {
+  const { lang } = useLang()
   const c = COPY[lang]
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
@@ -335,11 +336,7 @@ export default function Materials({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="mat">
-      <button className="mat-back" onClick={onBack} aria-label={c.back}>
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5m6-6l-6 6 6 6" /></svg>
-        {c.back}
-      </button>
-      <button className="mat-lang" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
+      <Nav sub />
 
       <div className="wrap mat-wrap">
         {/* Hero — product shot: a lit fan of card backs is the thesis */}

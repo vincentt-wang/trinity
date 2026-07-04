@@ -4,6 +4,7 @@ import { Reveal } from './lib/Reveal'
 import { useLenis, scrollToId } from './lib/useLenis'
 import { usePresentation, registerDims } from './lib/presentation'
 import { HeroNetwork } from './lib/HeroNetwork'
+import { Nav } from './lib/Nav'
 import { DimsNetwork } from './lib/DimsNetwork'
 import { DIM_MEET, DIM_EDGES } from './dimsGraph'
 import { Aurora } from './lib/Aurora'
@@ -734,45 +735,23 @@ function useNavTheme() {
 export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; onInsight: () => void; onMaterials: () => void }) {
   useLenis()
   usePresentation()
-  const { lang, setLang } = useLang()
+  const { lang } = useLang()
   const c = COPY[lang]
   const navDark = useNavTheme()
   const heroMag = useMagnetic<HTMLButtonElement>()
   const active = useActiveSection(['engine', 'stack', 'dims', 'fit'])
-  const [menuOpen, setMenuOpen] = useState(false)
-  const go = (fn: () => void) => { setMenuOpen(false); fn() }
+  // returning from a sub-page via a section hash (#engine…) scrolls there on mount
+  useEffect(() => {
+    const h = location.hash.replace(/^#\/?/, '')
+    if (h && ['engine', 'stack', 'dims', 'fit', 'celestial', 'why', 'ba', 'cta', 'top'].includes(h)) {
+      const t = setTimeout(() => scrollToId('#' + h), 620)
+      return () => clearTimeout(t)
+    }
+  }, [])
 
   return (
     <>
-      <nav className={`nav${navDark ? ' on-dark' : ''}${menuOpen ? ' menu-open' : ''}`}>
-        <div className="nav-in">
-          <a className="brand" href="#top" onClick={() => setMenuOpen(false)}>{LOGO} TRINITY</a>
-          <div className="nav-links nav-center">
-            <a className={active === 'engine' ? 'on' : ''} href="#engine" onClick={(e) => { e.preventDefault(); scrollToId('#engine') }}>{c.nav.howItWorks}</a>
-            <a className={active === 'stack' ? 'on' : ''} href="#stack" onClick={(e) => { e.preventDefault(); scrollToId('#stack') }}>{c.nav.stack}</a>
-            <a className={active === 'dims' ? 'on' : ''} href="#dims" onClick={(e) => { e.preventDefault(); scrollToId('#dims') }}>{c.nav.dims}</a>
-            <a className={active === 'fit' ? 'on' : ''} href="#fit" onClick={(e) => { e.preventDefault(); scrollToId('#fit') }}>{c.nav.fit}</a>
-            <a href="#insight" onClick={(e) => { e.preventDefault(); onInsight() }}>{c.nav.insight}</a>
-            <a href="#materials" onClick={(e) => { e.preventDefault(); onMaterials() }}>{c.nav.deck}</a>
-          </div>
-          <div className="nav-cta">
-            <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
-            <button className="btn btn-primary nav-analyze" onClick={onAnalyze}>{c.nav.cta}</button>
-            <button className={`nav-burger${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen((o) => !o)} aria-label="Menu" aria-expanded={menuOpen}>
-              <span /><span /><span />
-            </button>
-          </div>
-        </div>
-        <div className={`nav-mobile${menuOpen ? ' open' : ''}`}>
-          <a href="#engine" onClick={(e) => { e.preventDefault(); go(() => scrollToId('#engine')) }}>{c.nav.howItWorks}</a>
-          <a href="#stack" onClick={(e) => { e.preventDefault(); go(() => scrollToId('#stack')) }}>{c.nav.stack}</a>
-          <a href="#dims" onClick={(e) => { e.preventDefault(); go(() => scrollToId('#dims')) }}>{c.nav.dims}</a>
-          <a href="#fit" onClick={(e) => { e.preventDefault(); go(() => scrollToId('#fit')) }}>{c.nav.fit}</a>
-          <a href="#insight" onClick={(e) => { e.preventDefault(); go(onInsight) }}>{c.nav.insight}</a>
-          <a href="#materials" onClick={(e) => { e.preventDefault(); go(onMaterials) }}>{c.nav.deck}</a>
-          <button className="nav-mobile-cta" onClick={() => go(onAnalyze)}>{c.nav.cta}</button>
-        </div>
-      </nav>
+      <Nav active={active} navDark={navDark} />
 
       <header className="hero hero-center" id="top">
         <HeroNetwork />

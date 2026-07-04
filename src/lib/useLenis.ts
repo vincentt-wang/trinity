@@ -23,12 +23,22 @@ export function useLenis() {
   }, [])
 }
 
-/** Smoothly scroll to a section by id selector (e.g. "#engine"), offset for the fixed nav. */
-export function scrollToId(sel: string) {
+/**
+ * Scroll to a section by id selector (e.g. "#engine"), offset for the fixed nav.
+ * immediate=true jumps straight there without scrolling through (and fast-
+ * forwarding) every pinned section in between — used by the menu.
+ */
+export function scrollToId(sel: string, immediate = false) {
   const el = document.querySelector<HTMLElement>(sel)
   if (!el) return
-  if (_lenis) _lenis.scrollTo(el, { offset: -72, duration: 1.3 })
-  else el.scrollIntoView({ behavior: 'smooth' })
+  if (_lenis) _lenis.scrollTo(el, { offset: -64, immediate, duration: immediate ? 0 : 1.3 })
+  else el.scrollIntoView({ behavior: immediate ? 'auto' : 'smooth' })
+}
+
+/** Jump to the very top (menu brand click when already home). */
+export function scrollToTop(immediate = true) {
+  if (_lenis) _lenis.scrollTo(0, { immediate, duration: immediate ? 0 : 0.8 })
+  else window.scrollTo({ top: 0, behavior: immediate ? 'auto' : 'smooth' })
 }
 
 export function getLenis() {

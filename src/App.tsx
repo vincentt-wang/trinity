@@ -29,8 +29,10 @@ export default function App() {
     if (view === 'home') {
       // clear only a sub-view hash; leave home section anchors (#celestial…) alone
       if (viewFromHash() !== 'home') history.replaceState(null, '', location.pathname + location.search)
-    } else if (location.hash !== '#' + view) {
-      location.hash = view
+    } else {
+      if (location.hash !== '#' + view) location.hash = view
+      // a sub-page always opens at the top, regardless of where the last view was scrolled
+      window.scrollTo(0, 0)
     }
   }, [view])
 
@@ -56,7 +58,7 @@ export default function App() {
           exit={{ opacity: 0, x: 80 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <Materials onBack={() => setView('home')} />
+          <Materials />
         </motion.div>
       )}
       {view === 'analyze' && (

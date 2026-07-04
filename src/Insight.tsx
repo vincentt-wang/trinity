@@ -5,6 +5,7 @@ import { Aurora } from './lib/Aurora'
 import { HeroNetwork } from './lib/HeroNetwork'
 import { CountUp, MaskLines } from './lib/anim'
 import { useLang, type Lang } from './i18n'
+import { Nav } from './lib/Nav'
 import { COPY } from './copy'
 
 const EASE = [0.2, 0.7, 0.2, 1] as const
@@ -13,14 +14,6 @@ const MOON = '#475569'
 const SUN = '#d97706'
 const LENS_COLORS = [EARTH, MOON, SUN]
 const LENS_SOFT = ['#dbeafe', '#e2e8f0', '#fef3c7']
-
-const LOGO = (
-  <svg viewBox="0 0 32 32" aria-hidden>
-    <circle cx="16" cy="19" r="7.5" fill="#2563eb" />
-    <circle cx="16" cy="13" r="5" fill="#475569" stroke="#fbfcff" strokeWidth="1.4" />
-    <circle cx="16" cy="8" r="3" fill="#d97706" />
-  </svg>
-)
 
 const ARROW_R = (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
@@ -852,11 +845,17 @@ function ArticleDetail({ c, idx, lang, onList, onAnalyze }: { c: Ins; idx: numbe
 /* ===== page ===== */
 
 export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onAnalyze: () => void }) {
-  const { lang, setLang } = useLang()
+  const { lang } = useLang()
   const c = COPY[lang].insight
   const [open, setOpen] = useState<number | null>(null)
 
   useEffect(() => { window.scrollTo(0, 0) }, [open])
+  // clicking "Insight" in the nav while reading an article returns to the list
+  useEffect(() => {
+    const h = (e: Event) => { if ((e as CustomEvent).detail === 'insight') { setOpen(null); window.scrollTo(0, 0) } }
+    window.addEventListener('trinity:navview', h)
+    return () => window.removeEventListener('trinity:navview', h)
+  }, [])
 
   const sh = c.details.shared
 
@@ -869,17 +868,7 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
         </div>
       </motion.div>
 
-      <div className="az-top">
-        <button className="brand" onClick={onBack}>{LOGO} TRINITY</button>
-        <div className="az-top-right">
-          <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
-          <button className="az-back" onClick={onBack}>
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
-            {c.back}
-          </button>
-          <button className="btn btn-primary" onClick={onAnalyze}>{c.cta}</button>
-        </div>
-      </div>
+      <Nav sub />
 
       <AnimatePresence mode="wait">
         {open === null ? (

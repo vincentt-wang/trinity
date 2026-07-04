@@ -5,20 +5,13 @@ import { Aurora } from './lib/Aurora'
 import { HeroNetwork } from './lib/HeroNetwork'
 import { CelStars } from './lib/Celestial'
 import { useLang } from './i18n'
+import { Nav } from './lib/Nav'
 import { COPY, DIMENSIONS } from './copy'
 import { bumpAnalyzed, postAnalyzed } from './stats'
 
 const EASE = [0.2, 0.7, 0.2, 1] as const
 const STAG = { hide: {}, show: { transition: { staggerChildren: 0.09, delayChildren: 0.06 } } }
 const ITEM = { hide: { opacity: 0, y: 26 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }
-
-const LOGO = (
-  <svg viewBox="0 0 32 32" aria-hidden>
-    <circle cx="16" cy="19" r="7.5" fill="#2563eb" />
-    <circle cx="16" cy="13" r="5" fill="#475569" stroke="#fbfcff" strokeWidth="1.4" />
-    <circle cx="16" cy="8" r="3" fill="#d97706" />
-  </svg>
-)
 
 type Phase = 'intro' | 'form' | 'running' | 'done'
 
@@ -154,7 +147,7 @@ function Scanning({ onDone }: { onDone: () => void }) {
 }
 
 export default function Analyze({ onBack }: { onBack: () => void }) {
-  const { lang, setLang } = useLang()
+  const { lang } = useLang()
   const a = COPY[lang].analyze
   const r = a.report
   const intro = a.input.intro
@@ -219,16 +212,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
   return (
     <div className="az">
       <AzAmbient phase={phase} />
-      <div className="az-top">
-        <button className="brand" onClick={onBack}>{LOGO} TRINITY</button>
-        <div className="az-top-right">
-          <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
-          <button className="az-back" onClick={onBack}>
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
-            {a.back}
-          </button>
-        </div>
-      </div>
+      <Nav sub />
 
       <AnimatePresence mode="wait">
         {phase === 'intro' && (

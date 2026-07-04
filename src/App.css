@@ -201,6 +201,8 @@ footer .wrap{position:relative;z-index:1}
   radial-gradient(50% 40% at 5% 10%,rgba(124,58,237,.05),transparent 55%),
   var(--bg)}
 .az-top,.az-stage,.az-report,.scan{position:relative;z-index:1}
+/* clear the fixed shared nav (the old in-flow .az-top bar is gone) */
+.az,.insight-page{padding-top:58px}
 .az button.brand{background:none;border:0;cursor:pointer;padding:0}
 .az-top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
   width:min(92vw,1160px);margin-inline:auto;padding:20px 0}
@@ -1060,10 +1062,10 @@ footer .wrap{position:relative;z-index:1}
 
 /* ── dims: expanding glow ripple on lens change (D → F → V) ── */
 .dims-ripple{position:absolute;top:50%;left:50%;width:0;height:0;pointer-events:none;z-index:3}
-.dims-ripple span{position:absolute;top:0;left:0;width:26px;height:26px;margin:-13px;border-radius:50%;border:2px solid var(--rc);box-shadow:0 0 14px var(--rc);opacity:0;animation:dimsRipple 1.15s cubic-bezier(.2,.7,.2,1) forwards}
-.dims-ripple span:nth-child(2){animation-delay:.13s}
-.dims-ripple span:nth-child(3){animation-delay:.26s}
-@keyframes dimsRipple{0%{transform:scale(.4);opacity:.75}70%{opacity:.26}100%{transform:scale(19);opacity:0}}
+.dims-ripple span{position:absolute;top:0;left:0;width:30px;height:30px;margin:-15px;border-radius:50%;border:1.5px solid var(--rc);box-shadow:0 0 22px var(--rc);filter:blur(.7px);opacity:0;animation:dimsRipple 1.3s cubic-bezier(.22,.7,.2,1) forwards}
+.dims-ripple span:nth-child(2){animation-delay:.14s}
+.dims-ripple span:nth-child(3){animation-delay:.28s}
+@keyframes dimsRipple{0%{transform:scale(.5);opacity:.32}55%{opacity:.13}100%{transform:scale(16);opacity:0}}
 @media(prefers-reduced-motion:reduce){.dims-ripple{display:none}}
 
 /* ── why-founders: the four reasons take turns lighting up ── */
@@ -1110,4 +1112,5 @@ footer .wrap{position:relative;z-index:1}
 .nav-mobile a{font:inherit;font-size:1.1rem;font-weight:600;color:var(--ink-soft);padding:15px 2px;border-bottom:1px solid var(--line);text-decoration:none}
 .nav.on-dark .nav-mobile a{color:#e6e9ff;border-color:rgba(255,255,255,.09)}
 .nav-mobile-cta{margin-top:16px;border:none;border-radius:999px;font:inherit;font-size:1.06rem;font-weight:800;color:#fff;padding:15px;cursor:pointer;background:linear-gradient(120deg,#3B82F6,#7c3aed 55%,#FF6B00);box-shadow:0 14px 34px -14px rgba(90,120,255,.6)}
+.nav-analyze{white-space:nowrap}
 @media(max-width:880px){.nav-burger{display:flex}.nav-mobile{display:flex}.nav-analyze{display:none}}
