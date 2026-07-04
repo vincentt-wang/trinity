@@ -879,8 +879,16 @@ function ArticleDetail({ c, idx, lang, onList, onAnalyze, onOpen }: { c: Ins; id
         {p?.meta && <p className="if-meta">{p.meta}</p>}
         {p?.standfirst && <p className="if-standfirst">{p.standfirst}</p>}
         <p className="id-lead">{a.body}</p>
+        {p?.stat && (
+          <div className="if-stat">
+            <div className="if-stat-n"><CountUp to={p.stat.n} />{p.stat.unit}</div>
+            <p className="if-stat-l">{p.stat.label}</p>
+            <p className="if-stat-src">{p.stat.source}</p>
+          </div>
+        )}
       </header>
       {body}
+      {pr.slice(3).map((s, i) => <ProseSec key={`tail-${i}`} s={s} />)}
       <ReadNext c={c} idx={idx} onOpen={onOpen} />
       <Reveal>
         <div className="id-cta">
