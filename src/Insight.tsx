@@ -7,6 +7,7 @@ import { CountUp, MaskLines } from './lib/anim'
 import { useLang, type Lang } from './i18n'
 import { Nav } from './lib/Nav'
 import { COPY } from './copy'
+import { ARTICLE_PROSE } from './insightArticles'
 
 const EASE = [0.2, 0.7, 0.2, 1] as const
 const EARTH = '#2563eb'
@@ -691,7 +692,7 @@ function Hl({ t, c }: { t: string; c: string }) {
   return <>{parts.map((s, i) => (i % 2 === 1 ? <strong key={i} style={{ color: c }}>{s}</strong> : s))}</>
 }
 
-function ProseSec({ s }: { s: Feat['sections'][number] }) {
+function ProseSec({ s }: { s: { h: string; ps: { t: string; l: number }[] } }) {
   return (
     <Reveal>
       <section className="id-sec if-prose">
@@ -804,8 +805,34 @@ function FeaturedDetail({ c, onList, onAnalyze }: { c: Ins; onList: () => void; 
 
 /* ===== detail shell ===== */
 
-function ArticleDetail({ c, idx, lang, onList, onAnalyze }: { c: Ins; idx: number; lang: Lang; onList: () => void; onAnalyze: () => void }) {
+/* Read next: two sibling articles to keep people moving through the cluster (SEO/GEO internal links) */
+function ReadNext({ c, idx, onOpen }: { c: Ins; idx: number; onOpen: (i: number) => void }) {
+  const sh = c.details.shared
+  const picks = [(idx + 1) % c.articles.length, (idx + 2) % c.articles.length]
+  return (
+    <Reveal>
+      <section className="id-readnext">
+        <div className="id-label">{sh.readNext}</div>
+        <div className="id-rn-grid">
+          {picks.map((i) => {
+            const a = c.articles[i]
+            return (
+              <button key={i} className="id-rn-card" data-lens={lensOf(a.lens)} onClick={() => onOpen(i)}>
+                <span className="id-rn-top"><span className="id-rn-no">{a.no}</span><span className="id-rn-tag">{a.tag}</span></span>
+                <span className="id-rn-title">{a.title}</span>
+                <span className="id-rn-go">{sh.read} {ARROW_R}</span>
+              </button>
+            )
+          })}
+        </div>
+      </section>
+    </Reveal>
+  )
+}
+
+function ArticleDetail({ c, idx, lang, onList, onAnalyze, onOpen }: { c: Ins; idx: number; lang: Lang; onList: () => void; onAnalyze: () => void; onOpen: (i: number) => void }) {
   const a = c.articles[idx]
+  const p = ARTICLE_PROSE[lang][idx]
   const det = c.details
   const sh = det.shared
   const ctas = [det.d1.ctaLine, det.d2.ctaLine, det.d3.ctaLine, det.d4.ctaLine, det.d5.ctaLine, det.d6.ctaLine]
@@ -818,7 +845,7 @@ function ArticleDetail({ c, idx, lang, onList, onAnalyze }: { c: Ins; idx: numbe
   else body = <Detail6 d={det.d6} sh={sh} lang={lang} />
 
   return (
-    <div className="insight-detail" data-lens={lensOf(a.lens)}>
+    <article className="insight-detail" data-lens={lensOf(a.lens)}>
       <button className="id-back" onClick={onList}>
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M15 18l-6-6 6-6" /></svg>
         {sh.back}
@@ -829,16 +856,25 @@ function ArticleDetail({ c, idx, lang, onList, onAnalyze }: { c: Ins; idx: numbe
           <span className="insight-tag">{a.tag}</span>
         </div>
         <h1 className="id-title">{a.title}</h1>
+        {p?.meta && <p className="if-meta">{p.meta}</p>}
+        {p?.standfirst && <p className="if-standfirst">{p.standfirst}</p>}
         <p className="id-lead">{a.body}</p>
       </header>
-      {body}
+      {p?.sections?.map((s, i) => <ProseSec key={i} s={s} />)}
+      <Reveal>
+        <section className="id-sec">
+          <div className="id-label">{sh.figures}</div>
+          {body}
+        </section>
+      </Reveal>
+      <ReadNext c={c} idx={idx} onOpen={onOpen} />
       <Reveal>
         <div className="id-cta">
           <p>{ctas[idx]}</p>
           <button className="btn btn-ghost" onClick={onAnalyze}>{sh.ctaBtn} {ARROW_R}</button>
         </div>
       </Reveal>
-    </div>
+    </article>
   )
 }
 
@@ -856,6 +892,19 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
     window.addEventListener('trinity:navview', h)
     return () => window.removeEventListener('trinity:navview', h)
   }, [])
+  // per-article title + description so each article is its own crawlable/citeable page (SEO/GEO)
+  useEffect(() => {
+    const base = 'Trinity Check'
+    let title = lang === 'zh' ? '洞察觀點 · 引擎怎麼想' : 'Insight · How the engine thinks'
+    let desc = c.hero.lead
+    if (open === -1) { title = c.featured.title; desc = c.featured.standfirst }
+    else if (open !== null) { const a = c.articles[open]; title = a.title; desc = ARTICLE_PROSE[lang][open]?.standfirst || a.body }
+    document.title = `${title} · ${base}`
+    let m = document.querySelector('meta[name="description"]') as HTMLMetaElement | null
+    if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m) }
+    m.content = desc
+    return () => { document.title = base }
+  }, [open, lang, c])
 
   const sh = c.details.shared
 
@@ -960,7 +1009,7 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
           >
             {open === -1
               ? <FeaturedDetail c={c} onList={() => setOpen(null)} onAnalyze={onAnalyze} />
-              : <ArticleDetail c={c} idx={open} lang={lang} onList={() => setOpen(null)} onAnalyze={onAnalyze} />}
+              : <ArticleDetail c={c} idx={open} lang={lang} onList={() => setOpen(null)} onAnalyze={onAnalyze} onOpen={setOpen} />}
           </motion.div>
         )}
       </AnimatePresence>

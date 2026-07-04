@@ -11,7 +11,8 @@ const LOGO = (
   </svg>
 )
 
-const SECTION_IDS = ['engine', 'stack', 'dims', 'fit'] as const
+// order MUST match the home page's top-to-bottom flow: dims → engine → stack → fit
+const SECTION_IDS = ['dims', 'engine', 'stack', 'fit'] as const
 
 /**
  * The one nav used everywhere. On the home page section links smooth-scroll;
