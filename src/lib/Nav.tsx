@@ -28,7 +28,7 @@ export function Nav({ sub = false, active = '', navDark = false }: { sub?: boole
   const labels: Record<string, string> = { engine: c.nav.howItWorks, stack: c.nav.stack, dims: c.nav.dims, fit: c.nav.fit }
   // menu clicks jump straight to the section (no scrolling through / fast-forwarding pinned sections)
   const section = (id: string) => { if (sub) location.hash = id; else { scrollToId('#' + id, true); presentationResync() } setOpen(false) }
-  const viewTo = (v: string) => { window.dispatchEvent(new CustomEvent('trinity:navview', { detail: v })); location.hash = v; setOpen(false) }
+  const viewTo = (v: string) => { window.dispatchEvent(new CustomEvent('trinity:navview', { detail: v })); location.hash = v; window.scrollTo(0, 0); setOpen(false) }
   const home = () => { if (sub) location.hash = ''; else { scrollToTop(); presentationResync() } setOpen(false) }
 
   return (

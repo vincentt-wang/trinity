@@ -1,0 +1,5 @@
+# Trinity Check — allow all crawlers (search + generative engines)
+User-agent: *
+Allow: /
+
+Sitemap: https://trinity.easeai.com.tw/sitemap.xml

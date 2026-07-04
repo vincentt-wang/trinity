@@ -617,6 +617,48 @@ function StatsBand() {
   )
 }
 
+/* ---------- Promo video: a single section near the bottom (experimental) ---------- */
+function PromoVideo() {
+  const { lang } = useLang()
+  const base = import.meta.env.BASE_URL
+  const t = lang === 'zh'
+    ? { eyebrow: '30 秒看懂', h2a: '看引擎', h2b: '怎麼想', lead: '三個透鏡、六十個維度、一個誠實的判定。整個方法，半分鐘看完。' }
+    : { eyebrow: 'The 30-second tour', h2a: 'Watch the engine', h2b: 'think', lead: 'Three lenses, sixty dimensions, one honest verdict. The whole method, in half a minute.' }
+  return (
+    <section id="promo" className="sec">
+      <div className="wrap">
+        <Reveal>
+          <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto' }}>
+            <span className="eyebrow" style={{ justifyContent: 'center' }}>{t.eyebrow}</span>
+            <h2 style={{ fontSize: 'clamp(1.8rem,3.6vw,2.7rem)', marginTop: 14 }}>
+              {t.h2a}{' '}
+              <span style={{ backgroundImage: 'var(--grad-ink)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>{t.h2b}</span>
+            </h2>
+            <p className="lead" style={{ margin: '14px auto 0' }}>{t.lead}</p>
+          </div>
+        </Reveal>
+        <Reveal delay={0.12}>
+          <div style={{
+            maxWidth: 940, margin: '30px auto 0', borderRadius: 20, overflow: 'hidden',
+            border: '1px solid var(--line)', boxShadow: 'var(--shadow-lg)', background: '#000',
+          }}>
+            <video
+              controls
+              playsInline
+              preload="metadata"
+              poster={`${base}video/trinity-promo-poster.jpg`}
+              style={{ width: '100%', display: 'block' }}
+              aria-label="Trinity product promo"
+            >
+              <source src={`${base}video/trinity-promo-16x9.mp4`} type="video/mp4" />
+            </video>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
 /* ---------- Footer: brand + channels + learn + start ---------- */
 const CHAN_ICONS = [
   /* Instagram: rounded square + lens + dot */
@@ -740,6 +782,9 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
       return () => clearTimeout(t)
     }
   }, [])
+  useEffect(() => {
+    document.title = lang === 'zh' ? 'Trinity Check — 從一個點子到值得投資的新創' : 'Trinity Check — From an idea to an investable startup'
+  }, [lang])
 
   return (
     <>
@@ -800,6 +845,8 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
           </Reveal>
         </div>
       </section>
+
+      <PromoVideo />
 
       <Footer onAnalyze={onAnalyze} onInsight={onInsight} onMaterials={onMaterials} />
     </>

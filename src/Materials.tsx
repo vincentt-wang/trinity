@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ReactNode, type CSSProperties } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode, type CSSProperties } from 'react'
 import { motion } from 'framer-motion'
 import { useLang } from './i18n'
 import { Nav } from './lib/Nav'
@@ -71,6 +71,50 @@ function CardBack({ small }: { small?: boolean }) {
     <div className="cardback">
       {CARD_LOGO(small ? 34 : 46, small ? 36 : 49)}
       <div className="cardback-wm">TRINITY</div>
+    </div>
+  )
+}
+
+/* a small principle-card front for the hero fan (so it isn't five identical backs) */
+function MiniFront({ card, lang }: { card: TCard; lang: L }) {
+  const col = pileColor(card.k)
+  return (
+    <div className="mat-hb front" style={{ '--c': col } as CSSProperties}>
+      <span className="mat-hb-accent" />
+      <div className="mhb-cat">{card.k} · {pileName(card.k, lang)}</div>
+      {CARD_LOGO(30, 32)}
+      <div className="mhb-cn">{lang === 'en' ? card.cne : card.cn}</div>
+      <div className="mhb-wm">TRINITY</div>
+    </div>
+  )
+}
+
+/* the hero: a hand of 60 cards fanning open — backs on the wings, three real fronts in the middle */
+const FAN_PICK = { s: TCARDS.find((c) => c.k === 'S')!, d: TCARDS.find((c) => c.k === 'D')!, v: TCARDS.find((c) => c.k === 'V')! }
+function HeroFan({ lang }: { lang: L }) {
+  const reduce = REDUCED
+  const items = [
+    { key: 'bl', ang: -30, node: <div className="mat-hb"><CardBack small /></div> },
+    { key: 'd', ang: -15, node: <MiniFront card={FAN_PICK.d} lang={lang} /> },
+    { key: 's', ang: 0, node: <MiniFront card={FAN_PICK.s} lang={lang} /> },
+    { key: 'v', ang: 15, node: <MiniFront card={FAN_PICK.v} lang={lang} /> },
+    { key: 'br', ang: 30, node: <div className="mat-hb"><CardBack small /></div> },
+  ]
+  return (
+    <div className="mat-herofan">
+      <div className="mat-halo" aria-hidden />
+      {items.map((it, i) => (
+        <motion.div
+          key={it.key}
+          className="mat-fancard"
+          initial={reduce ? { rotate: it.ang, opacity: 1 } : { rotate: 0, y: 26, opacity: 0, scale: 0.92 }}
+          animate={{ rotate: it.ang, y: 0, opacity: 1, scale: 1 }}
+          transition={{ delay: reduce ? 0 : 0.12 + i * 0.08, type: 'spring', stiffness: 130, damping: 15 }}
+          style={{ zIndex: 6 - Math.abs(it.ang) / 15 } as CSSProperties}
+        >
+          {it.node}
+        </motion.div>
+      ))}
     </div>
   )
 }
@@ -314,6 +358,14 @@ const PILES = ['S', 'D', 'F', 'V', 'G']
 export default function Materials() {
   const { lang } = useLang()
   const c = COPY[lang]
+  // always open at the top, and jump back to the top if the deck nav is re-clicked
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    document.title = lang === 'zh' ? '創業原則卡 · Trinity Check' : 'The Principle Deck · Trinity Check'
+    const h = (e: Event) => { if ((e as CustomEvent).detail === 'materials') window.scrollTo(0, 0) }
+    window.addEventListener('trinity:navview', h)
+    return () => window.removeEventListener('trinity:navview', h)
+  }, [lang])
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
   const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
@@ -341,12 +393,7 @@ export default function Materials() {
       <div className="wrap mat-wrap">
         {/* Hero — product shot: a lit fan of card backs is the thesis */}
         <motion.div className="mat-hero" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE }}>
-          <div className="mat-herofan" aria-hidden>
-            <div className="mat-halo" />
-            <div className="mat-hb hb-l"><CardBack /></div>
-            <div className="mat-hb hb-r"><CardBack /></div>
-            <div className="mat-hb hb-c"><CardBack /></div>
-          </div>
+          <HeroFan lang={lang} />
           <div className="mat-badge">{c.badge}</div>
           <h1 className="mat-title">{c.title}</h1>
           <div className="mat-sub">{LOGO}<span>{c.sub}</span></div>

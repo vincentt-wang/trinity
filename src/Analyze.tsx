@@ -148,6 +148,10 @@ function Scanning({ onDone }: { onDone: () => void }) {
 
 export default function Analyze({ onBack }: { onBack: () => void }) {
   const { lang } = useLang()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    document.title = lang === 'zh' ? '分析你的點子 · Trinity Check' : 'Analyze your idea · Trinity Check'
+  }, [lang])
   const a = COPY[lang].analyze
   const r = a.report
   const intro = a.input.intro
