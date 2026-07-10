@@ -1,0 +1,26 @@
+name = "trinity-check-intake"
+main = "index.js"
+compatibility_date = "2026-01-01"
+
+# The Worker only writes answers.json server-side; any deck file goes straight to
+# R2 via a presigned PUT (file upload is optional — the form can also send a deck link).
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "trinity-submissions"
+
+[vars]
+R2_ACCOUNT_ID = "REPLACE_WITH_CLOUDFLARE_ACCOUNT_ID"
+R2_BUCKET = "trinity-submissions"
+NOTIFY_TO = "vincent@easeai.com.tw"
+
+# Serve the API same-origin so /analyze can call /api/analyze/* with no CORS drama.
+# Requires easeai.com.tw (or the trinity subdomain) to be an active zone on this account.
+routes = [
+  { pattern = "trinity.easeai.com.tw/api/analyze/*", zone_name = "easeai.com.tw" }
+]
+
+# Secrets are NOT stored here. Set them with wrangler:
+#   wrangler secret put RESEND_API_KEY        # for the notification email (skip = no email)
+#   wrangler secret put R2_ACCESS_KEY_ID      # only if you enable deck FILE upload
+#   wrangler secret put R2_SECRET_ACCESS_KEY
+#   # ANTHROPIC_API_KEY is RESERVED for approach B — do NOT set it yet.

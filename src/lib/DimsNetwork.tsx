@@ -20,7 +20,7 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
   activeLens: LensK
   lang: Lang
   onHover: (h: { k: LensK; d: Dim } | null) => void
-  onPick: (k: LensK) => void
+  onPick: (h: { k: LensK; d: Dim }) => void
 }) {
   const ref = useRef<HTMLCanvasElement>(null)
   const live = useRef({ activeLens, lang, onHover, onPick })
@@ -70,7 +70,7 @@ export function DimsNetwork({ activeLens, lang, onHover, onPick }: {
     window.addEventListener('resize', onResize)
     const onMove = (e: MouseEvent) => { const r = canvas.getBoundingClientRect(); mx = (e.clientX - r.left) * (W / r.width); my = (e.clientY - r.top) * (H / r.height) }
     const onLeave = () => { mx = -9999; my = -9999 }
-    const onClick = () => { if (hovI >= 0) live.current.onPick(nodes[hovI].k) }
+    const onClick = () => { if (hovI >= 0) live.current.onPick({ k: nodes[hovI].k, d: DIMENSIONS[nodes[hovI].k][nodes[hovI].di] }) }
     canvas.addEventListener('mousemove', onMove)
     canvas.addEventListener('mouseleave', onLeave)
     canvas.addEventListener('click', onClick)

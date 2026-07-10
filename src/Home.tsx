@@ -14,6 +14,7 @@ import { CountUp, MaskLines, Stagger } from './lib/anim'
 import { analyzedCount, fetchAnalyzed } from './stats'
 import { useLang } from './i18n'
 import { COPY, DIMENSIONS } from './copy'
+import Pitch from './Pitch'
 
 const LOGO = (
   <svg viewBox="0 0 32 32" aria-hidden>
@@ -264,6 +265,9 @@ function DimsSection() {
   const c = COPY[lang].dims
   const [k, setK] = useState<DimK>('e')
   const [hov, setHov] = useState<{ k: DimK; d: Dim } | null>(null)
+  // a clicked dimension pins its card open; hover no longer overrides it until another
+  // dim is clicked, the next-step nav advances, or a lens tab returns to the overview
+  const [locked, setLocked] = useState<{ k: DimK; d: Dim } | null>(null)
   // a lens change fires an expanding glow ripple in the network (not on hover)
   const [pulse, setPulse] = useState<{ n: number; k: DimK }>({ n: 0, k: 'e' })
   const pulseTo = (nk: DimK) => { setK(nk); setPulse((p) => ({ n: p.n + 1, k: nk })) }
@@ -272,15 +276,17 @@ function DimsSection() {
   kRef.current = k
   useEffect(() => {
     const order: DimK[] = ['e', 'm', 's']
-    registerDims({ count: 3, get: () => order.indexOf(kRef.current), set: (i) => pulseTo(order[i]) })
+    registerDims({ count: 3, get: () => order.indexOf(kRef.current), set: (i) => { setLocked(null); setHov(null); pulseTo(order[i]) } })
     return () => registerDims(null)
   }, [])
   const meta = c.lensMeta[k]
-  const accent = hov ? DIM_VAR[hov.k] : DIM_VAR[k]
-  const d = hov?.d ?? null
+  // a pinned (clicked) dim wins over hover; hover only drives the card when nothing is pinned
+  const sel = locked ?? hov
+  const accent = sel ? DIM_VAR[sel.k] : DIM_VAR[k]
+  const d = sel?.d ?? null
   // zero-padded two-digit chip from the id (C04 -> 04); string ops only, no parseInt
   const num = d ? d.id.replace(/\D/g, '').padStart(2, '0') : String(DIMENSIONS[k].length)
-  const tag = c.lensMeta[hov ? hov.k : k].label
+  const tag = c.lensMeta[sel ? sel.k : k].label
   const name = d ? (lang === 'en' ? d.en : d.zh) : `${meta.label} · ${DIMENSIONS[k].length} ${c.dimsWord}`
   const desc = d ? (lang === 'en' ? d.de : d.dz) : meta.q
   const ask = d ? (lang === 'en' ? d.ask_en : d.ask_zh) : null
@@ -288,7 +294,7 @@ function DimsSection() {
   return (
     <section id="dims" className="sec sec-soft dims-sec">
       <div className="dims-net-layer">
-        <DimsNetwork activeLens={k} lang={lang} onHover={(h) => { setHov(h); if (h) setK(h.k) }} onPick={pulseTo} />
+        <DimsNetwork activeLens={k} lang={lang} onHover={(h) => { setHov(h); if (h && !locked) setK(h.k) }} onPick={(h) => { setLocked(h); setK(h.k); setPulse((p) => ({ n: p.n + 1, k: h.k })) }} />
         {pulse.n > 0 && (
           <div key={pulse.n} className="dims-ripple" style={{ ['--rc' as string]: DIM_VAR[pulse.k] }} aria-hidden>
             <span /><span /><span />
@@ -302,7 +308,7 @@ function DimsSection() {
           </Reveal>
           <div className="lenstabs lenstabs-row">
             {DIM_KEYS.map((x) => (
-              <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => pulseTo(x)}>
+              <button key={x} className={`lenstab ${x} ${k === x ? 'on' : ''}`} onClick={() => { setLocked(null); setHov(null); pulseTo(x) }}>
                 <span className="lenstab-dot" /> {c.lensMeta[x].label} <em>{DIMENSIONS[x].length}</em>
               </button>
             ))}
@@ -772,6 +778,7 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
   const { lang } = useLang()
   const c = COPY[lang]
   const navDark = useNavTheme()
+  const [pitchOpen, setPitchOpen] = useState(false)
   const heroMag = useMagnetic<HTMLButtonElement>()
   const active = useActiveSection(['engine', 'stack', 'dims', 'fit'])
   // returning from a sub-page via a section hash (#engine…) scrolls there on mount
@@ -794,7 +801,17 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
         <HeroNetwork />
         <div className="hero-veil" aria-hidden />
         <div className="wrap hero-inner">
-          <Reveal><div className="eyebrow eyebrow-center">{c.hero.eyebrow}</div></Reveal>
+          <Reveal>
+            <button
+              type="button"
+              className="eyebrow eyebrow-center eyebrow-trigger"
+              onClick={() => setPitchOpen(true)}
+              aria-haspopup="dialog"
+              aria-label={c.hero.eyebrow}
+            >
+              {c.hero.eyebrow}<span className="et-dot" aria-hidden />
+            </button>
+          </Reveal>
           <h1 className="hero-title" key={lang}>
             <MaskLines lines={[<>{c.hero.titleA}</>, <>{c.hero.titleB}<span className="hl">{c.hero.titleHl}</span></>]} />
           </h1>
@@ -849,6 +866,10 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
       <PromoVideo />
 
       <Footer onAnalyze={onAnalyze} onInsight={onInsight} onMaterials={onMaterials} />
+
+      <AnimatePresence>
+        {pitchOpen && <Pitch onClose={() => setPitchOpen(false)} />}
+      </AnimatePresence>
     </>
   )
 }

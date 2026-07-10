@@ -144,6 +144,7 @@ function CardFace({ c, lang }: { c: TCard; lang: L }) {
         <div className="td-cat">{c.k} · {pileName(c.k, lang)}</div>
         {CARD_LOGO(40, 43)}
         <div className="td-cn">{en ? c.cne : c.cn}</div>
+        <div className="td-gloss">{en ? c.ge : c.g}</div>
         <div className="td-pun">{punchLines(en ? c.pe || c.p : c.p)}</div>
         <div className="td-wm">TRINITY</div>
       </div>
