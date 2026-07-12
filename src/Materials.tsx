@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { useLang } from './i18n'
 import { Nav } from './lib/Nav'
 import { urlFor } from './router'
-import { TCARDS, TD_CAT, type TCard } from './canonCards'
+import { TCARDS, TD_CAT, BFACE, type TCard, type BFaceData } from './canonCards'
 
 const WAITLIST_URL = 'https://trinity-counter.comicbnb.workers.dev/waitlist'
 const NOTIFY_TO = 'vincent@easeai.com.tw'
@@ -127,10 +127,49 @@ function HeroFan({ lang }: { lang: L }) {
   )
 }
 
+/* the B 版面 (framework visual) — used as the back for cards whose canonical default is B (BFACE) */
+function BFaceBack({ c, data, lang }: { c: TCard; data: BFaceData; lang: L }) {
+  const en = lang === 'en'
+  const col = pileColor(c.k)
+  const T = (o?: { zh: string; en: string } | null) => (o ? (en ? o.en || o.zh : o.zh) : '')
+  const isGrid = data.type === 'grid'
+  return (
+    <div className="td-face td-backface" style={{ '--tc': col } as CSSProperties}>
+      <div className="td-bhead">
+        <span className="td-bid">{c.k}{c.n}</span>
+        <span className="td-bcn" style={{ color: col }}>{T(data.title)}</span>
+      </div>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '3px', overflow: 'hidden', margin: '6px 0' }}>
+        {isGrid ? (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '4px', height: '100%' }}>
+            {Object.entries(data.cells!).map(([k, v]) => (
+              <div key={k} style={{ border: `1px solid ${col}44`, borderRadius: '5px', padding: '4px 5px', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', fontSize: '0.62rem', fontWeight: 700, lineHeight: 1.2, color: 'var(--ink,#e8e8f0)' }}>{T(v)}</div>
+            ))}
+          </div>
+        ) : (
+          data.items!.map((it, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: '6px', padding: '1px 0' }}>
+              <span style={{ flex: '0 0 auto', width: '15px', fontSize: '0.6rem', fontWeight: 800, color: col }}>{String(i + 1).padStart(2, '0')}</span>
+              <span style={{ flex: '0 0 auto', fontSize: '0.68rem', fontWeight: 800, whiteSpace: 'nowrap' }}>{T(it.label)}</span>
+              <span style={{ flex: 1, fontSize: '0.6rem', opacity: 0.62, lineHeight: 1.25, textAlign: 'right' }}>{T(it.sub)}</span>
+            </div>
+          ))
+        )}
+      </div>
+      {data.note && <div style={{ fontSize: '0.6rem', color: col, opacity: 0.9, lineHeight: 1.3 }}>{T(data.note)}</div>}
+      <div className="td-bfoot">
+        <span style={{ color: col }}>{c.src}</span>
+        <span className="td-wm2">TRINITY</span>
+      </div>
+    </div>
+  )
+}
+
 /* the two faces of a dealt card */
 function CardFace({ c, lang }: { c: TCard; lang: L }) {
   const en = lang === 'en'
   const col = pileColor(c.k)
+  const bface = BFACE[c.id]
   const blk = (label: string, v: string) =>
     v ? (
       <div className="td-blk">
@@ -148,22 +187,26 @@ function CardFace({ c, lang }: { c: TCard; lang: L }) {
         <div className="td-pun">{punchLines(en ? c.pe || c.p : c.p)}</div>
         <div className="td-wm">TRINITY</div>
       </div>
-      <div className="td-face td-backface">
-        <div className="td-bhead">
-          <span className="td-bid">{c.k}{c.n}</span>
-          <span className="td-bcn" style={{ color: col }}>{en ? c.cne : c.cn}</span>
+      {bface ? (
+        <BFaceBack c={c} data={bface} lang={lang} />
+      ) : (
+        <div className="td-face td-backface">
+          <div className="td-bhead">
+            <span className="td-bid">{c.k}{c.n}</span>
+            <span className="td-bcn" style={{ color: col }}>{en ? c.cne : c.cn}</span>
+          </div>
+          <div className="td-bbody">
+            {blk(en ? 'Rule' : '判準', en ? c.cre : c.cr)}
+            {blk(en ? 'Example' : '範例', en ? c.cee : c.ce)}
+            {blk(en ? 'Trap' : '常見誤解', en ? c.cae : c.ca)}
+            {blk(en ? 'Do' : '動手', en ? c.cde : c.cd)}
+          </div>
+          <div className="td-bfoot">
+            <span style={{ color: col }}>{c.src}</span>
+            <span className="td-wm2">TRINITY</span>
+          </div>
         </div>
-        <div className="td-bbody">
-          {blk(en ? 'Rule' : '判準', en ? c.cre : c.cr)}
-          {blk(en ? 'Example' : '範例', en ? c.cee : c.ce)}
-          {blk(en ? 'Trap' : '常見誤解', en ? c.cae : c.ca)}
-          {blk(en ? 'Do' : '動手', en ? c.cde : c.cd)}
-        </div>
-        <div className="td-bfoot">
-          <span style={{ color: col }}>{c.src}</span>
-          <span className="td-wm2">TRINITY</span>
-        </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -173,6 +216,7 @@ function DeckDraw({ lang, cta }: { lang: L; cta: { draw: string; reveal: string;
   const [cur, setCur] = useState<TCard | null>(null)
   const [drawn, setDrawn] = useState<string[]>([])
   const [flipped, setFlipped] = useState(false)
+  const [revealed, setRevealed] = useState(false)
   const [seq, setSeq] = useState(0)
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 })
   const tiltRef = useRef<HTMLDivElement>(null)
@@ -182,19 +226,19 @@ function DeckDraw({ lang, cta }: { lang: L; cta: { draw: string; reveal: string;
     let next = drawn
     if (!pool.length) { pool = TCARDS.slice(); next = [] }
     const c = pool[Math.floor(Math.random() * pool.length)]
-    setCur(c); setDrawn([...next, c.id]); setFlipped(false); setSeq((s) => s + 1); setTilt({ rx: 0, ry: 0 })
+    setCur(c); setDrawn([...next, c.id]); setFlipped(!!BFACE[c.id]); setRevealed(false); setSeq((s) => s + 1); setTilt({ rx: 0, ry: 0 })
   }
   const pick = (id: string) => {
     const c = TCARDS.find((x) => x.id === id)
     if (!c) return
-    setCur(c); setDrawn((d) => [...d.filter((x) => x !== id), id]); setFlipped(false); setSeq((s) => s + 1); setTilt({ rx: 0, ry: 0 })
+    setCur(c); setDrawn((d) => [...d.filter((x) => x !== id), id]); setFlipped(!!BFACE[c.id]); setRevealed(false); setSeq((s) => s + 1); setTilt({ rx: 0, ry: 0 })
   }
   const primary = () => {
     if (!cur) return draw()
-    if (!flipped) return setFlipped(true)
+    if (!revealed) { setFlipped((f) => !f); setRevealed(true); return }
     return draw()
   }
-  const primaryLabel = !cur ? cta.draw : !flipped ? cta.reveal : cta.again
+  const primaryLabel = !cur ? cta.draw : !revealed ? cta.reveal : cta.again
 
   const onMove = (e: React.MouseEvent) => {
     if (REDUCED || !tiltRef.current) return
@@ -236,7 +280,7 @@ function DeckDraw({ lang, cta }: { lang: L; cta: { draw: string; reveal: string;
               style={{ transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)` }}
               onMouseMove={onMove}
               onMouseLeave={onLeave}
-              onClick={() => setFlipped((f) => !f)}
+              onClick={() => { setFlipped((f) => !f); setRevealed(true) }}
             >
               <div className={`td-inner-faces${flipped ? ' flipped' : ''}`}>
                 <CardFace c={cur} lang={lang} />
