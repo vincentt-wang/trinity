@@ -139,24 +139,33 @@ function BFaceBack({ c, data, lang }: { c: TCard; data: BFaceData; lang: L }) {
         <span className="td-bid">{c.k}{c.n}</span>
         <span className="td-bcn" style={{ color: col }}>{T(data.title)}</span>
       </div>
-      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '3px', overflow: 'hidden', margin: '6px 0' }}>
-        {isGrid ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '4px', height: '100%' }}>
-            {Object.entries(data.cells!).map(([k, v]) => (
-              <div key={k} style={{ border: `1px solid ${col}44`, borderRadius: '5px', padding: '4px 5px', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', fontSize: '0.62rem', fontWeight: 700, lineHeight: 1.2, color: 'var(--ink,#e8e8f0)' }}>{T(v)}</div>
+      {isGrid ? (
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '4px', margin: '6px 10px 8px' }}>
+          <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gridTemplateRows: '1fr 1fr', gridTemplateAreas: "'prob sol uvp adv cust' 'prob met uvp chan cust'", gap: '4px' }}>
+            {['prob', 'sol', 'uvp', 'adv', 'cust', 'met', 'chan'].map((k) => (
+              <div key={k} style={{ gridArea: k, border: '1px solid rgba(255,255,255,.16)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2px', fontSize: '0.66rem', fontWeight: 600, lineHeight: 1.15, color: '#d4d9f5' }}>{T(data.cells![k])}</div>
             ))}
           </div>
-        ) : (
-          data.items!.map((it, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: '6px', padding: '1px 0' }}>
-              <span style={{ flex: '0 0 auto', width: '15px', fontSize: '0.6rem', fontWeight: 800, color: col }}>{String(i + 1).padStart(2, '0')}</span>
-              <span style={{ flex: '0 0 auto', fontSize: '0.68rem', fontWeight: 800, whiteSpace: 'nowrap' }}>{T(it.label)}</span>
-              <span style={{ flex: 1, fontSize: '0.6rem', opacity: 0.62, lineHeight: 1.25, textAlign: 'right' }}>{T(it.sub)}</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', height: '20%' }}>
+            {['cost', 'rev'].map((k) => (
+              <div key={k} style={{ border: '1px solid rgba(255,255,255,.16)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2px', fontSize: '0.66rem', fontWeight: 600, lineHeight: 1.15, color: '#d4d9f5' }}>{T(data.cells![k])}</div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', margin: '2px 12px 4px' }}>
+          {data.items!.map((it, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(255,255,255,.08)', flex: 1, minHeight: 0 }}>
+              <span style={{ flex: 'none', width: '22px', fontSize: '0.66rem', fontWeight: 800, color: col }}>{String(i + 1).padStart(2, '0')}</span>
+              <span style={{ flex: 1, minWidth: 0 }}>
+                <span style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#eef1ff', lineHeight: 1.15 }}>{T(it.label)}</span>
+                {it.sub && <span style={{ display: 'block', fontSize: '0.66rem', color: '#a9b0d6', lineHeight: 1.15, marginTop: '1px' }}>{T(it.sub)}</span>}
+              </span>
             </div>
-          ))
-        )}
-      </div>
-      {data.note && <div style={{ fontSize: '0.6rem', color: col, opacity: 0.9, lineHeight: 1.3 }}>{T(data.note)}</div>}
+          ))}
+        </div>
+      )}
+      {data.note && <div style={{ fontSize: '0.62rem', color: col, textAlign: 'center', padding: '1px 10px 2px', lineHeight: 1.3 }}>{T(data.note)}</div>}
       <div className="td-bfoot">
         <span style={{ color: col }}>{c.src}</span>
         <span className="td-wm2">TRINITY</span>
