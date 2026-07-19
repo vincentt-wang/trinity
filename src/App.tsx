@@ -1,14 +1,22 @@
-import { useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import './App.css'
 import Home from './Home'
-import Analyze from './Analyze'
-import Insight from './Insight'
-import Materials from './Materials'
 import { LangProvider } from './i18n'
 import { viewFromLocation, routeTo, type View } from './router'
 
+// Home ships in the entry chunk (it is the landing view); the three sub-pages
+// are split out so a first visit does not download them.
+const Analyze = lazy(() => import('./Analyze'))
+const Insight = lazy(() => import('./Insight'))
+const Materials = lazy(() => import('./Materials'))
+
 const EASE = [0.2, 0.7, 0.2, 1] as const
+
+/** Holds the viewport while a split chunk lands, so the page does not collapse to zero height. */
+function ViewFallback() {
+  return <div style={{ minHeight: '100svh', background: 'var(--bg)' }} aria-busy="true" />
+}
 
 export default function App() {
   // view lives in the URL path (/, /analyze, /insight, /deck) so every page is shareable + indexable
@@ -23,6 +31,15 @@ export default function App() {
   useEffect(() => {
     if (view !== 'home') window.scrollTo(0, 0) // a sub-page always opens at the top
   }, [view])
+  // Warm the split chunks once the landing view is idle, so the first
+  // navigation is instant and the Suspense fallback never actually shows.
+  useEffect(() => {
+    const warm = () => { void import('./Analyze'); void import('./Insight'); void import('./Materials') }
+    const ric = window.requestIdleCallback
+    if (ric) { const id = ric(warm, { timeout: 3000 }); return () => window.cancelIdleCallback?.(id) }
+    const t = setTimeout(warm, 1800)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
     <LangProvider>
@@ -46,7 +63,7 @@ export default function App() {
           exit={{ opacity: 0, x: 80 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <Materials />
+          <Suspense fallback={<ViewFallback />}><Materials /></Suspense>
         </motion.div>
       )}
       {view === 'analyze' && (
@@ -57,7 +74,7 @@ export default function App() {
           exit={{ opacity: 0, x: 80 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <Analyze onBack={() => setView('home')} />
+          <Suspense fallback={<ViewFallback />}><Analyze onBack={() => setView('home')} /></Suspense>
         </motion.div>
       )}
       {view === 'insight' && (
@@ -68,7 +85,7 @@ export default function App() {
           exit={{ opacity: 0, x: 80 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <Insight onBack={() => routeTo('home')} onAnalyze={() => routeTo('analyze')} />
+          <Suspense fallback={<ViewFallback />}><Insight onBack={() => routeTo('home')} onAnalyze={() => routeTo('analyze')} /></Suspense>
         </motion.div>
       )}
     </AnimatePresence>
