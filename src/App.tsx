@@ -1,15 +1,37 @@
-import { Suspense, lazy, useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useState, type ComponentType } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import './App.css'
 import Home from './Home'
 import { LangProvider } from './i18n'
 import { viewFromLocation, routeTo, type View } from './router'
 
+/**
+ * lazy() with one retry, then a single hard reload.
+ *
+ * A chunk import can fail for reasons that have nothing to do with this code:
+ * the file has not propagated to the edge yet, or a newer deploy replaced it
+ * while this tab still runs the old entry chunk. Both leave a blank view with
+ * no way back. Retry once (cache-busted) for a transient miss; if it still
+ * fails, reload once to pick up the current index.html. sessionStorage keeps
+ * that reload from ever looping.
+ */
+function lazyView<P>(name: string, load: () => Promise<{ default: ComponentType<P> }>) {
+  return lazy<ComponentType<P>>(() =>
+    load().catch(() =>
+      load().catch(() => {
+        const key = `trinity-chunk-reload:${name}`
+        if (!sessionStorage.getItem(key)) { sessionStorage.setItem(key, '1'); location.reload() }
+        return new Promise<{ default: ComponentType<P> }>(() => {}) // hold Suspense while the reload happens
+      }),
+    ),
+  )
+}
+
 // Home ships in the entry chunk (it is the landing view); the three sub-pages
 // are split out so a first visit does not download them.
-const Analyze = lazy(() => import('./Analyze'))
-const Insight = lazy(() => import('./Insight'))
-const Materials = lazy(() => import('./Materials'))
+const Analyze = lazyView('analyze', () => import('./Analyze'))
+const Insight = lazyView('insight', () => import('./Insight'))
+const Materials = lazyView('materials', () => import('./Materials'))
 
 const EASE = [0.2, 0.7, 0.2, 1] as const
 
