@@ -726,8 +726,17 @@ function Footer({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState('')
   useEffect(() => {
+    // track the live set, so leaving every section clears the nav instead of
+    // leaving the last-seen link lit for the rest of the page
+    const live = new Set<string>()
     const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id) }),
+      (entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) live.add(e.target.id); else live.delete(e.target.id) })
+        const inDoc = ids
+          .filter((id) => live.has(id))
+          .sort((a, b) => (document.getElementById(a)?.offsetTop ?? 0) - (document.getElementById(b)?.offsetTop ?? 0))
+        setActive(inDoc[0] ?? '')
+      },
       { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
     )
     ids.forEach((id) => { const el = document.getElementById(id); if (el) obs.observe(el) })

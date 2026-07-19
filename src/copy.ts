@@ -152,7 +152,7 @@ export const COPY = {
       ],
       lensName: { e: 'Desirability', m: 'Feasibility', s: 'Viability', a: 'One system' },
     },
-    stats: { labels: ['startups analyzed', 'dimensions scored', 'independent lenses', 'markets mapped · US + TW'] },
+    stats: { labels: ['startups analyzed', 'dimensions scored', 'independent lenses', 'markets: US + TW'] },
     cta: {
       h2: 'Get started', p: 'Run your first round free. A full report: your Trinity scores, your stage, and the top three things to fix.',
       paths: [
@@ -653,7 +653,7 @@ export const COPY = {
       ],
       lensName: { e: '欲求性', m: '可行性', s: '存續性', a: '一個系統' },
     },
-    stats: { labels: ['家新創已分析', '個維度評分', '個獨立透鏡', '個市場 · 美國＋台灣'] },
+    stats: { labels: ['家新創已分析', '個維度評分', '個獨立透鏡', '個市場：美國＋台灣'] },
     cta: {
       h2: '開始使用', p: '免費跑你的第一輪。一份完整報告：你的 Trinity 分數、所處階段，以及最該修的三件事。',
       paths: [

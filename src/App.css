@@ -8,12 +8,15 @@
 .brand svg{width:28px;height:28px}
 .nav-cta{justify-self:end}
 .nav-center{justify-self:center;display:flex;align-items:center;gap:2px}
-.nav-center a{position:relative;font-weight:500;color:var(--ink-soft);padding:8px 16px;transition:color .2s}
+/* nowrap: the ZH labels are short enough to fit, but wrap into orphans without it */
+.nav-center a{position:relative;font-weight:500;color:var(--ink-soft);padding:8px 16px;white-space:nowrap;transition:color .2s}
+@media(max-width:1080px){.nav-center a{padding:8px 11px}}
 .nav-center a:hover{color:var(--ink)}
 .nav-center a::after{content:"";position:absolute;left:16px;right:16px;bottom:2px;height:2px;border-radius:2px;background:var(--grad-ink);transform:scaleX(0);transform-origin:left;transition:transform .32s var(--ease)}
 .nav-center a:hover::after{transform:scaleX(1)}
 .nav.on-dark .nav-center a::after{background:linear-gradient(90deg,#93c5fd,#c4b5fd)}
-@media(max-width:880px){.nav-in{grid-template-columns:1fr auto}.nav-center{display:none}}
+/* 1000px, not 880: below this the nowrap ZH links push the CTA off the right edge */
+@media(max-width:1000px){.nav-in{grid-template-columns:1fr auto}.nav-center{display:none}}
 
 /* full-bleed section shell: each section is its own screen */
 .sec{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:clamp(90px,12vh,150px) 0;position:relative;overflow:hidden}
@@ -346,7 +349,9 @@ footer .wrap{position:relative;z-index:1}
 @media(max-width:1000px){.cards.c4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.cards.c4{grid-template-columns:1fr}}
 .cards.c4 .card{padding:28px 26px}
-.cards.c4 .card h3{font-size:1.28rem}
+.cards.c4 .card h3{font-size:1.28rem;line-height:1.3}
+/* multi-column: reserve two title lines so every card's body copy starts on the same row */
+@media(min-width:561px){.cards.c4 .card h3{min-height:2.6em}}
 
 /* before / after */
 .ba{margin-top:52px;display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:stretch}
@@ -361,6 +366,8 @@ footer .wrap{position:relative;z-index:1}
 .ba-q{font-family:var(--font-disp);font-weight:600;font-size:1.04rem;color:var(--ink-dim);margin-bottom:6px}
 .ba-col.after .ba-q{color:var(--ink-soft)}
 .ba-a{display:flex;align-items:flex-start;gap:9px;font-size:1.12rem;line-height:1.45;color:var(--ink-soft)}
+/* side-by-side: reserve two answer lines so before/after rows stay on the same baseline */
+@media(min-width:861px){.ba-a{min-height:2.9em}}
 .ba-col.after .ba-a{color:var(--ink);font-weight:600}
 .ba-check{flex:none;margin-top:3px;color:var(--green)}
 .ba-arrow{display:grid;place-items:center;color:var(--line-strong)}
@@ -506,12 +513,15 @@ footer .wrap{position:relative;z-index:1}
 .dims-overlay{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:30px;min-height:74vh;pointer-events:none}
 .dims-copy{max-width:30rem}
 .dims-overlay .lenstabs-row{pointer-events:auto;margin-top:30px;margin-bottom:0}
-.dims-overlay .dim-detail{pointer-events:none;max-width:25rem;margin-top:0;background:rgba(255,255,255,.82);backdrop-filter:blur(6px)}
+/* min() keeps the 25rem cap from overriding the base max-width:100% on narrow viewports */
+.dims-overlay .dim-detail{pointer-events:none;max-width:min(25rem,100%);margin-top:0;background:rgba(255,255,255,.82);backdrop-filter:blur(6px)}
 @media(max-width:820px){
   .dims-net-layer{position:relative;width:100%;height:64vh;order:2}
   .dims-overlay{order:1;min-height:0;gap:24px}
   .dims-sec{display:flex;flex-direction:column}
 }
+/* narrow viewports cannot fit three lens tabs on one row */
+@media(max-width:560px){.lenstabs-row{flex-wrap:wrap;row-gap:8px}}
 
 /* Analyze email field (HITL capture) */
 .az-email{width:100%;margin-top:16px;padding:15px 22px;border-radius:var(--r);border:1px solid var(--line-strong);background:var(--bg-card);font-family:var(--font-body);font-size:1.08rem;color:var(--ink);box-shadow:var(--shadow);transition:.22s var(--ease)}
@@ -1121,7 +1131,7 @@ footer .wrap{position:relative;z-index:1}
 .nav.on-dark .nav-mobile a{color:#e6e9ff;border-color:rgba(255,255,255,.09)}
 .nav-mobile-cta{margin-top:16px;border:none;border-radius:999px;font:inherit;font-size:1.06rem;font-weight:800;color:#fff;padding:15px;cursor:pointer;background:linear-gradient(120deg,#3B82F6,#7c3aed 55%,#FF6B00);box-shadow:0 14px 34px -14px rgba(90,120,255,.6)}
 .nav-analyze{white-space:nowrap}
-@media(max-width:880px){.nav-burger{display:flex}.nav-mobile{display:flex}.nav-analyze{display:none}}
+@media(max-width:1000px){.nav-burger{display:flex}.nav-mobile{display:flex}.nav-analyze{display:none}}
 
 /* ── insight: read-next cross-links (SEO/GEO internal linking) ── */
 .id-readnext{margin-top:48px;max-width:760px}
