@@ -43,6 +43,10 @@ export default function App() {
 
   return (
     <LangProvider>
+    {/* Suspense sits OUTSIDE AnimatePresence on purpose: a lazy child that
+        suspends while mounted inside AnimatePresence gets dropped from its
+        child list and the tree renders empty (blank /deck on a direct load). */}
+    <Suspense fallback={<ViewFallback />}>
     <AnimatePresence mode="wait" initial={false}>
       {view === 'home' && (
         <motion.div
@@ -63,7 +67,7 @@ export default function App() {
           exit={{ opacity: 0, x: 80 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <Suspense fallback={<ViewFallback />}><Materials /></Suspense>
+          <Materials />
         </motion.div>
       )}
       {view === 'analyze' && (
@@ -74,7 +78,7 @@ export default function App() {
           exit={{ opacity: 0, x: 80 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <Suspense fallback={<ViewFallback />}><Analyze onBack={() => setView('home')} /></Suspense>
+          <Analyze onBack={() => setView('home')} />
         </motion.div>
       )}
       {view === 'insight' && (
@@ -85,10 +89,11 @@ export default function App() {
           exit={{ opacity: 0, x: 80 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <Suspense fallback={<ViewFallback />}><Insight onBack={() => routeTo('home')} onAnalyze={() => routeTo('analyze')} /></Suspense>
+          <Insight onBack={() => routeTo('home')} onAnalyze={() => routeTo('analyze')} />
         </motion.div>
       )}
     </AnimatePresence>
+    </Suspense>
     </LangProvider>
   )
 }
