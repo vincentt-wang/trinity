@@ -1,8 +1,10 @@
-# A missing /assets/* file must 404, never fall through to the SPA rule below.
-# Otherwise a chunk that has not propagated yet is answered with index.html at
-# status 200, the browser caches HTML under a .js URL, and every later dynamic
-# import of that chunk fails for as long as the entry lives in its cache.
-/assets/*  /assets/:splat  404
+# Note: a missing /assets/* file falls through to the SPA rule and is answered
+# with index.html at status 200, so a chunk requested in the few seconds around
+# a deploy activation comes back as HTML. It cannot be excluded here —
+# _redirects supports 200/301/302/303/307/308, not 404, and there is no negative
+# match. Measured: it self-heals within ~10s. The client side is what protects
+# the user: lazyView() in App.tsx retries the import, then reloads once, which
+# rebuilds the module map that keeps a failed chunk failed for the document.
 
 # SPA fallback: serve the app for clean paths (/deck, /insight, /analyze).
 # Real files (assets/*, og-cover.png, robots.txt, sitemap.xml) are served before this.
