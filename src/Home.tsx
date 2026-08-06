@@ -592,6 +592,94 @@ function BeforeAfter() {
   )
 }
 
+
+/* ---------- Founder card ---------- */
+function FounderSection() {
+  const { lang } = useLang()
+  const c = COPY[lang].founder
+  return (
+    <section className="sec founder-sec" id="founder">
+      <Aurora tone="cool" />
+      <div className="wrap">
+        <Reveal>
+          <div className="fdr">
+            <div className="fdr-photo">
+              <img src={`${import.meta.env.BASE_URL}img/vincent.jpg`} alt={c.name} width={793} height={900} loading="lazy" decoding="async" />
+              <span className="fdr-ring" aria-hidden />
+            </div>
+            <div className="fdr-body">
+              <div className="eyebrow">{c.eyebrow}</div>
+              <h2 className="fdr-name">{c.name}</h2>
+              <div className="fdr-role">{c.role}</div>
+              <p className="fdr-lead">{c.lead}</p>
+              <div className="fdr-creds">
+                {c.creds.map((r, i) => (
+                  <div className="fdr-cred" key={i}><b>{r.k}</b><span>{r.v}</span></div>
+                ))}
+              </div>
+              <p className="fdr-note">{c.note}</p>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- Where it came from (orgs) ---------- */
+function OrgsSection() {
+  const { lang } = useLang()
+  const c = COPY[lang].orgs
+  return (
+    <section className="sec sec-soft orgs-sec" id="orgs">
+      <div className="wrap">
+        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
+        <Stagger className="orgs">
+          {c.items.map((o, i) => (
+            <div className="org" key={i}>
+              {i === 0
+                ? <img className="org-logo" src={`${import.meta.env.BASE_URL}img/evoscale.png`} alt={o.n} width={600} height={125} loading="lazy" decoding="async" />
+                : <div className="org-name">{o.n}</div>}
+              <div className="org-desc">{o.d}</div>
+            </div>
+          ))}
+        </Stagger>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- Services ---------- */
+function ServicesSection({ onAnalyze }: { onAnalyze: () => void }) {
+  const { lang } = useLang()
+  const c = COPY[lang].services
+  return (
+    <section className="sec services-sec" id="services">
+      <ParallaxRings />
+      <div className="wrap">
+        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
+        <Stagger className="svc-grid">
+          {c.cards.map((s, i) => (
+            <div className={`svc svc-${i}`} key={i}>
+              <div className="svc-top">
+                <span className="svc-tag">{s.tag}</span>
+                <span className="svc-meta">{s.meta}</span>
+              </div>
+              <h3>{s.h}</h3>
+              <ul className="svc-list">
+                {s.items.map((x, j) => <li key={j}>{x}</li>)}
+              </ul>
+              <div className="svc-foot">{s.foot}</div>
+              {i === 2 && <button className="btn btn-primary svc-cta" onClick={onAnalyze}>{COPY[lang].nav.cta}</button>}
+            </div>
+          ))}
+        </Stagger>
+        <Reveal delay={0.1}><p className="svc-disc">{c.disclaimer}</p></Reveal>
+      </div>
+    </section>
+  )
+}
+
 /* ---------- Track-record stats band ---------- */
 function StatsBand() {
   const { lang } = useLang()
@@ -789,7 +877,7 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
   const navDark = useNavTheme()
   const [pitchOpen, setPitchOpen] = useState(false)
   const heroMag = useMagnetic<HTMLButtonElement>()
-  const active = useActiveSection(['engine', 'stack', 'dims', 'fit'])
+  const active = useActiveSection(['engine', 'stack', 'dims', 'fit', 'services'])
   // returning from a sub-page via a section hash (#engine…) scrolls there on mount
   useEffect(() => {
     const h = location.hash.replace(/^#\/?/, '')
@@ -848,6 +936,12 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
       <WhyFounders />
 
       <BeforeAfter />
+
+      <FounderSection />
+
+      <OrgsSection />
+
+      <ServicesSection onAnalyze={onAnalyze} />
 
       <section id="cta" className="sec sec-dark cta-sec">
         <div className="cta-glow" aria-hidden />

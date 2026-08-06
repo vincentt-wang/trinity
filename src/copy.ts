@@ -47,7 +47,7 @@ export const DIMENSIONS: Record<'e' | 'm' | 's', Dim[]> = {
     { id: "C38", en: "Execution Velocity", zh: "組織執行效能", de: "The five high-performance traits in place, a team grown role-by-role rather than by headcount, and the riskiest assumption tested first.", dz: "五特徵到位程度、團隊依角色缺口成長而非盲目擴編、最高風險假設優先驗證", ask_en: "What evidences iteration speed, is each hire filling a real role rather than headcount, and is the riskiest assumption tested first?", ask_zh: "團隊迭代速度的證據是什麼，每個進人是補真實角色還是盲目擴編，最高風險假設優先驗了嗎？" },
     { id: "C51", en: "Leverage Structure", zh: "槓桿結構", de: "Permissionless leverage first, compounding assets over rented reach.", dz: "免許可槓桿優先與資產複利的結構合理性", ask_en: "Is the current leverage sound: does it compound as an asset, or vanish when it stops?", ask_zh: "現在用的槓桿合理嗎，停下來會歸零還是資產持續複利？" },
     { id: "C53", en: "Learning Velocity", zh: "學習與迭代速度", de: "How fast the organization turns feedback into versioned, retained learning.", dz: "組織把回饋轉成版本演進的速度與留存", ask_en: "Is there a visible cadence of versioned learning, and do the same mistakes recur?", ask_zh: "產品與敘事有版本演進的軌跡嗎，錯誤有沒有重複出現？" },
-    { id: "C54", en: "Repeatable Playbook", zh: "方法論可複製性", de: "Whether results come from a replicable method or one person’s improvisation.", dz: "成果來自可複製的方法還是個人即興發揮", ask_en: "Remove the founder from the room: can the method still be replicated and hold steady?", ask_zh: "拿掉創辦人本人，這套方法還能被複製並穩定重現嗎？" },
+    { id: "C54", en: "Repeatable Playbook", zh: "方法論可複製性", de: "Whether results come from a replicable method or one person’s improvisation.", dz: "成果來自可複製的方法還是個人即興發揮", ask_en: "Remove the founder: can the method still be replicated? Three denominators: how far the close rate drops without them, how long a new hire takes to reach team median, and whether per-head productivity holds through headcount growth.", ask_zh: "拿掉創辦人本人，這套方法還能被複製嗎？三個分母：創辦人抽掉成交率掉多少、新人多久做到隊上中位數、人均產能在擴編中有沒有守住。" },
     { id: "C61", en: "Output Sustainability", zh: "輸出持續性", de: "Stability and systematization of the venture’s public output over time.", dz: "對外輸出的節奏穩定度與系統化程度", ask_en: "Is the public output a steady long-run system, or bursts followed by long silence?", ask_zh: "對外輸出是長期穩定的系統，還是衝刺後長期沉寂？" },
   ],
   s: [
@@ -55,7 +55,7 @@ export const DIMENSIONS: Record<'e' | 'm' | 's', Dim[]> = {
     { id: "C12", en: "Two-Track Sizing Check", zh: "雙軌市場驗算", de: "Reconciling top-down direction with bottom-up order math.", dz: "由上而下方向與由下而上訂單的相互驗證", ask_en: "Do the top-down direction and the bottom-up order math actually reconcile?", ask_zh: "由上而下的方向與由下而上的真實訂單，兩邊數字對得上嗎？" },
     { id: "C37", en: "Runway", zh: "現金跑道", de: "Default alive or default dead: does growth reach breakeven before cash runs out.", dz: "現金存續與增長能否在燒完前損益兩平", ask_en: "How many months of cash remain, and does current growth reach breakeven before zero?", ask_zh: "現金還剩幾個月，現有增長率來得及在燒完前損益兩平嗎？" },
     { id: "C39", en: "Value Equation", zh: "價值方程式", de: "Outcome times certainty over delay times effort: is the offer irresistible.", dz: "夢想結果與成功機率對時間與費力的比值", ask_en: "Are the outcome and certainty big enough, the delay and effort small enough, to refuse?", ask_zh: "結果與把握夠大、等待與費力夠小到讓人無法拒絕嗎？" },
-    { id: "C40", en: "Distribution-Message Fit", zh: "分發與訊息對位", de: "Right audience × right message on distribution you own — including a build-in-public track record: steady cadence and evidence-driven iteration over six months or more.", dz: "對的人乘對的訊息與自有分發的長期結構，含 Build-in-Public 軌跡：六個月以上穩定節奏與用證據迭代", ask_en: "Is distribution owned (including a 6-month-plus build-in-public track record), and does the message lead with meaning?", ask_zh: "分發靠自有管道嗎（含六個月以上 Build-in-Public 軌跡），訊息先講意義還是功能？" },
+    { id: "C40", en: "Distribution-Message Fit", zh: "分發與訊息對位", de: "Right audience × right message on distribution you own — including a build-in-public track record: steady cadence and evidence-driven iteration over six months or more.", dz: "對的人乘對的訊息與自有分發的長期結構，含 Build-in-Public 軌跡：六個月以上穩定節奏與用證據迭代", ask_en: "Is distribution owned (including a 6-month-plus build-in-public track record), does the message lead with meaning, and does persuasion happen before the conversation or inside it?", ask_zh: "分發靠自有管道嗎（含六個月以上 Build-in-Public 軌跡），訊息先講意義還是功能，說服發生在對話前還是對話裡？" },
     { id: "C41", en: "Funnel Health", zh: "成長漏斗健康度", de: "Locating the true bottleneck across the funnel, retention loop first.", dz: "獲取到推薦全漏斗的瓶頸定位與留存迴路", ask_en: "Where is the funnel’s true bottleneck, and was retention fixed before scaling spend?", ask_zh: "漏斗真正的瓶頸卡在哪一關，留存迴路修好了才放大嗎？" },
     { id: "C42", en: "Pricing Power", zh: "定價策略", de: "Pricing derived from customer outcomes, with willingness to pay actually tested.", dz: "從客戶結果回推的定價與願付驗證", ask_en: "Is price derived from the customer’s outcome, and was willingness to pay actually tested?", ask_zh: "價格從客戶拿到的結果回推嗎，真實願付驗過還是憑感覺？" },
     { id: "C43", en: "Unit Economics", zh: "單位經濟", de: "Health of the six numbers: LTV, gross profit, CAC, ratio, churn, retention.", dz: "終身毛利、獲客成本、回本期等六數字健康度", ask_en: "Does lifetime gross profit clear three times CAC, with payback inside twelve months?", ask_zh: "單客毛利對獲客成本過三倍了嗎，回本期壓在一年內嗎？" },
@@ -74,7 +74,7 @@ export const DIMENSIONS: Record<'e' | 'm' | 's', Dim[]> = {
 
 export const COPY = {
   en: {
-    nav: { howItWorks: 'The engine', stack: 'The stack', dims: 'The 60 dimensions', fit: 'Where you fit', insight: 'Insight', deck: 'The deck', cta: 'Analyze my idea' },
+    nav: { howItWorks: 'The engine', stack: 'The stack', dims: 'The 60 dimensions', fit: 'Where you fit', services: 'Work with me', insight: 'Insight', deck: 'The deck', cta: 'Analyze my idea' },
     hero: { eyebrow: 'Innovation Trinity · Feasibility Engine', titleA: 'From an idea to', titleB: 'an ', titleHl: 'investable startup', lead: 'Feed your idea to the Trinity engine. See where it really stands across 60 dimensions, and exactly who to talk to next.', ctaPrimary: 'Analyze my idea', ctaGhost: 'See how it works' },
     lenses: {
       eyebrow: 'How the engine thinks', h2: 'Three lenses, three questions', lead: 'An investable startup needs three things to hold at once. Miss one and the engine tells you.',
@@ -153,6 +153,48 @@ export const COPY = {
       lensName: { e: 'Desirability', m: 'Feasibility', s: 'Viability', a: 'One system' },
     },
     stats: { labels: ['startups analyzed', 'dimensions scored', 'independent lenses', 'markets: US + TW'] },
+    founder: {
+      eyebrow: 'Who built this',
+      name: 'Vincent Wang',
+      role: 'Founding AO · EvoScale Capital',
+      lead: 'I sit in deal reviews every month and watch founders get judged. Trinity is that judgement written down: the same three lenses I use on real cases, and the same five-chapter course I teach at universities and founder communities.',
+      note: 'Trinity is my own work. It is not any fund\u2019s product, and it is kept separate from any fund\u2019s investment decisions.',
+      creds: [
+        { k: 'EvoScale Capital', v: 'Founding AO, in deal review every month' },
+        { k: 'Design for Taiwan', v: '1st place, and speaker at its 10th year' },
+        { k: 'Stanford', v: 'Design Thinking Seminar' },
+        { k: 'Strategy & Entrepreneurship', v: '5 chapters, 360 slides, 38 live exercises' },
+      ],
+    },
+    services: {
+      eyebrow: 'Work with me',
+      h2: 'Three ways into the same engine',
+      lead: 'The tool, the course and the one-on-one all run on the same three lenses. Pick the format that matches where you are.',
+      cards: [
+        { tag: 'Advisory', h: 'Strategy and fundraising advisory', meta: 'US$100 \u00b7 50 minutes',
+          items: ['Before: I read your deck in full and send you a one-page list of what I will ask.', 'During: fifty minutes on one topic you choose. If something does not hold, I say so.', 'After: within three working days, a one-page written conclusion and the next thing to do.'],
+          foot: 'One session, no retainer. A 15 to 30 minute intro chat is free.' },
+        { tag: 'Workshop', h: 'Strategy and entrepreneurship workshop', meta: '90 minutes to two days',
+          items: ['Five chapters: strategy, desirability, feasibility, viability, growth.', '360 slides and 38 exercises where the room has to commit to an answer.', 'Recomposed per audience and per length, not the same talk every time.'],
+          foot: 'Delivered at National Taipei University Career Center, Chung Shan Medical innovation group, and Design for Taiwan\u2019s 10th year.' },
+        { tag: 'Trinity Check', h: 'A 60-dimension read on one idea', meta: 'Online, free first run',
+          items: ['Desirability, feasibility and viability scored independently, then cross-checked.', 'Sixty dimensions, each with a score and the reason behind it.', 'A one-page decision brief, including the single assumption to test first.'],
+          foot: 'That is the analyze button at the top of this page.' },
+      ],
+      disclaimer: 'No guarantee you will raise. What you pay for is judgement, not an outcome. I do not ghostwrite your deck. All of this is separate from any fund\u2019s investment decisions.',
+    },
+    orgs: {
+      eyebrow: 'Where this comes from',
+      h2: 'The rooms it was built in',
+      lead: 'The engine did not come from a book. It came from reviewing real teams and teaching the same judgement in real rooms.',
+      items: [
+        { n: 'EvoScale Capital', d: 'Founding AO' },
+        { n: 'Design for Taiwan', d: '1st place, 10th-year speaker' },
+        { n: 'National Taipei University', d: 'Career Development Center' },
+        { n: 'Chung Shan Medical', d: 'Innovation in medicine group' },
+        { n: 'Stanford', d: 'Design Thinking Seminar' },
+      ],
+    },
     cta: {
       h2: 'Get started', p: 'Run your first round free. A full report: your Trinity scores, your stage, and the top three things to fix.',
       paths: [
@@ -575,7 +617,7 @@ export const COPY = {
     },
   },
   zh: {
-    nav: { howItWorks: '運算引擎', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', insight: '洞察觀點', deck: '原則卡', cta: '分析我的點子' },
+    nav: { howItWorks: '運算引擎', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', services: '合作方式', insight: '洞察觀點', deck: '原則卡', cta: '分析我的點子' },
     hero: { eyebrow: '創新三元 · 可行性引擎', titleA: '從一個點子', titleB: '到值得投資的', titleHl: '新創', lead: '把你的點子餵給 Trinity 引擎，看它在 60 個維度上真正的位置，以及下一步該找誰談。', ctaPrimary: '分析我的點子', ctaGhost: '看它怎麼運作' },
     lenses: {
       eyebrow: '引擎怎麼思考', h2: '三個透鏡，三個問題', lead: '一家值得投資的新創，需要三件事同時成立。少一個，引擎會告訴你。',
@@ -654,6 +696,48 @@ export const COPY = {
       lensName: { e: '欲求性', m: '可行性', s: '存續性', a: '一個系統' },
     },
     stats: { labels: ['家新創已分析', '個維度評分', '個獨立透鏡', '個市場：美國＋台灣'] },
+    founder: {
+      eyebrow: '這是誰做的',
+      name: 'Vincent Wang',
+      role: 'EvoScale Capital · Founding AO',
+      lead: '我每個月固定坐在評案的位置上，看創辦人怎麼被判斷。Trinity 就是那套判斷寫下來的樣子：跟我看真實案子用的是同一組三透鏡，也跟我在大學與社群開的五章課程是同一套。',
+      note: 'Trinity 是我個人的東西，不是任何基金的產品，也與任何基金的投資決定分開。',
+      creds: [
+        { k: 'EvoScale Capital', v: 'Founding AO，每個月固定看團隊做評案' },
+        { k: 'Design for Taiwan', v: '競賽首獎，並在十週年擔任講者' },
+        { k: 'Stanford', v: 'Design Thinking Seminar' },
+        { k: '策略創業課程', v: '五章、360 頁教材、38 個互動練習' },
+      ],
+    },
+    services: {
+      eyebrow: '可以怎麼合作',
+      h2: '同一個引擎　三種用法',
+      lead: '線上工具、課程、一對一，跑的都是同一組三透鏡。看你現在在哪個階段，挑一種就好。',
+      cards: [
+        { tag: '一對一', h: '創業與募資策略諮詢', meta: 'US$100 · 50 分鐘',
+          items: ['會前：我把你的簡報與資料完整讀過，先寄一頁問題清單給你。', '當場：五十分鐘只談你指定的一個主題。哪裡站不住我會直說。', '會後：三個工作天內給一頁書面結論，以及下一件該做的事。'],
+          foot: '單次，不綁約。想先聊 15 到 30 分鐘不收費。' },
+        { tag: '工作坊', h: '策略創業工作坊', meta: '90 分鐘到兩天',
+          items: ['五章：策略思維、欲求性、可行性、存續性、成長思維。', '360 頁教材，38 個當場就要做出決定的互動練習。', '依對象與時長重組，不是每次講同一套。'],
+          foot: '已在國立台北大學職涯發展中心、中山醫學院創新醫療小組、Design for Taiwan 十週年講過。' },
+        { tag: 'Trinity Check', h: '一個點子的 60 維體檢', meta: '線上，第一次免費',
+          items: ['欲求性、可行性、存續性先各自獨立評分，再交叉互推。', '六十個維度逐項給分，每一分都附理由。', '一頁決策簡報，含最該先驗的那一個假設。'],
+          foot: '就是這一頁最上面那顆分析按鈕。' },
+      ],
+      disclaimer: '不保證募到資，收費的是判斷不是結果。不做代寫，簡報還是你自己做。以上全部與任何基金的投資決定分開。',
+    },
+    orgs: {
+      eyebrow: '這套判斷從哪裡來',
+      h2: '它是在這些場子裡長出來的',
+      lead: '引擎不是讀書讀出來的，是看真實團隊、並且把同一套判斷在真實的教室裡講出來，才長成現在的樣子。',
+      items: [
+        { n: 'EvoScale Capital', d: 'Founding AO' },
+        { n: 'Design for Taiwan', d: '競賽首獎 · 十週年講者' },
+        { n: '國立台北大學', d: '職涯發展中心' },
+        { n: '中山醫學院', d: '創新醫療小組' },
+        { n: 'Stanford', d: 'Design Thinking Seminar' },
+      ],
+    },
     cta: {
       h2: '開始使用', p: '免費跑你的第一輪。一份完整報告：你的 Trinity 分數、所處階段，以及最該修的三件事。',
       paths: [

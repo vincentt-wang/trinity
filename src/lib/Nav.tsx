@@ -14,7 +14,7 @@ const LOGO = (
 )
 
 // order MUST match the home page's top-to-bottom flow: dims → engine → stack → fit
-const SECTION_IDS = ['dims', 'engine', 'stack', 'fit'] as const
+const SECTION_IDS = ['dims', 'engine', 'stack', 'fit', 'services'] as const
 
 /**
  * The one nav used everywhere. On the home page section links smooth-scroll;
@@ -26,7 +26,7 @@ export function Nav({ sub = false, active = '', navDark = false }: { sub?: boole
   const { lang, setLang } = useLang()
   const c = COPY[lang]
   const [open, setOpen] = useState(false)
-  const labels: Record<string, string> = { engine: c.nav.howItWorks, stack: c.nav.stack, dims: c.nav.dims, fit: c.nav.fit }
+  const labels: Record<string, string> = { engine: c.nav.howItWorks, stack: c.nav.stack, dims: c.nav.dims, fit: c.nav.fit, services: c.nav.services }
   // menu clicks jump straight to the section (no scrolling through / fast-forwarding pinned sections)
   const section = (id: string) => { if (sub) routeTo('home', '#' + id); else { scrollToId('#' + id, true); presentationResync() } setOpen(false) }
   const viewTo = (v: View) => { window.dispatchEvent(new CustomEvent('trinity:navview', { detail: v })); routeTo(v); window.scrollTo(0, 0); setOpen(false) }
