@@ -670,7 +670,9 @@ function ServicesSection({ onAnalyze }: { onAnalyze: () => void }) {
                 {s.items.map((x, j) => <li key={j}>{x}</li>)}
               </ul>
               <div className="svc-foot">{s.foot}</div>
-              {i === 2 && <button className="btn btn-primary svc-cta" onClick={onAnalyze}>{COPY[lang].nav.cta}</button>}
+              {i === 2
+                ? <button className="btn btn-primary svc-cta" onClick={onAnalyze}>{COPY[lang].nav.cta}</button>
+                : <a className="btn btn-ghost svc-cta" href={`mailto:${c.email}?subject=${encodeURIComponent(s.h)}`}>{s.cta}</a>}
             </div>
           ))}
         </Stagger>
