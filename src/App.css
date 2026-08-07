@@ -1266,3 +1266,9 @@ footer .wrap{position:relative;z-index:1}
 .svc-foot{margin-top:auto;padding-top:16px;font-size:.95rem;line-height:1.6;color:var(--ink-soft);opacity:.85}
 .svc-cta{margin-top:16px;align-self:flex-start}
 .svc-disc{margin-top:22px;font-size:.95rem;line-height:1.75;color:var(--ink-soft);opacity:.8;max-width:74ch}
+
+/* founder section: affiliation mark + taught-at line (2026-08-07) */
+.fdr-mark{display:block;height:26px;width:auto;object-fit:contain;object-position:left center;margin:14px 0 0;opacity:.92}
+.fdr-taught{margin-top:22px;padding-top:16px;border-top:1px solid rgba(14,18,48,.10);
+  font-size:1rem;line-height:1.7;color:var(--ink-soft)}
+.fdr-taught b{color:var(--ink);font-weight:700;white-space:nowrap}

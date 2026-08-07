@@ -190,17 +190,8 @@ export const COPY = {
       email: 'vincent@easeai.com.tw',
     },
     orgs: {
-      eyebrow: 'Where this comes from',
-      h2: 'The rooms it was built in',
-      lead: 'The engine did not come from a book. It came from reviewing real teams and teaching the same judgement in real rooms.',
-      items: [
-        { n: 'EvoScale Capital', d: 'Founding AO' },
-        { n: 'Design for Taiwan', d: '1st place, 10th-year speaker' },
-        { n: 'Stanford ASES Taiwan', d: 'Organising team' },
-        { n: 'StarWorks Ventures', d: 'Fellowship founder programme' },
-        { n: 'National Taipei University', d: 'Career Development Center' },
-        { n: 'Chung Shan Medical', d: 'Innovation in medicine group' },
-      ],
+      taughtLabel: 'Taught at\u3000',
+      taught: 'National Taipei University Career Center \u00b7 Chung Shan Medical innovation group \u00b7 Design for Taiwan 10th year \u00b7 Rotary',
     },
     cta: {
       h2: 'Get started', p: 'Run your first round free. A full report: your Trinity scores, your stage, and the top three things to fix.',
@@ -740,17 +731,8 @@ export const COPY = {
       email: 'vincent@easeai.com.tw',
     },
     orgs: {
-      eyebrow: '這套判斷從哪裡來',
-      h2: '它是在這些場子裡長出來的',
-      lead: '引擎不是讀書讀出來的，是看真實團隊、並且把同一套判斷在真實的教室裡講出來，才長成現在的樣子。',
-      items: [
-        { n: 'EvoScale Capital', d: '創始 AO' },
-        { n: 'Design for Taiwan', d: '競賽首獎 · 十週年講者' },
-        { n: 'Stanford ASES 台灣', d: '籌辦團隊' },
-        { n: '炙星創投', d: 'Fellowship 創業養成計畫' },
-        { n: '國立台北大學', d: '職涯發展中心' },
-        { n: '中山醫學院', d: '創新醫療小組' },
-      ],
+      taughtLabel: '教過的地方　',
+      taught: '國立台北大學職涯發展中心 · 中山醫學院創新醫療小組 · Design for Taiwan 十週年 · 扶輪社',
     },
     cta: {
       h2: '開始使用', p: '免費跑你的第一輪。一份完整報告：你的 Trinity 分數、所處階段，以及最該修的三件事。',

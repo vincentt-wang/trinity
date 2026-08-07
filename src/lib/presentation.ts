@@ -23,7 +23,7 @@ const PINNED: Record<string, { track: string; steps: number[] }> = {
   '#fit': { track: '.fit-track', steps: [0.12, 0.37, 0.62, 0.9] },
 }
 /* full slide order (top-level anchors, in DOM order) */
-const ORDER = ['#top', '#celestial', '#dims', '#engine', '#stack', '#fit', '#why', '#ba', '#founder', '#orgs', '#services', '#cta']
+const ORDER = ['#top', '#celestial', '#dims', '#engine', '#stack', '#fit', '#why', '#ba', '#founder', '#services', '#cta']
 
 type Step = { y: number; dims?: number }
 const topOf = (el: Element) => (el as HTMLElement).getBoundingClientRect().top + window.scrollY
