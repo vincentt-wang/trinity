@@ -4,6 +4,7 @@ import { COPY } from '../copy'
 import { scrollToId, scrollToTop } from './useLenis'
 import { presentationResync } from './presentation'
 import { routeTo, type View } from '../router'
+import { PERSONAL_SITE } from '../intake'
 
 const LOGO = (
   <svg viewBox="0 0 32 32" aria-hidden>
@@ -42,9 +43,11 @@ export function Nav({ sub = false, active = '', navDark = false }: { sub?: boole
           ))}
           <a href="#insight" onClick={(e) => { e.preventDefault(); viewTo('insight') }}>{c.nav.insight}</a>
           <a href="#materials" onClick={(e) => { e.preventDefault(); viewTo('materials') }}>{c.nav.deck}</a>
+          <a href={PERSONAL_SITE} target="_blank" rel="noopener" className="nav-ext">{c.nav.vincent} ↗</a>
         </div>
         <div className="nav-cta">
-          <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label="Switch language">{lang === 'en' ? 'CH' : 'EN'}</button>
+          {/* the label names the language you switch TO */}
+          <button className="lang-btn" onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} aria-label={lang === 'en' ? '切換到中文' : 'Switch to English'} lang={lang === 'en' ? 'zh-Hant' : 'en'}>{lang === 'en' ? '中文' : 'EN'}</button>
           <button className="btn btn-primary nav-analyze" onClick={() => viewTo('analyze')}>{c.nav.cta}</button>
           <button className={`nav-burger${open ? ' open' : ''}`} onClick={() => setOpen((o) => !o)} aria-label="Menu" aria-expanded={open}>
             <span /><span /><span />
@@ -57,6 +60,7 @@ export function Nav({ sub = false, active = '', navDark = false }: { sub?: boole
         ))}
         <a href="#insight" onClick={(e) => { e.preventDefault(); viewTo('insight') }}>{c.nav.insight}</a>
         <a href="#materials" onClick={(e) => { e.preventDefault(); viewTo('materials') }}>{c.nav.deck}</a>
+        <a href={PERSONAL_SITE} target="_blank" rel="noopener">{c.nav.vincent} ↗</a>
         <button className="nav-mobile-cta" onClick={() => viewTo('analyze')}>{c.nav.cta}</button>
       </div>
     </nav>

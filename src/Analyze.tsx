@@ -3,21 +3,25 @@ import { motion, AnimatePresence, animate } from 'framer-motion'
 import { CountUp } from './lib/anim'
 import { Aurora } from './lib/Aurora'
 import { HeroNetwork } from './lib/HeroNetwork'
-import { CelStars } from './lib/Celestial'
 import { useLang } from './i18n'
 import { Nav } from './lib/Nav'
-import { COPY, DIMENSIONS } from './copy'
+import { COPY } from './copy'
 import { bumpAnalyzed, postAnalyzed } from './stats'
+import { submitIntake, mailtoFallback, IntakeError, PUBLIC_EMAIL, CONTACT_URL, type MailStatus } from './intake'
+import { routeTo } from './router'
 
 const EASE = [0.2, 0.7, 0.2, 1] as const
 const STAG = { hide: {}, show: { transition: { staggerChildren: 0.09, delayChildren: 0.06 } } }
 const ITEM = { hide: { opacity: 0, y: 26 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }
 
-type Phase = 'intro' | 'form' | 'running' | 'done'
+type Phase = 'intro' | 'form' | 'done'
+type Plan = 'free' | 'report' | 'report-meet'
+const PLANS: Plan[] = ['free', 'report', 'report-meet']
 
 const CHECK = (
   <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden><polyline points="20 6 9 17 4 12" /></svg>
 )
+const ARROW = <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
 
 /** Form-section heading with a gradient hairline that draws in on scroll. */
 function GroupHead({ t }: { t: string }) {
@@ -36,7 +40,7 @@ function GroupHead({ t }: { t: string }) {
   )
 }
 
-/** Phase-aware ambient backdrop: constellation on intro/done, stars+net while scanning, faint aurora on form. */
+/** Ambient backdrop: constellation on intro/done, faint aurora on the form. */
 function AzAmbient({ phase }: { phase: Phase }) {
   return (
     <div className="az-amb" aria-hidden>
@@ -46,14 +50,8 @@ function AzAmbient({ phase }: { phase: Phase }) {
         </div>
       </motion.div>
       <AnimatePresence>
-        {(phase === 'intro' || phase === 'done') && (
+        {phase !== 'form' && (
           <motion.div key="amb-soft" className="az-amb-layer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.9, ease: EASE }}>
-            <HeroNetwork variant="ambient" />
-          </motion.div>
-        )}
-        {phase === 'running' && (
-          <motion.div key="amb-scan" className="az-amb-layer az-amb-scan" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8, ease: EASE }}>
-            <CelStars />
             <HeroNetwork variant="ambient" />
           </motion.div>
         )}
@@ -62,12 +60,10 @@ function AzAmbient({ phase }: { phase: Phase }) {
   )
 }
 
-// HITL mini-loop: submissions email here; Vincent runs deal-lens by hand, then automates later.
-// Address is base64-encoded so scrapers that regex the bundle for e-mails can't harvest it;
-// it is decoded only at submit time. Swap for a formsubmit alias when available for full cover.
-const FORM_TO = atob('dmluY2VudEBlYXNlYWkuY29tLnR3')
+// The intro shows what a finished read looks like. These three numbers are a labelled
+// sample (copy.analyze.input.intro.previewTitle / previewNote); nothing on the page scores anyone.
 const COLS = { e: '#2563eb', m: '#475569', s: '#d97706' } as const
-const SCORES = { e: 72, m: 64, s: 58 } as const
+const SAMPLE = { e: 72, m: 64, s: 58 } as const
 const ORDER = ['e', 'm', 's'] as const
 
 function ScoreRing({ label, value, col, delay = 0 }: { label: string; value: number; col: string; delay?: number }) {
@@ -99,52 +95,15 @@ function ScoreRing({ label, value, col, delay = 0 }: { label: string; value: num
   )
 }
 
-/* ---------- Running scan animation ---------- */
-function Scanning({ onDone }: { onDone: () => void }) {
-  const { lang } = useLang()
-  const c = COPY[lang]
-  const [active, setActive] = useState(0)
-  const [scanIdx, setScanIdx] = useState(0)
-
-  useEffect(() => {
-    const lensMs = 1150
-    const timers: ReturnType<typeof setTimeout>[] = []
-    ORDER.forEach((_, i) => timers.push(setTimeout(() => setActive(i), i * lensMs)))
-    const flick = setInterval(() => setScanIdx((n) => n + 1), 190)
-    timers.push(setTimeout(onDone, ORDER.length * lensMs + 500))
-    return () => { timers.forEach(clearTimeout); clearInterval(flick) }
-  }, [onDone])
-
-  const k = ORDER[active]
-  const col = COLS[k]
-  const list = DIMENSIONS[k]
-  const dim = list[scanIdx % list.length]
-  return (
-    <motion.div className="scan" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <div className="scan-orb" aria-hidden>
-        <svg viewBox="0 0 220 220" width="220" height="220">
-          <defs>
-            <radialGradient id="scan-core" cx="42%" cy="36%"><stop offset="0" stopColor="#fff" /><stop offset=".5" stopColor="#60a5fa" /><stop offset="1" stopColor="#7c3aed" /></radialGradient>
-          </defs>
-          {[88, 66, 44].map((r, i) => (
-            <circle key={r} cx="110" cy="110" r={r} fill="none" stroke={COLS[ORDER[i]]} strokeWidth="2" strokeDasharray="3 7" opacity={active === i ? 0.95 : 0.2}>
-              <animateTransform attributeName="transform" type="rotate" from="0 110 110" to={`${i % 2 ? -360 : 360} 110 110`} dur={`${8 + i * 4}s`} repeatCount="indefinite" />
-            </circle>
-          ))}
-          <circle cx="110" cy="110" r="26" fill="url(#scan-core)">
-            <animate attributeName="r" values="26;30;26" dur="1.6s" repeatCount="indefinite" />
-          </circle>
-        </svg>
-      </div>
-      <div className="scan-tag" style={{ color: col }}>{c.dims.lensMeta[k].label}</div>
-      <div className="scan-dim">{lang === 'en' ? dim.en : dim.zh}</div>
-      <div className="scan-dots">
-        {ORDER.map((key, i) => <span key={key} className={i <= active ? 'on' : ''} style={{ background: i <= active ? COLS[ORDER[i]] : undefined }} />)}
-      </div>
-      <div className="scan-cap">{c.analyze.scan.caption}</div>
-    </motion.div>
-  )
+/** ?plan=report | ?plan=meet preselects the plan (product cards on the home page link here). */
+function planFromUrl(): Plan {
+  const p = new URLSearchParams(location.search).get('plan')
+  if (p === 'report') return 'report'
+  if (p === 'meet' || p === 'report-meet') return 'report-meet'
+  return 'free'
 }
+
+type Result = { id: string; mail: MailStatus; email: string; company: string; oneLine: string; plan: Plan; track: 'a' | 'b' }
 
 export default function Analyze({ onBack }: { onBack: () => void }) {
   const { lang } = useLang()
@@ -152,10 +111,12 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
     window.scrollTo(0, 0)
     document.title = lang === 'zh' ? '分析你的點子 · Trinity Check' : 'Analyze your idea · Trinity Check'
   }, [lang])
-  const a = COPY[lang].analyze
-  const r = a.report
+  const c = COPY[lang]
+  const a = c.analyze
   const intro = a.input.intro
   const fc = a.input.form
+  const done = a.done
+  const lens = c.dims.lensMeta
   const [phase, setPhase] = useState<Phase>('intro')
   const [f, setF] = useState({
     company: '', name: '', email: '', website: '',
@@ -166,6 +127,12 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
   })
   const [agree, setAgree] = useState(false)
   const [track, setTrack] = useState<'a' | 'b'>('a')
+  const [plan, setPlan] = useState<Plan>(planFromUrl)
+  const [reportLang, setReportLang] = useState<'zh' | 'en'>(lang)
+  const [sending, setSending] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
+  const [result, setResult] = useState<Result | null>(null)
   const upd = (k: 'company' | 'name' | 'email' | 'website' | 'oneLine' | 'pain' | 'solution' | 'customer' | 'deck' | 'evidence' | 'team' | 'demo' | 'money' | 'whyNow') =>
     (e: { target: { value: string } }) => setF((s) => ({ ...s, [k]: e.target.value }))
   const updMetric = (i: number) => (e: { target: { value: string } }) =>
@@ -185,33 +152,58 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
 
   useEffect(() => { window.scrollTo(0, 0) }, [phase])
 
-  const run = () => {
-    if (!ready) return
-    // fire-and-forget: route the submission to Vincent so a real hand-made read can be sent back
-    try {
-      const fd = new FormData()
-      fd.append('Company', f.company); fd.append('Name', f.name); fd.append('Email', f.email)
-      fd.append('Website', f.website)
-      fd.append('One-line', f.oneLine)
-      fd.append('Pain', f.pain); fd.append('Solution', f.solution); fd.append('Target customer', f.customer)
-      fd.append('Proof of demand', f.evidence)
-      fd.append('Why this team', f.team); fd.append('Demo', f.demo)
-      fd.append('Revenue model', f.money); fd.append('Why now', f.whyNow)
-      fd.append('Key numbers', f.metrics.map((v, i) => (v.trim() ? `${fc.metrics[i]}: ${v.trim()}` : '')).filter(Boolean).join(' | '))
-      fd.append('Business model', f.model >= 0 ? fc.models[f.model] : '')
-      fd.append('Product stage', f.stage >= 0 ? fc.stages[f.stage] : '')
-      fd.append('Target markets', f.markets.map((i) => fc.markets[i]).join(', '))
-      fd.append('Funding round', f.funding >= 0 ? fc.fundings[f.funding] : '')
-      fd.append('Pitch deck', f.deck)
-      fd.append('Consent track', track === 'b' ? 'ecosystem-visibility' : 'confidential-only')
-      fd.append('_subject', 'Trinity · new idea to analyze')
-      fetch('https://formsubmit.co/ajax/' + encodeURIComponent(FORM_TO), { method: 'POST', headers: { Accept: 'application/json' }, body: fd }).catch(() => {})
-      bumpAnalyzed() // local fallback: the submitter sees the count tick up even offline
-      postAnalyzed() // global live counter (CF Worker + KV), fire-and-forget
-    } catch { /* never block the flow */ }
-    setPhase('running')
+  /** Everything the user typed, with the select answers as the labels they saw. */
+  const answers = () => ({
+    company: f.company, name: f.name, email: f.email.trim(), website: f.website,
+    oneLine: f.oneLine, pain: f.pain, customer: f.customer, evidence: f.evidence,
+    solution: f.solution, team: f.team, demo: f.demo, money: f.money,
+    metrics: f.metrics.map((v, i) => (v.trim() ? `${fc.metrics[i]}: ${v.trim()}` : '')).filter(Boolean).join(' | '),
+    whyNow: f.whyNow,
+    model: f.model >= 0 ? fc.models[f.model] : '',
+    stage: f.stage >= 0 ? fc.stages[f.stage] : '',
+    markets: f.markets.map((i) => fc.markets[i]),
+    funding: f.funding >= 0 ? fc.fundings[f.funding] : '',
+    deck: f.deck,
+    plan,
+    reportLang: plan === 'free' ? '' : reportLang,
+    consentTrack: track === 'b' ? 'ecosystem' : 'confidential',
+  })
+  /** Plain-text copy of the answers for the mailto fallback and the copy button. */
+  const asLines = () => {
+    const an = answers()
+    const L: Record<string, string> = {
+      company: fc.company.l, name: fc.name.l, email: fc.email.l, website: fc.website.l, oneLine: fc.oneLine.l,
+      pain: fc.pain.l, customer: fc.customer.l, evidence: fc.evidence.l, solution: fc.solution.l, team: fc.team.l,
+      demo: fc.demo.l, money: fc.money.l, metrics: fc.metricsL, whyNow: fc.whyNow.l, model: fc.modelL, stage: fc.stageL,
+      markets: fc.marketsL, funding: fc.fundingL, deck: fc.deck.l, plan: fc.s4, reportLang: fc.reportLangL, consentTrack: intro.tracks.title,
+    }
+    return Object.entries(an).map(([k, v]) => {
+      let val: string = Array.isArray(v) ? v.join(', ') : String(v ?? '')
+      if (!val) return ''
+      if (k === 'plan') val = `${fc.plans[v as Plan].h} (${fc.plans[v as Plan].price})`
+      if (k === 'reportLang') val = fc.reportLangs[v as 'zh' | 'en']
+      if (k === 'consentTrack') val = v === 'ecosystem' ? intro.tracks.b.h : intro.tracks.a.h
+      return `${L[k]}: ${val}`
+    }).filter(Boolean)
   }
-  const reset = () => { setPhase('form') }
+
+  const run = async () => {
+    if (!ready || sending) return
+    setSending(true); setErr(null)
+    try {
+      const r = await submitIntake('analyze', lang, answers())
+      bumpAnalyzed(); postAnalyzed() // the public counter only moves once a submission is actually stored
+      setResult({ id: r.id, mail: r.mail, email: f.email.trim(), company: f.company, oneLine: f.oneLine, plan, track })
+      setPhase('done')
+    } catch (e) {
+      setErr(e instanceof IntakeError ? e.code : 'network')
+    } finally { setSending(false) }
+  }
+  const copyAnswers = async () => {
+    try { await navigator.clipboard.writeText(asLines().join('\n')) } catch { /* the user still has the page */ }
+    setCopied(true); window.setTimeout(() => setCopied(false), 2200)
+  }
+  const mailHref = () => mailtoFallback(`Trinity Check · ${f.company || 'my idea'}`, asLines())
 
   return (
     <div className="az">
@@ -228,9 +220,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
             <motion.div className="az-preview" variants={ITEM}>
               <div className="az-preview-h">{intro.previewTitle}</div>
               <div className="rings">
-                <ScoreRing label={r.rings[0]} value={SCORES.e} col={COLS.e} delay={0.25} />
-                <ScoreRing label={r.rings[1]} value={SCORES.m} col={COLS.m} delay={0.37} />
-                <ScoreRing label={r.rings[2]} value={SCORES.s} col={COLS.s} delay={0.49} />
+                {ORDER.map((k, i) => <ScoreRing key={k} label={lens[k].label} value={SAMPLE[k]} col={COLS[k]} delay={0.25 + i * 0.12} />)}
               </div>
               <div className="az-preview-note">{intro.previewNote}</div>
             </motion.div>
@@ -239,7 +229,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
               <div className="az-decl-h">{intro.declTitle}</div>
               <ul>
                 {intro.decl.map((d, i) => (
-                  <li key={i}><span className="az-decl-ic">{CHECK}</span><span>{d.replace('{email}', FORM_TO)}</span></li>
+                  <li key={i}><span className="az-decl-ic">{CHECK}</span><span>{d.replace('{email}', PUBLIC_EMAIL)}</span></li>
                 ))}
               </ul>
             </motion.div>
@@ -277,8 +267,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
             <motion.div className="az-pricenote" variants={ITEM}>{intro.priceNote}</motion.div>
 
             <motion.button className="btn btn-primary az-run" variants={ITEM} disabled={!agree} onClick={() => setPhase('form')}>
-              {intro.start}
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
+              {intro.start}{ARROW}
             </motion.button>
           </motion.section>
         )}
@@ -372,90 +361,109 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
               <label className="ffield"><span className="fl">{fc.deck.l} <em className="opt">{a.input.optional}</em></span><input value={f.deck} onChange={upd('deck')} placeholder={fc.deck.ph} /><span className="fnote">{fc.deckNote}</span></label>
             </motion.div>
 
+            {/* What you want back: free first read, full report, report + Meet. No payment happens here. */}
+            <motion.div className="fgroup" variants={ITEM} id="plan">
+              <GroupHead t={fc.s4} />
+              <div className="ffield">
+                <span className="fl">{fc.planL}</span>
+                <div className="az-plan-grid" role="radiogroup" aria-label={fc.s4}>
+                  {PLANS.map((k) => (
+                    <button key={k} type="button" role="radio" aria-checked={plan === k} className={`az-track az-plan${plan === k ? ' on' : ''}`} onClick={() => setPlan(k)}>
+                      <span className="az-track-top"><span className="az-track-dot" aria-hidden /><span className="az-track-tag">{fc.plans[k].price}</span></span>
+                      <span className="az-track-h">{fc.plans[k].h}</span>
+                      <span className="az-track-p">{fc.plans[k].p}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {plan !== 'free' && (
+                <div className="ffield">
+                  <span className="fl">{fc.reportLangL}</span>
+                  <div className="fstages">
+                    {(['zh', 'en'] as const).map((k) => (
+                      <button key={k} type="button" className={`fstage ${reportLang === k ? 'on' : ''}`} onClick={() => setReportLang(k)}>{fc.reportLangs[k]}</button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <p className="az-track-note">{fc.planNote}</p>
+            </motion.div>
+
+            {err && (
+              <motion.div className="az-err" role="alert" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <div className="az-err-h">{fc.err.h}</div>
+                <p>{fc.err.p.replace('{email}', PUBLIC_EMAIL)}</p>
+                <div className="az-err-actions">
+                  <button className="btn btn-primary" onClick={run} disabled={sending}>{fc.err.retry}</button>
+                  <a className="btn btn-ghost" href={mailHref()}>{fc.err.mail}</a>
+                  <button className="btn btn-ghost" onClick={copyAnswers}>{copied ? fc.err.copied : fc.err.copy}</button>
+                </div>
+                <div className="az-err-code">{err}</div>
+              </motion.div>
+            )}
+
             <motion.div className="az-formnav" variants={ITEM}>
-              <button className="btn btn-ghost" onClick={() => setPhase('intro')}>
+              <button className="btn btn-ghost" onClick={() => setPhase('intro')} disabled={sending}>
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
                 {fc.back}
               </button>
-              <button className="btn btn-primary az-run" disabled={!ready} onClick={run}>
-                {fc.run}
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
+              <button className="btn btn-primary az-run" disabled={!ready || sending} onClick={run} aria-busy={sending}>
+                {sending ? fc.sending : fc.run}{!sending && ARROW}
               </button>
             </motion.div>
           </motion.section>
         )}
 
-        {phase === 'running' && <Scanning key="run" onDone={() => setPhase('done')} />}
-
-        {phase === 'done' && (
-          <motion.section key="done" className="az-report" variants={STAG} initial="hide" animate="show">
-            <motion.div className="az-sample" variants={ITEM}>
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 8v4m0 4h.01" /></svg>
-              {r.sample}
-            </motion.div>
+        {phase === 'done' && result && (
+          <motion.section key="done" className="az-stage az-done" variants={STAG} initial="hide" animate="show">
+            <motion.div className="eyebrow" variants={ITEM}>{done.eyebrow}</motion.div>
+            <motion.h1 className="az-h1" variants={ITEM}>
+              {done.h1.split('{id}')[0]}<span className="az-id">{result.id}</span>{done.h1.split('{id}')[1]}
+            </motion.h1>
+            <motion.p className={`az-sub${result.mail.confirm === 'sent' ? '' : ' az-sub-warn'}`} variants={ITEM}>
+              {result.mail.confirm === 'sent' ? done.mailOk.replace('{email}', result.email) : done.mailFail}
+            </motion.p>
 
             <motion.div className="az-trackecho" variants={ITEM}>
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-                {track === 'a'
+                {result.track === 'a'
                   ? <><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>
                   : <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18" /></>}
               </svg>
-              {track === 'a' ? r.trackEcho.a : r.trackEcho.b}
+              {result.track === 'a' ? intro.tracks.a.h : intro.tracks.b.h}
             </motion.div>
 
-            <motion.div className="az-verdict" variants={ITEM}>
-              <div>
-                <div className="eyebrow">{r.verdictKicker}</div>
-                <h1 className="az-h1">{r.verdict}</h1>
-                <p className="az-sub">{r.verdictLine}</p>
-              </div>
-              <div className="rings">
-                <ScoreRing label={r.rings[0]} value={SCORES.e} col={COLS.e} delay={0.3} />
-                <ScoreRing label={r.rings[1]} value={SCORES.m} col={COLS.m} delay={0.42} />
-                <ScoreRing label={r.rings[2]} value={SCORES.s} col={COLS.s} delay={0.54} />
-              </div>
+            <motion.div className="az-done-card" variants={ITEM}>
+              <div className="az-kicker">{done.nextH}</div>
+              <ol className="az-steps">
+                {done.steps[result.plan].map((s, i) => <li key={i}><span className="az-step-n">{i + 1}</span><span>{s}</span></li>)}
+              </ol>
             </motion.div>
 
-            <motion.div className="az-grid" variants={ITEM}>
-              <div className="az-card">
-                <div className="az-kicker">{r.stageKicker}</div>
-                <div className="az-big">{r.stage}</div>
-                <p>{r.stageWhy}</p>
-              </div>
-              <div className="az-card">
-                <div className="az-kicker">{r.roomKicker}</div>
-                <div className="az-big">{r.archetype}</div>
-                <p>{r.archetypeWhy}</p>
-              </div>
+            <motion.div className="az-done-card" variants={ITEM}>
+              <div className="az-kicker">{done.summaryH}</div>
+              <dl className="az-summary">
+                <dt>{fc.company.l}</dt><dd>{result.company}</dd>
+                <dt>{fc.oneLine.l}</dt><dd>{result.oneLine}</dd>
+                <dt>{done.plan}</dt><dd>{fc.plans[result.plan].h} · {fc.plans[result.plan].price}</dd>
+                <dt>{fc.email.l}</dt><dd>{result.email}</dd>
+              </dl>
+              <p className="fnote">{done.summaryNote}</p>
             </motion.div>
 
-            <motion.div className="az-firms" variants={ITEM}>
-              <div className="az-kicker">{r.firmsKicker}</div>
-              <p className="az-firms-note">{r.firmsNote}</p>
-              <motion.div className="firm-list" variants={{ show: { transition: { staggerChildren: 0.07 } } }}>
-                {r.firms.map((f) => (
-                  <motion.div className="firm" key={f.n} variants={{ hide: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE } } }}>
-                    <div className="firm-top"><span className="firm-n">{f.n}</span><span className="firm-geo">{f.geo}</span></div>
-                    <div className="firm-type">{f.type}</div>
-                    <p>{f.note}</p>
-                  </motion.div>
+            <motion.div variants={ITEM}>
+              <div className="az-kicker az-more-h">{done.moreH}</div>
+              <div className="az-more">
+                {done.more.map((m) => (
+                  m.kind === 'contact'
+                    ? <a className="az-more-card" key={m.kind} href={CONTACT_URL} target="_blank" rel="noopener"><b>{m.h}</b><p>{m.p}</p><span className="az-more-cta">{m.cta} ↗</span></a>
+                    : <button className="az-more-card" key={m.kind} onClick={() => routeTo(m.kind === 'deck' ? 'materials' : 'insight')}><b>{m.h}</b><p>{m.p}</p><span className="az-more-cta">{m.cta} →</span></button>
                 ))}
-              </motion.div>
-            </motion.div>
-
-            <motion.div className="az-fixes" variants={ITEM}>
-              <div className="az-kicker">{r.fixesKicker}</div>
-              {r.fixes.map((f, i) => (
-                <div className="fix" key={f.h}>
-                  <div className="fix-n" style={{ color: COLS[f.lens as 'e' | 'm' | 's'] }}>{String(i + 1).padStart(2, '0')}</div>
-                  <div><h3 style={{ color: COLS[f.lens as 'e' | 'm' | 's'] }}>{f.h}</h3><p>{f.p}</p></div>
-                </div>
-              ))}
+              </div>
             </motion.div>
 
             <motion.div className="az-actions" variants={ITEM}>
-              <button className="btn btn-ghost" onClick={reset}>{r.again}</button>
-              <button className="btn btn-primary" onClick={onBack}>{r.backHome}</button>
+              <button className="btn btn-primary" onClick={onBack}>{done.home}</button>
             </motion.div>
           </motion.section>
         )}

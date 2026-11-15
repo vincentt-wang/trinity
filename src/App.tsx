@@ -100,7 +100,7 @@ export default function App() {
           exit={{ opacity: 0, x: 80 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <Analyze onBack={() => setView('home')} />
+          <Analyze onBack={() => routeTo('home')} />
         </motion.div>
       )}
       {view === 'insight' && (

@@ -4,9 +4,7 @@ import { useLang } from './i18n'
 import { Nav } from './lib/Nav'
 import { urlFor } from './router'
 import { TCARDS, TD_CAT, BFACE, type TCard, type BFaceData } from './canonCards'
-
-const WAITLIST_URL = 'https://trinity-counter.comicbnb.workers.dev/waitlist'
-const NOTIFY_TO = 'vincent@easeai.com.tw'
+import { submitIntake, mailtoFallback, IntakeError, PUBLIC_EMAIL } from './intake'
 
 const EARTH = '#2563eb'
 const MOON = '#475569'
@@ -345,7 +343,8 @@ type Copy = {
   pilesH: string; pilesSub: string
   inH: string; incl: { t: string; d: string }[]
   priceH: string; priceBig: string; priceNote: string; notify: string; notifyNote: string
-  sentH: string; sentBody: string; disc: string
+  sending: string; sentH: string; sentBody: string; sentNoMail: string
+  errH: string; errP: string; errRetry: string; errMail: string; disc: string
 }
 const COPY: Record<L, Copy> = {
   zh: {
@@ -374,14 +373,20 @@ const COPY: Record<L, Copy> = {
       { t: '使用說明', d: 'facilitator 牌陣與判準速查' },
       { t: 'AI 教練 Gem', d: '用同一套判準自評你的案子' },
     ],
-    priceH: '定價',
-    priceBig: '即將公布',
-    priceNote: '實體卡牌正在最後打磨與印製，定價與開賣時間即將公布。',
-    notify: '加入名單',
-    notifyNote: '開賣時第一批寄信通知你，只用來通知這副卡。',
-    sentH: '已加入名單',
-    sentBody: '開賣第一時間就寄信通知你。',
-    disc: '這是預告頁，尚未正式開賣。',
+    priceH: '目前不收費',
+    priceBig: '只收等候名單',
+    priceNote: '只留 email，不收錢，名單也不會自動變成訂單。滿 10 人才送印；送印前先寄信告訴你價格與內含物，到時再決定要不要買。',
+    notify: '加入等候名單',
+    notifyNote: '只用來通知這副卡，不寄其他東西。送出後會收到一封確認信。',
+    sending: '送出中…',
+    sentH: '已加入等候名單，編號 {id}',
+    sentBody: '確認信已寄到你的信箱。滿 10 人開始製作，製作前會先寄信問你要不要買。',
+    sentNoMail: '已存進名單，但確認信沒寄出去。請記下編號；滿 10 人前會再寄信給你。',
+    errH: '沒送出。',
+    errP: '請再試一次；還是不行的話，改寄 email 到 ' + PUBLIC_EMAIL + '，寫「原則卡等候名單」就好。',
+    errRetry: '再試一次',
+    errMail: '改用 email',
+    disc: '這是預告頁，尚未正式開賣，目前不收任何費用。',
   },
   en: {
     back: 'Home',
@@ -409,14 +414,20 @@ const COPY: Record<L, Copy> = {
       { t: 'Facilitator manual', d: 'Spreads and a criteria cheat-sheet' },
       { t: 'AI coach Gem', d: 'Self-check your case on the same criteria' },
     ],
-    priceH: 'Price',
-    priceBig: 'Announcing soon',
-    priceNote: 'The physical deck is in final polish and print. Price and launch date will be announced shortly.',
-    notify: 'Join the list',
-    notifyNote: "We'll email you first when it opens — only about this deck.",
-    sentH: "You're on the list",
-    sentBody: "We'll email you the moment it opens.",
-    disc: 'This is a preview page. Not yet on sale.',
+    priceH: 'Not charging yet',
+    priceBig: 'Waitlist only',
+    priceNote: 'Email only, no money, and the list does not turn into an order by itself. The deck goes to print once 10 people are on it; before that you get the price and contents by email and decide then.',
+    notify: 'Join the waitlist',
+    notifyNote: 'Only about this deck, nothing else. You get a confirmation email right away.',
+    sending: 'Sending…',
+    sentH: 'You are on the list, id {id}',
+    sentBody: 'A confirmation is in your inbox. Production starts at 10 people; you hear from Vincent before that and decide whether to buy.',
+    sentNoMail: 'Stored on the list, but the confirmation email did not go out. Keep the id; you hear from Vincent before production starts.',
+    errH: 'Not sent.',
+    errP: 'Try again; if it still fails, email ' + PUBLIC_EMAIL + ' with the words "Principle Deck waitlist".',
+    errRetry: 'Try again',
+    errMail: 'Email instead',
+    disc: 'This is a preview page. Not on sale, nothing is charged.',
   },
 }
 
@@ -434,7 +445,10 @@ export default function Materials() {
     return () => window.removeEventListener('trinity:navview', h)
   }, [lang])
   const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
+  const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [sentId, setSentId] = useState('')
+  const [sentMail, setSentMail] = useState('')
+  const [errCode, setErrCode] = useState('')
   const [copied, setCopied] = useState(false)
   const share = async () => {
     const url = urlFor('materials')
@@ -445,21 +459,17 @@ export default function Materials() {
     setCopied(true); window.setTimeout(() => setCopied(false), 2200)
   }
   const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
-  const join = () => {
-    if (!valid) return
-    // durable collection: worker stores the signup in KV (deduped by email)
-    fetch(WAITLIST_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, lang }),
-    }).catch(() => {})
-    // also email Vincent so a signup lands in the inbox, not just the store
-    fetch(`https://formsubmit.co/ajax/${NOTIFY_TO}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ _subject: 'Principle Deck · waitlist signup', email, lang, source: 'trinity /materials' }),
-    }).catch(() => {})
-    setSent(true)
+  // One call: the intake Worker stores the email (KV, deduped), emails the person a
+  // confirmation and emails Vincent. Failure is shown, never swallowed.
+  const join = async () => {
+    if (!valid || state === 'sending') return
+    setState('sending'); setErrCode('')
+    try {
+      const r = await submitIntake('waitlist', lang, { email: email.trim() })
+      setSentId(r.id); setSentMail(r.mail.confirm); setState('sent')
+    } catch (e) {
+      setErrCode(e instanceof IntakeError ? e.code : 'network'); setState('error')
+    }
   }
 
   return (
@@ -533,21 +543,31 @@ export default function Materials() {
           <div className="mat-price-h">{c.priceH}</div>
           <div className="mat-price-big">{c.priceBig}</div>
           <p className="mat-price-note">{c.priceNote}</p>
-          {sent ? (
+          {state === 'sent' ? (
             <motion.div className="mat-sent" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }}>
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#0e9f6e" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
               <div>
-                <div className="mat-sent-h">{c.sentH}</div>
-                <div className="mat-sent-b">{c.sentBody}</div>
+                <div className="mat-sent-h">{c.sentH.replace('{id}', sentId)}</div>
+                <div className="mat-sent-b">{sentMail === 'sent' ? c.sentBody : c.sentNoMail}</div>
               </div>
             </motion.div>
           ) : (
             <>
               <div className="mat-notify">
-                <input className="mat-input" type="email" placeholder="you@email.com" aria-label="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') join() }} />
-                <button className="btn btn-primary" disabled={!valid} onClick={join}>{c.notify}</button>
+                <input className="mat-input" type="email" placeholder="you@email.com" aria-label="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') join() }} disabled={state === 'sending'} />
+                <button className="btn btn-primary" disabled={!valid || state === 'sending'} onClick={join} aria-busy={state === 'sending'}>{state === 'sending' ? c.sending : c.notify}</button>
               </div>
               <div className="mat-cta-note">{c.notifyNote}</div>
+              {state === 'error' && (
+                <div className="mat-err" role="alert">
+                  <b>{c.errH}</b> {c.errP}
+                  <div className="mat-err-actions">
+                    <button className="btn btn-primary" onClick={join}>{c.errRetry}</button>
+                    <a className="btn btn-ghost" href={mailtoFallback(lang === 'zh' ? '原則卡等候名單' : 'Principle Deck waitlist', [email])}>{c.errMail}</a>
+                  </div>
+                  <span className="mat-err-code">{errCode}</span>
+                </div>
+              )}
             </>
           )}
         </section>

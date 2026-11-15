@@ -15,6 +15,8 @@ import { analyzedCount, fetchAnalyzed } from './stats'
 import { useLang } from './i18n'
 import { COPY, DIMENSIONS } from './copy'
 import Pitch from './Pitch'
+import { routeTo } from './router'
+import { CONTACT_URL, PERSONAL_SITE } from './intake'
 
 const LOGO = (
   <svg viewBox="0 0 32 32" aria-hidden>
@@ -621,6 +623,7 @@ function FounderSection() {
               </div>
               <div className="fdr-taught"><b>{o.taughtLabel}</b>{o.taught}</div>
               <p className="fdr-note">{c.note}</p>
+              <a className="fdr-site" href={PERSONAL_SITE} target="_blank" rel="noopener">{c.site} ↗</a>
             </div>
           </div>
         </Reveal>
@@ -652,7 +655,9 @@ function ServicesSection({ onAnalyze }: { onAnalyze: () => void }) {
               <div className="svc-foot">{s.foot}</div>
               {i === 2
                 ? <button className="btn btn-primary svc-cta" onClick={onAnalyze}>{COPY[lang].nav.cta}</button>
-                : <a className="btn btn-ghost svc-cta" href={`mailto:${c.email}?subject=${encodeURIComponent(s.h)}`}>{s.cta}</a>}
+                : i === 0
+                  ? <a className="btn btn-ghost svc-cta" href={CONTACT_URL} target="_blank" rel="noopener">{s.cta} ↗</a>
+                  : <a className="btn btn-ghost svc-cta" href={`mailto:${c.email}?subject=${encodeURIComponent(s.h)}`}>{s.cta}</a>}
             </div>
           ))}
         </Stagger>
@@ -693,43 +698,32 @@ function StatsBand() {
   )
 }
 
-/* ---------- Promo video: a single section near the bottom (experimental) ---------- */
-function PromoVideo() {
+/* ---------- Products: the three things you can buy (replaced the promo video, 2026-11-15) ---------- */
+function ProductsSection({ onMaterials }: { onMaterials: () => void }) {
   const { lang } = useLang()
-  const base = import.meta.env.BASE_URL
-  const t = lang === 'zh'
-    ? { eyebrow: '30 秒看懂', h2a: '看引擎', h2b: '怎麼想', lead: '三個透鏡、六十個維度、一個誠實的判定。整個方法，半分鐘看完。' }
-    : { eyebrow: 'The 30-second tour', h2a: 'Watch the engine', h2b: 'think', lead: 'Three lenses, sixty dimensions, one honest verdict. The whole method, in half a minute.' }
+  const c = COPY[lang].products
+  // card 0 -> /analyze with the report plan preselected; card 1 -> personal site; card 2 -> /deck
+  const go = [() => routeTo('analyze', '?plan=report'), null, onMaterials] as const
   return (
-    <section id="promo" className="sec">
+    <section id="products" className="sec products-sec">
       <div className="wrap">
-        <Reveal>
-          <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto' }}>
-            <span className="eyebrow" style={{ justifyContent: 'center' }}>{t.eyebrow}</span>
-            <h2 style={{ fontSize: 'clamp(1.8rem,3.6vw,2.7rem)', marginTop: 14 }}>
-              {t.h2a}{' '}
-              <span style={{ backgroundImage: 'var(--grad-ink)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>{t.h2b}</span>
-            </h2>
-            <p className="lead" style={{ margin: '14px auto 0' }}>{t.lead}</p>
-          </div>
-        </Reveal>
-        <Reveal delay={0.12}>
-          <div style={{
-            maxWidth: 940, margin: '30px auto 0', borderRadius: 20, overflow: 'hidden',
-            border: '1px solid var(--line)', boxShadow: 'var(--shadow-lg)', background: '#000',
-          }}>
-            <video
-              controls
-              playsInline
-              preload="metadata"
-              poster={`${base}video/trinity-promo-poster.jpg`}
-              style={{ width: '100%', display: 'block' }}
-              aria-label="Trinity product promo"
-            >
-              <source src={`${base}video/trinity-promo-16x9.mp4`} type="video/mp4" />
-            </video>
-          </div>
-        </Reveal>
+        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
+        <Stagger className="svc-grid prod-grid">
+          {c.cards.map((p, i) => (
+            <div className={`svc svc-${i} prod`} key={i}>
+              <div className="svc-top">
+                <span className="svc-tag">{p.tag}</span>
+                <span className="prod-price">{p.price}</span>
+              </div>
+              <h3>{p.h}</h3>
+              <p className="prod-p">{p.p}</p>
+              {i === 1
+                ? <a className="btn btn-ghost svc-cta" href={CONTACT_URL} target="_blank" rel="noopener">{p.cta} ↗</a>
+                : <button className={`btn ${i === 0 ? 'btn-primary' : 'btn-ghost'} svc-cta`} onClick={go[i] ?? undefined}>{p.cta}</button>}
+            </div>
+          ))}
+        </Stagger>
+        <Reveal delay={0.1}><p className="svc-disc">{c.note}</p></Reveal>
       </div>
     </section>
   )
@@ -757,6 +751,7 @@ function Footer({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; 
           <div className="foot-col foot-brandcol">
             <a className="brand" href="#top">{LOGO} TRINITY</a>
             <p className="foot-note">{c.footer}</p>
+            <a className="foot-site" href={PERSONAL_SITE} target="_blank" rel="noopener">{f.vincent} ↗</a>
           </div>
           <div className="foot-col">
             <div className="foot-h">{f.channels}</div>
@@ -946,7 +941,7 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
         </div>
       </section>
 
-      <PromoVideo />
+      <ProductsSection onMaterials={onMaterials} />
 
       <Footer onAnalyze={onAnalyze} onInsight={onInsight} onMaterials={onMaterials} />
 
