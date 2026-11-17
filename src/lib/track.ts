@@ -14,6 +14,10 @@ export function captureSource(): string {
   } catch { return '' }
 }
 
+export function setSource(s: string) {
+  try { sessionStorage.setItem(KEY, s.slice(0, 60)) } catch { /* ignore */ }
+}
+
 export function source(): string {
   try { return sessionStorage.getItem(KEY) || '' } catch { return '' }
 }

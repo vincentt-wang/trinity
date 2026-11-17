@@ -17,6 +17,7 @@ export function viewFromLocation(): View {
   if (seg.startsWith(BASE)) seg = seg.slice(BASE.length)
   seg = strip(seg)
   if (VIEW_OF[seg]) return VIEW_OF[seg]
+  if (/^insight\/ep\d\d$/.test(seg)) return 'insight' // episode pages: /insight/ep01 … ep06
   // backward compatibility: legacy #hash links (#materials / #analyze / #insight)
   const h = strip(location.hash.replace(/^#\/?/, ''))
   if (h === 'materials' || h === 'analyze' || h === 'insight') return h as View
@@ -33,4 +34,12 @@ export function routeTo(view: View, hash = ''): void {
   const url = BASE + PATH_OF[view] + hash
   if (location.pathname + location.hash !== url) history.pushState(null, '', url)
   window.dispatchEvent(new Event('trinity:route'))
+}
+
+/** Episode slug from /insight/epNN, or null on the list (261117). */
+export function epSlugFromLocation(): string | null {
+  let seg = location.pathname
+  if (seg.startsWith(BASE)) seg = seg.slice(BASE.length)
+  const m = strip(seg).match(/^insight\/(ep\d\d)$/)
+  return m ? m[1] : null
 }

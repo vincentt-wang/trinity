@@ -7,7 +7,11 @@ import { useLang } from './i18n'
 import { Nav } from './lib/Nav'
 import { COPY } from './copy'
 import { bumpAnalyzed, postAnalyzed } from './stats'
-import { submitIntake, mailtoFallback, IntakeError, PUBLIC_EMAIL, CONTACT_URL, type MailStatus } from './intake'
+import { submitIntake, mailtoFallback, IntakeError, PUBLIC_EMAIL, CONTACT_URL, type MailStatus, type DeckFile } from './intake'
+
+const DECK_MAX = 15 * 1024 * 1024
+const DECK_OK = /\.(pdf|ppt|pptx|key)$/i
+const HTTPS_OK = /^https:\/\/[^\s.]+\.[^\s]+$/i
 import { routeTo } from './router'
 
 const EASE = [0.2, 0.7, 0.2, 1] as const
@@ -133,6 +137,23 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
   const [err, setErr] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [result, setResult] = useState<Result | null>(null)
+  const [deckFile, setDeckFile] = useState<DeckFile | null>(null)
+  const [deckErr, setDeckErr] = useState('')
+  const pickDeck = (e: { target: HTMLInputElement }) => {
+    const file = e.target.files?.[0]
+    setDeckErr('')
+    if (!file) { setDeckFile(null); return }
+    if (!DECK_OK.test(file.name)) { setDeckFile(null); setDeckErr(fc.deckFile.badType); return }
+    if (file.size > DECK_MAX) { setDeckFile(null); setDeckErr(fc.deckFile.tooBig); return }
+    const rd = new FileReader()
+    rd.onload = () => {
+      const url = String(rd.result || '')
+      setDeckFile({ name: file.name, type: file.type, size: file.size, b64: url.slice(url.indexOf(',') + 1) })
+    }
+    rd.onerror = () => { setDeckFile(null); setDeckErr(fc.deckFile.badType) }
+    rd.readAsDataURL(file)
+  }
+  const siteOk = HTTPS_OK.test(f.website.trim())
   const upd = (k: 'company' | 'name' | 'email' | 'website' | 'oneLine' | 'pain' | 'solution' | 'customer' | 'deck' | 'evidence' | 'team' | 'demo' | 'money' | 'whyNow') =>
     (e: { target: { value: string } }) => setF((s) => ({ ...s, [k]: e.target.value }))
   const updMetric = (i: number) => (e: { target: { value: string } }) =>
@@ -145,7 +166,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
   }
   const toggleMarket = (i: number) => setF((s) => ({ ...s, markets: s.markets.includes(i) ? s.markets.filter((x) => x !== i) : [...s.markets, i] }))
   const ready = Boolean(
-    f.company.trim() && f.name.trim() && /\S+@\S+\.\S+/.test(f.email) &&
+    f.company.trim() && f.name.trim() && /\S+@\S+\.\S+/.test(f.email) && siteOk && deckFile &&
     f.oneLine.trim().length > 6 && f.pain.trim() && f.solution.trim() && f.customer.trim() &&
     f.model >= 0 && f.stage >= 0 && f.markets.length > 0,
   )
@@ -154,7 +175,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
 
   /** Everything the user typed, with the select answers as the labels they saw. */
   const answers = () => ({
-    company: f.company, name: f.name, email: f.email.trim(), website: f.website,
+    company: f.company, name: f.name, email: f.email.trim(), website: f.website.trim(),
     oneLine: f.oneLine, pain: f.pain, customer: f.customer, evidence: f.evidence,
     solution: f.solution, team: f.team, demo: f.demo, money: f.money,
     metrics: f.metrics.map((v, i) => (v.trim() ? `${fc.metrics[i]}: ${v.trim()}` : '')).filter(Boolean).join(' | '),
@@ -191,7 +212,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
     if (!ready || sending) return
     setSending(true); setErr(null)
     try {
-      const r = await submitIntake('analyze', lang, answers())
+      const r = await submitIntake('analyze', lang, answers(), deckFile || undefined)
       bumpAnalyzed(); postAnalyzed() // the public counter only moves once a submission is actually stored
       setResult({ id: r.id, mail: r.mail, email: f.email.trim(), company: f.company, oneLine: f.oneLine, plan, track })
       setPhase('done')
@@ -286,7 +307,7 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
               </div>
               <div className="frow two">
                 <label className="ffield"><span className="fl">{fc.email.l}<i>*</i></span><input type="email" value={f.email} onChange={upd('email')} placeholder={fc.email.ph} /></label>
-                <label className="ffield"><span className="fl">{fc.website.l} <em className="opt">{a.input.optional}</em></span><input value={f.website} onChange={upd('website')} placeholder={fc.website.ph} /></label>
+                <label className="ffield"><span className="fl">{fc.website.l}<i>*</i></span><input type="url" inputMode="url" value={f.website} onChange={upd('website')} placeholder={fc.website.ph} />{f.website.trim() && !siteOk && <span className="fnote fnote-err">{fc.websiteBad}</span>}</label>
               </div>
             </motion.div>
 
@@ -358,6 +379,11 @@ export default function Analyze({ onBack }: { onBack: () => void }) {
                   ))}
                 </div>
               </div>
+              <label className="ffield az-file"><span className="fl">{fc.deckFile.l}<i>*</i></span>
+                <input type="file" accept=".pdf,.ppt,.pptx,.key,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation" onChange={pickDeck} />
+                <span className="fnote">{deckFile ? `${deckFile.name} · ${(deckFile.size / 1048576).toFixed(1)} MB` : fc.deckFile.note}</span>
+                {deckErr && <span className="fnote fnote-err">{deckErr}</span>}
+              </label>
               <label className="ffield"><span className="fl">{fc.deck.l} <em className="opt">{a.input.optional}</em></span><input value={f.deck} onChange={upd('deck')} placeholder={fc.deck.ph} /><span className="fnote">{fc.deckNote}</span></label>
             </motion.div>
 

@@ -4,7 +4,7 @@ import { COPY } from '../copy'
 import { scrollToId, scrollToTop } from './useLenis'
 import { presentationResync } from './presentation'
 import { routeTo, type View } from '../router'
-import { PERSONAL_SITE, EPISODES_URL, ONE_ON_ONE_NAV } from '../intake'
+import { ONE_ON_ONE_NAV } from '../intake'
 
 const LOGO = (
   <svg viewBox="0 0 32 32" aria-hidden>
@@ -17,13 +17,13 @@ const LOGO = (
 // order MUST match the home page's top-to-bottom flow: dims → engine → stack → fit
 const SECTION_IDS = ['dims', 'engine', 'stack', 'fit'] as const
 
-type Item = { label: string; ext?: boolean; href: string; go?: () => void }
+type Item = { label: string; ext?: boolean; href: string; go?: () => void; hint?: string }
 type Group = { id: string; label: string; items: Item[]; activeIds?: readonly string[] }
 
 /**
- * The one nav used everywhere (261117: 4 top-level entries + the Analyze button).
- * Engine / How it thinks / Pricing are dropdowns (hover or click on desktop,
- * tap-to-expand accordions on mobile); Vincent is a plain outbound link.
+ * The one nav used everywhere (261117 v2: Engine / How it thinks / Services dropdowns + the Analyze button).
+ * All three are dropdowns (hover or click on desktop,
+ * tap-to-expand accordions on mobile).
  * On a sub-page (sub=true) section links route home with the hash and Home
  * scrolls there on mount.
  */
@@ -55,19 +55,18 @@ export function Nav({ sub = false, active = '', navDark = false }: { sub?: boole
     { id: 'engine', label: n.engine, activeIds: SECTION_IDS,
       items: SECTION_IDS.map((id) => ({ label: secLabel[id], href: '#' + id, go: () => section(id) })) },
     { id: 'thinks', label: n.insight, items: [
-      { label: n.insightPage, href: '/insight', go: () => viewTo('insight') },
-      { label: n.episodes, href: EPISODES_URL, ext: true },
+      { label: n.episodes, href: '/insight', go: () => viewTo('insight') },
+      { label: n.insightPage, href: '/insight#notes', go: () => viewTo('insight', '#notes') },
     ] },
-    { id: 'pricing', label: n.pricing, items: [
-      { label: n.report, href: '/analyze?plan=report', go: () => viewTo('analyze', '?plan=report') },
-      { label: n.deck, href: '/deck', go: () => viewTo('materials') },
+    { id: 'services', label: n.services, items: [
+      { label: n.cta, hint: n.freeHint, href: '/analyze', go: () => viewTo('analyze') },
       { label: n.oneOnOne, href: ONE_ON_ONE_NAV, ext: true },
     ] },
   ]
 
   const link = (it: Item, cls = '') => it.ext
     ? <a key={it.label} className={cls} href={it.href} target="_blank" rel="noopener" data-cta={'nav:' + it.label} onClick={close}>{it.label} ↗</a>
-    : <a key={it.label} className={cls} href={it.href} onClick={(e) => { e.preventDefault(); it.go?.() }}>{it.label}</a>
+    : <a key={it.label} className={cls} href={it.href} onClick={(e) => { e.preventDefault(); it.go?.() }}>{it.label}{it.hint && <small className="nav-hint">{it.hint}</small>}</a>
 
   return (
     <nav ref={navRef} className={`nav${navDark ? ' on-dark' : ''}${open ? ' menu-open' : ''}`}>
@@ -87,7 +86,6 @@ export function Nav({ sub = false, active = '', navDark = false }: { sub?: boole
               </div>
             </div>
           ))}
-          <a href={PERSONAL_SITE} target="_blank" rel="noopener" className="nav-ext" data-cta="nav:vincent">{n.vincent} ↗</a>
         </div>
         <div className="nav-cta">
           {/* the label names the language you switch TO */}
@@ -110,7 +108,6 @@ export function Nav({ sub = false, active = '', navDark = false }: { sub?: boole
             </div>
           </div>
         ))}
-        <a href={PERSONAL_SITE} target="_blank" rel="noopener" data-cta="nav:vincent" onClick={close}>{n.vincent} ↗</a>
         <button className="nav-mobile-cta" data-cta="nav:analyze" onClick={() => viewTo('analyze')}>{n.cta}</button>
       </div>
     </nav>

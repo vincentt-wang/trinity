@@ -16,7 +16,7 @@ id = "3a7a86a7169844f396fc5bf2281e15bd"
 # bucket_name = "trinity-submissions"
 
 [vars]
-NOTIFY_TO = "new.vincent21@gmail.com"
+NOTIFY_TO = "vincent@easeai.com.tw"
 PUBLIC_EMAIL = "vincent@easeai.com.tw"
 MAIL_FROM = "Trinity Check <trinity@vs.easeai.com.tw>"
 SITE_URL = "https://trinity.easeai.com.tw"

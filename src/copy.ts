@@ -74,7 +74,7 @@ export const DIMENSIONS: Record<'e' | 'm' | 's', Dim[]> = {
 
 export const COPY = {
   en: {
-    nav: { engine: 'Engine', howItWorks: 'How it works', stack: 'The stack', dims: '60 dimensions', fit: 'Where you fit', insight: 'How it thinks', insightPage: 'Under the hood', episodes: 'Episodes', pricing: 'Pricing', report: 'Report', deck: 'Principle deck', oneOnOne: 'One-on-one', vincent: 'Vincent', cta: 'Analyze my idea' },
+    nav: { engine: 'Engine', howItWorks: 'How it works', stack: 'The stack', dims: '60 dimensions', fit: 'Where you fit', insight: 'How it thinks', insightPage: 'Engine notes', episodes: 'Episodes', services: 'Services', freeHint: 'First one free', deck: 'Principle deck', oneOnOne: 'One-on-one', vincent: 'Vincent', cta: 'Analyze my idea' },
     hero: { eyebrow: 'Innovation Trinity · Feasibility Engine', titleA: 'From an idea to', titleB: 'an ', titleHl: 'investable startup', lead: 'Feed your idea to the Trinity engine. See where it really stands across 60 dimensions, and exactly who to talk to next.', ctaPrimary: 'Analyze my idea', ctaGhost: 'See how it works' },
     lenses: {
       eyebrow: 'How the engine thinks', h2: 'Three lenses, three questions', lead: 'An investable startup needs three things to hold at once. Miss one and the engine tells you.',
@@ -85,27 +85,27 @@ export const COPY = {
       ],
     },
     engine: {
-      eyebrow: 'How the engine computes', h2a: 'Independent first,', h2b: 'then cross-linked', lead: 'Not vibes. Not one prompt. A disciplined sequence that mirrors how the best investors actually reason.',
+      eyebrow: 'How the engine computes', h2a: 'Independent first,', h2b: 'then cross-linked', lead: '',
       steps: [
-        { n: '01', h: 'Each lens scores in isolation', p: 'Desirability, Feasibility and Viability are scored independently, blind to each other, to avoid anchoring.' },
-        { n: '02', h: 'Then they cross-link', p: 'Six directions of cross-correction. A strong demand signal raises the bar on viability, and so on.' },
-        { n: '03', h: 'And converge into one verdict', p: 'D is the gate. The three become a single, actionable call: where you stand and what to fix.' },
+        { n: '01', h: 'Blind scoring', p: 'Desirability, Feasibility and Viability are scored blind to each other.' },
+        { n: '02', h: 'Cross checks', p: 'The three lenses then correct each other.' },
+        { n: '03', h: 'One verdict', p: 'Where you stand, and what to fix first.' },
       ],
       verdictH: 'One clear verdict', verdictP: 'Where you stand, and what to fix first.',
     },
     stack: {
-      eyebrow: 'The Trinity stack', h2: 'Innovation, engineered', lead: 'Six composable layers turn a raw idea into a verdict you can act on.',
+      eyebrow: 'The Trinity stack', h2: 'Innovation, engineered', lead: '',
       layers: [
-        { n: '01', h: '60-dimension scoring', p: 'Every idea is read across 60 weighted dimensions, each one a solid algorithm rather than a hunch.' },
-        { n: '02', h: 'Three independent lenses', p: 'Desirability, Feasibility and Viability are scored blind to each other, so no lens anchors the rest.' },
-        { n: '03', h: 'Six-way cross-link', p: 'The three lenses then correct one another in six directions before anything is concluded.' },
-        { n: '04', h: 'Evidence gating', p: 'Scores are gated on evidence, so the engine cannot be talked into an inflated number.' },
-        { n: '05', h: 'Synthesis into one verdict', p: 'Desirability is the gate. The three converge into a single, actionable call.' },
-        { n: '06', h: 'Investor & stage matching', p: 'Your verdict maps to a funding stage and a shortlist of real investors, across the US and Taiwan.' },
+        { n: '01', h: 'Dimension scoring', p: '60 weighted dimensions, each scored from evidence.' },
+        { n: '02', h: 'Blind lenses', p: 'No lens sees the other two while scoring.' },
+        { n: '03', h: 'Cross checks', p: 'The lenses correct each other in six directions.' },
+        { n: '04', h: 'Evidence gates', p: 'No evidence, no points.' },
+        { n: '05', h: 'One verdict', p: 'Desirability is the gate. Three lenses, one call.' },
+        { n: '06', h: 'Investor match', p: 'Your stage, and real investors in the US and Taiwan.' },
       ],
     },
     dims: {
-      eyebrow: 'The 60 dimensions', h2: 'Every score is a solid algorithm', lead: 'Sixty dimensions, three lenses. Every one is scored from evidence, with a single master card converging the three lenses; the four dashed nodes score like the rest and then carry an in-person deep dive on top.',
+      eyebrow: 'The 60 dimensions', h2: '60 dimensions, 3 lenses', lead: '',
       sub: 'weighted dimensions, scored across three lenses', dimsWord: 'dimensions',
       lensMeta: {
         e: { label: 'Desirability', q: 'Is the need real, sharp and shared by enough people to pay?' },
@@ -114,7 +114,7 @@ export const COPY = {
       },
     },
     fit: {
-      eyebrow: 'Where you fit', h2: 'Your analysis, turned into a move', lead: 'Trinity places your stage, names the investor type that weights your strongest lens, and shortlists real institutions to contact. Walk the stages to see who you would talk to.',
+      eyebrow: 'Where you fit', h2: 'Your analysis, turned into a move', lead: '',
       roomAtPre: 'The room at ', roomAtPost: '', who: 'Who you would talk to', readsBy: 'The engine reads you by',
       stages: [
         { label: 'Pre-seed', room: 'Accelerators & angels', desc: 'Conviction on the founder and a sharp wedge, before the metrics exist.', read: 'Founder strength + the FMF signal' },
@@ -289,7 +289,9 @@ export const COPY = {
           fundingL: 'Funding round',
           fundings: ['Pre-seed', 'Seed', 'Series A', 'Growth', 'Not raising'],
           deck: { l: 'Pitch deck link', ph: 'https://… a Drive or Notion link' },
-          deckNote: 'Encouraged. Paste a Google Drive or Notion link that opens without login.',
+          deckNote: 'Optional. A Google Drive or Notion link that opens without login.',
+          deckFile: { l: 'Pitch deck file', note: 'PDF, PPT, PPTX or Keynote, up to 15MB.', tooBig: 'This file is over 15MB. Export a smaller PDF and try again.', badType: 'Use a PDF, PPT, PPTX or Keynote file.' },
+          websiteBad: 'Start with https://',
           s4: 'What you want back',
           planL: 'Pick one',
           plans: {
@@ -638,7 +640,7 @@ export const COPY = {
     },
   },
   zh: {
-    nav: { engine: '引擎', howItWorks: '運算原理', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', insight: '引擎怎麼想', insightPage: '引擎內部', episodes: '影片與文章', pricing: '價格', report: '評案報告', deck: '原則卡', oneOnOne: '一對一', vincent: 'Vincent', cta: '分析我的點子' },
+    nav: { engine: '引擎', howItWorks: '運算原理', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', insight: '引擎怎麼想', insightPage: '引擎筆記', episodes: '影片與文章', services: '服務', freeHint: '第一次免費', deck: '原則卡', oneOnOne: '一對一', vincent: 'Vincent', cta: '分析我的點子' },
     hero: { eyebrow: '創新三元 · 可行性引擎', titleA: '從一個點子', titleB: '到值得投資的', titleHl: '新創', lead: '把你的點子餵給 Trinity 引擎，看它在 60 個維度上真正的位置，以及下一步該找誰談。', ctaPrimary: '分析我的點子', ctaGhost: '看它怎麼運作' },
     lenses: {
       eyebrow: '引擎怎麼思考', h2: '三個透鏡，三個問題', lead: '一家值得投資的新創，需要三件事同時成立。少一個，引擎會告訴你。',
@@ -649,27 +651,27 @@ export const COPY = {
       ],
     },
     engine: {
-      eyebrow: '引擎怎麼計算', h2a: '先各自獨立，', h2b: '再交叉校正', lead: '不是憑感覺，也不是一句提示詞，而是一套紀律化流程，模擬頂尖投資人真正的推理方式。',
+      eyebrow: '引擎怎麼計算', h2a: '先各自獨立，', h2b: '再交叉校正', lead: '',
       steps: [
-        { n: '01', h: '每個透鏡各自獨立評分', p: '欲求性、可行性、存續性彼此盲評、互不參照，避免先入為主。' },
-        { n: '02', h: '接著彼此交叉校正', p: '六個方向的相互修正。強烈的需求訊號，會拉高存續性的標準，依此類推。' },
-        { n: '03', h: '最後收斂成一個結論', p: '欲求性是門檻。三者收斂成一個可行動的判斷：你在哪、該先修什麼。' },
+        { n: '01', h: '各自盲評', p: '欲求性、可行性、存續性彼此盲評。' },
+        { n: '02', h: '交叉校正', p: '三個透鏡接著互相修正。' },
+        { n: '03', h: '收斂裁決', p: '你站在哪裡，以及該先修哪一件事。' },
       ],
       verdictH: '一個清楚的結論', verdictP: '你站在哪裡，以及該先修哪一件事。',
     },
     stack: {
-      eyebrow: 'Trinity 引擎堆疊', h2: '工程化的創新', lead: '六層可組合的結構，把一個原始點子變成你能行動的結論。',
+      eyebrow: 'Trinity 引擎堆疊', h2: '工程化的創新', lead: '',
       layers: [
-        { n: '01', h: '60 維度評分', p: '每個點子都會被 60 個加權維度檢視，每一個都是扎實的演算法，而非直覺。' },
-        { n: '02', h: '三個獨立透鏡', p: '欲求性、可行性、存續性彼此盲評，沒有任何一個透鏡會綁架其他兩個。' },
-        { n: '03', h: '六向交叉校正', p: '三個透鏡接著在六個方向上彼此修正，才得出任何結論。' },
-        { n: '04', h: '證據閘控', p: '分數受證據閘控，所以引擎不會被話術灌出虛高的數字。' },
-        { n: '05', h: '收斂成單一結論', p: '欲求性是門檻。三者收斂成一個可行動的判斷。' },
-        { n: '06', h: '投資人與階段配對', p: '你的結論會對應到一個募資階段，與一份橫跨美國與台灣的真實投資人名單。' },
+        { n: '01', h: '維度評分', p: '60 個加權維度，各自由證據計分。' },
+        { n: '02', h: '獨立透鏡', p: '評分時，每個透鏡都看不到另外兩個。' },
+        { n: '03', h: '交叉校正', p: '三個透鏡在六個方向互相修正。' },
+        { n: '04', h: '證據把關', p: '沒有證據就不給分。' },
+        { n: '05', h: '收斂裁決', p: '欲求性是門檻，三個透鏡收成一個判斷。' },
+        { n: '06', h: '投資配對', p: '對應你的階段，以及美國、台灣的真實投資人。' },
       ],
     },
     dims: {
-      eyebrow: '60 個維度', h2: '每個分數都是扎實的演算法', lead: '六十個維度，三個透鏡，全部由證據計分，唯一的總綱卡負責收斂三透鏡；虛線的 4 個照常入分，另外帶著見面深掘的追問。',
+      eyebrow: '60 個維度', h2: '60 個維度、三個透鏡', lead: '',
       sub: '個加權維度，分屬三個透鏡', dimsWord: '個維度',
       lensMeta: {
         e: { label: '欲求性', q: '需求是否真實、夠尖銳，且夠多人願意付錢。' },
@@ -678,7 +680,7 @@ export const COPY = {
       },
     },
     fit: {
-      eyebrow: '你的定位', h2: '把分析變成下一步行動', lead: 'Trinity 為你定位募資階段，指出最看重你最強透鏡的投資人類型，並列出可接觸的真實機構。走過各階段，看看你會跟誰談。',
+      eyebrow: '你的定位', h2: '把分析變成下一步行動', lead: '',
       roomAtPre: '', roomAtPost: ' 階段會見的投資人', who: '你會接觸的對象', readsBy: '引擎判讀重點',
       stages: [
         { label: '種子前', room: '加速器與天使', desc: '在數據出現之前，投的是對創辦人與切入點的信念。', read: '創辦人強度＋FMF 訊號' },
@@ -853,7 +855,9 @@ export const COPY = {
           fundingL: '募資輪次',
           fundings: ['種子前', '種子輪', 'A 輪', '成長期', '暫不募資'],
           deck: { l: 'Pitch Deck 連結', ph: 'https://… Drive 或 Notion 連結' },
-          deckNote: '建議附上。貼一個免登入即可開啟的 Google Drive 或 Notion 連結。',
+          deckNote: '選填。免登入即可開啟的 Google Drive 或 Notion 連結。',
+          deckFile: { l: '簡報檔', note: 'PDF、PPT、PPTX 或 Keynote，15MB 以內。', tooBig: '檔案超過 15MB，請另存較小的 PDF 再上傳。', badType: '請上傳 PDF、PPT、PPTX 或 Keynote 檔。' },
+          websiteBad: '請以 https:// 開頭',
           s4: '你要拿回什麼',
           planL: '選一種',
           plans: {

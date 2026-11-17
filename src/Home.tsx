@@ -14,8 +14,7 @@ import { CountUp, MaskLines, Stagger } from './lib/anim'
 import { useLang } from './i18n'
 import { COPY, DIMENSIONS } from './copy'
 import Pitch from './Pitch'
-import { routeTo } from './router'
-import { ABOUT_URL, ONE_ON_ONE_PROD, PERSONAL_SITE, FOLLOW } from './intake'
+import { ABOUT_URL, PERSONAL_SITE, FOLLOW } from './intake'
 
 const LOGO = (
   <svg viewBox="0 0 32 32" aria-hidden>
@@ -186,7 +185,7 @@ function EngineScrolly() {
           <div className="scrolly-copy">
             <div className="eyebrow">{c.eyebrow}</div>
             <h2>{c.h2a}<br />{c.h2b}</h2>
-            <p className="lead">{c.lead}</p>
+            {c.lead && <p className="lead">{c.lead}</p>}
             <div className="estep-list">
               {c.steps.map((s, i) => (
                 <div key={s.n} className={`estep ${step === i ? 'on' : ''}`}>
@@ -305,7 +304,7 @@ function DimsSection() {
       <div className="wrap dims-overlay">
         <div className="dims-copy">
           <Reveal>
-            <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div>
+            <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2>{c.lead && <p className="lead">{c.lead}</p>}</div>
           </Reveal>
           <div className="lenstabs lenstabs-row">
             {DIM_KEYS.map((x) => (
@@ -367,7 +366,7 @@ function StackSection() {
       <div ref={ref} className="stack-track">
         <div className="stack-stage wrap">
         <VScrollRail progress={scrollYProgress} steps={6} active={active} />
-        <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div>
+        <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2>{c.lead && <p className="lead">{c.lead}</p>}</div>
         <div className="stack">
           <div className="stack-list">
             {c.layers.map((s, i) => (
@@ -448,7 +447,7 @@ function FitSection() {
       <div ref={ref} className="fit-track">
         <div className="fit-stage wrap">
           <VScrollRail progress={scrollYProgress} steps={n} active={i} />
-          <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div>
+          <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2>{c.lead && <p className="lead">{c.lead}</p>}</div>
           <div className="fit">
             <div className="fit-rail">
               <div className="fit-rail-line">
@@ -531,7 +530,7 @@ function WhyFounders() {
       <div className="why-bg" aria-hidden><span className="why-blob b1" /><span className="why-blob b2" /><span className="why-blob b3" /></div>
       <ParallaxRings />
       <div className="wrap">
-        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
+        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2>{c.lead && <p className="lead">{c.lead}</p>}</div></Reveal>
         <Stagger className="cards c4">
           {c.cards.map((w, i) => (
             <div className={`card why-card${lit === i ? ' why-lit' : ''}`} style={{ ['--wc' as string]: DIM_VAR[WHY_META[i].k] }} key={i}>
@@ -558,7 +557,7 @@ function BeforeAfter() {
       <Aurora tone="warm" />
       <DrawArcs />
       <div className="wrap">
-        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
+        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2>{c.lead && <p className="lead">{c.lead}</p>}</div></Reveal>
         <motion.div className="ba" initial="hide" whileInView="show" viewport={{ once: true, margin: '-15% 0px' }}>
           <motion.div className="ba-col before" variants={{ hide: { opacity: 0, x: -70 }, show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: EASE } } }}>
             <div className="ba-tag">{c.without}</div>
@@ -594,7 +593,7 @@ function BeforeAfter() {
 }
 
 
-/* ---------- Founder strip (261117: one paragraph + three logos) ---------- */
+/* ---------- Founder card (261117 v2: photo grid back, one paragraph, two equal logo tiles, button) ---------- */
 function FounderSection() {
   const { lang } = useLang()
   const c = COPY[lang].founder
@@ -604,15 +603,26 @@ function FounderSection() {
       <Aurora tone="cool" />
       <div className="wrap">
         <Reveal>
-          <div className="fdr-slim">
-            <div className="eyebrow">{c.eyebrow}</div>
-            <p className="fdr-lead">{c.lead}</p>
-            <div className="fdr-logos">
-              <span className="fdr-logo"><img src={`${B}img/evoscale.png`} alt="EvoScale Capital" width={600} height={125} loading="lazy" decoding="async" /></span>
-              <span className="fdr-logo"><img src={`${B}img/gva-rocket.png`} alt="GVA" width={428} height={429} loading="lazy" decoding="async" /><span>GVA</span></span>
-              <a className="fdr-logo" href={ABOUT_URL} target="_blank" rel="noopener" data-cta="founder:avatar"><img className="fdr-av" src={`${B}img/vincent.jpg`} alt="Vincent Wang" width={793} height={900} loading="lazy" decoding="async" /><span>Vincent Wang</span></a>
+          <div className="fdr">
+            <div className="fdr-photo">
+              <img src={`${B}img/vincent.jpg`} alt="Vincent Wang" width={793} height={900} loading="lazy" decoding="async" />
+              <span className="fdr-ring" aria-hidden />
             </div>
-            <a className="fdr-site" href={ABOUT_URL} target="_blank" rel="noopener" data-cta="founder:about">{c.site} →</a>
+            <div className="fdr-body">
+              <div className="eyebrow">{c.eyebrow}</div>
+              <h2 className="fdr-name">{c.name}</h2>
+              <p className="fdr-lead">{c.lead}</p>
+              <div className="fdr-tiles">
+                <a className="fdr-tile" href="https://evoscalecapital.com" target="_blank" rel="noopener" data-cta="founder:evoscale" aria-label="EvoScale Capital">
+                  <img src={`${B}img/evoscale.png`} alt="EvoScale Capital" width={600} height={125} loading="lazy" decoding="async" />
+                </a>
+                <a className="fdr-tile fdr-tile-gva" href="https://gva.tw" target="_blank" rel="noopener" data-cta="founder:gva" aria-label="Global Venture Accelerator">
+                  <img src={`${B}img/gva-rocket.png`} alt="" width={428} height={429} loading="lazy" decoding="async" />
+                  <span>Global Venture Accelerator</span>
+                </a>
+              </div>
+              <a className="btn btn-primary fdr-btn" href={ABOUT_URL} target="_blank" rel="noopener" data-cta="founder:about">{c.site} →</a>
+            </div>
           </div>
         </Reveal>
       </div>
@@ -642,37 +652,6 @@ function StatsBand() {
         ))}
       </div>
     </div>
-  )
-}
-
-/* ---------- Products: the three things you can buy (replaced the promo video, 2026-11-15) ---------- */
-function ProductsSection({ onMaterials }: { onMaterials: () => void }) {
-  const { lang } = useLang()
-  const c = COPY[lang].products
-  // card 0 -> /analyze with the report plan preselected; card 1 -> personal site; card 2 -> /deck
-  const go = [() => routeTo('analyze', '?plan=report'), null, onMaterials] as const
-  return (
-    <section id="products" className="sec products-sec">
-      <div className="wrap">
-        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
-        <Stagger className="svc-grid prod-grid">
-          {c.cards.map((p, i) => (
-            <div className={`svc svc-${i} prod`} key={i}>
-              <div className="svc-top">
-                <span className="svc-tag">{p.tag}</span>
-                <span className="prod-price">{p.price}</span>
-              </div>
-              <h3>{p.h}</h3>
-              <p className="prod-p">{p.p}</p>
-              {i === 1
-                ? <a className="btn btn-ghost svc-cta" href={ONE_ON_ONE_PROD} target="_blank" rel="noopener" data-cta="prod:one-on-one">{p.cta} ↗</a>
-                : <button className={`btn ${i === 0 ? 'btn-primary' : 'btn-ghost'} svc-cta`} data-cta={i === 0 ? 'prod:report' : 'prod:deck'} onClick={go[i] ?? undefined}>{p.cta}</button>}
-            </div>
-          ))}
-        </Stagger>
-        <Reveal delay={0.1}><p className="svc-disc">{c.note}</p></Reveal>
-      </div>
-    </section>
   )
 }
 
@@ -806,7 +785,7 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
   // returning from a sub-page via a section hash (#engine…) scrolls there on mount
   useEffect(() => {
     const h = location.hash.replace(/^#\/?/, '')
-    if (h && ['engine', 'stack', 'dims', 'fit', 'celestial', 'why', 'ba', 'founder', 'products', 'cta', 'top'].includes(h)) {
+    if (h && ['engine', 'stack', 'dims', 'fit', 'celestial', 'why', 'ba', 'founder', 'cta', 'top'].includes(h)) {
       const t = setTimeout(() => scrollToId('#' + h), 620)
       return () => clearTimeout(t)
     }
@@ -863,8 +842,6 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
       <BeforeAfter />
 
       <FounderSection />
-
-      <ProductsSection onMaterials={onMaterials} />
 
       <section id="cta" className="sec sec-dark cta-sec">
         <div className="cta-glow" aria-hidden />

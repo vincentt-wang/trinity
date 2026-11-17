@@ -51,7 +51,7 @@ export default function App() {
     window.addEventListener('trinity:route', sync)
     return () => { window.removeEventListener('popstate', sync); window.removeEventListener('trinity:route', sync) }
   }, [])
-  useEffect(() => { trackView() }, [view]) // one page view per view change, tagged with ?s=
+  useEffect(() => { if (!/\/insight\/ep\d\d/.test(location.pathname)) trackView() }, [view]) // episode pages log their own view // one page view per view change, tagged with ?s=
   useEffect(() => {
     if (view !== 'home') window.scrollTo(0, 0) // a sub-page always opens at the top
   }, [view])

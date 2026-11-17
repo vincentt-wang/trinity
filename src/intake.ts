@@ -6,7 +6,8 @@
  */
 export type IntakeKind = 'analyze' | 'waitlist'
 export type MailStatus = { confirm: string; notify: string }
-export type IntakeOk = { ok: true; id: string; mail: MailStatus }
+export type IntakeOk = { ok: true; id: string; mail: MailStatus; mailIds?: { confirm: string; notify: string } }
+export type DeckFile = { name: string; type: string; size: number; b64: string }
 
 export class IntakeError extends Error {
   code: string
@@ -30,20 +31,20 @@ export const FOLLOW = [
 ] as const
 export const CONTACT_URL = 'https://vincent.easeai.com.tw/contact/?s=trinity'
 
-export async function submitIntake(kind: IntakeKind, lang: 'en' | 'zh', answers: Record<string, unknown>): Promise<IntakeOk> {
+export async function submitIntake(kind: IntakeKind, lang: 'en' | 'zh', answers: Record<string, unknown>, deckFile?: DeckFile): Promise<IntakeOk> {
   const ctrl = new AbortController()
-  const timer = setTimeout(() => ctrl.abort(), 25000)
+  const timer = setTimeout(() => ctrl.abort(), deckFile ? 120000 : 25000) // a 15MB deck needs time on a slow uplink
   try {
     const r = await fetch(`${API_BASE}/api/intake`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ kind, lang, answers: { ...answers, s: source() }, s: source() }),
+      body: JSON.stringify({ kind, lang, answers: { ...answers, s: source() }, s: source(), deckFile: deckFile ? { name: deckFile.name, type: deckFile.type, b64: deckFile.b64 } : undefined }),
       signal: ctrl.signal,
     })
     let j: Partial<IntakeOk> & { error?: string } | null = null
     try { j = await r.json() } catch { j = null }
     if (!r.ok || !j || j.ok !== true || !j.id) throw new IntakeError((j && j.error) || `http_${r.status}`)
-    return { ok: true, id: j.id, mail: j.mail || { confirm: 'unknown', notify: 'unknown' } }
+    return { ok: true, id: j.id, mail: j.mail || { confirm: 'unknown', notify: 'unknown' }, mailIds: j.mailIds }
   } catch (e) {
     if (e instanceof IntakeError) throw e
     throw new IntakeError((e as { name?: string })?.name === 'AbortError' ? 'timeout' : 'network')

@@ -8,6 +8,9 @@ import { useLang, type Lang } from './i18n'
 import { Nav } from './lib/Nav'
 import { COPY } from './copy'
 import { ARTICLE_PROSE, type ProseSection } from './insightArticles'
+import { EpisodeList, EpisodeDetail } from './Episodes'
+import { EPISODES } from './episodeData'
+import { epSlugFromLocation } from './router'
 
 const EASE = [0.2, 0.7, 0.2, 1] as const
 const EARTH = '#2563eb'
@@ -906,8 +909,22 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
   const { lang } = useLang()
   const c = COPY[lang].insight
   const [open, setOpen] = useState<number | null>(null)
+  const [epSlug, setEpSlug] = useState<string | null>(epSlugFromLocation)
+  useEffect(() => {
+    const sync = () => { setEpSlug(epSlugFromLocation()); setOpen(null) }
+    window.addEventListener('popstate', sync)
+    window.addEventListener('trinity:route', sync)
+    return () => { window.removeEventListener('popstate', sync); window.removeEventListener('trinity:route', sync) }
+  }, [])
+  const ep = epSlug ? EPISODES.find((e) => e.slug === epSlug) || null : null
+  // /insight#notes (nav "Engine notes") scrolls past the episodes to the engine articles
+  useEffect(() => {
+    if (ep || open !== null || location.hash !== '#notes') return
+    const t = setTimeout(() => document.getElementById('notes')?.scrollIntoView({ behavior: 'smooth' }), 500)
+    return () => clearTimeout(t)
+  }, [ep, open, epSlug])
 
-  useEffect(() => { window.scrollTo(0, 0) }, [open])
+  useEffect(() => { window.scrollTo(0, 0) }, [open, epSlug])
   // clicking "Insight" in the nav while reading an article returns to the list
   useEffect(() => {
     const h = (e: Event) => { if ((e as CustomEvent).detail === 'insight') { setOpen(null); window.scrollTo(0, 0) } }
@@ -916,6 +933,7 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
   }, [])
   // per-article title + description so each article is its own crawlable/citeable page (SEO/GEO)
   useEffect(() => {
+    if (ep) return
     const base = 'Trinity Check'
     let title = lang === 'zh' ? '洞察觀點 · 引擎怎麼想' : 'Insight · How the engine thinks'
     let desc = c.hero.lead
@@ -926,7 +944,7 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
     if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m) }
     m.content = desc
     return () => { document.title = base }
-  }, [open, lang, c])
+  }, [open, lang, c, ep])
 
   const sh = c.details.shared
 
@@ -942,7 +960,17 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
       <Nav sub />
 
       <AnimatePresence mode="wait">
-        {open === null ? (
+        {ep ? (
+          <motion.div
+            key={`ep-${ep.slug}-${lang}`}
+            initial={{ opacity: 0, y: 22 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -14 }}
+            transition={{ duration: 0.42, ease: EASE }}
+          >
+            <EpisodeDetail ep={ep} />
+          </motion.div>
+        ) : open === null ? (
           <motion.div
             key={`list-${lang}`}
             initial={{ opacity: 0, y: 22 }}
@@ -958,6 +986,12 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
               <Reveal delay={0.35}><p className="insight-lead">{c.hero.lead}</p></Reveal>
             </header>
 
+            <EpisodeList />
+
+            <div className="wrap ins-notes-head" id="notes">
+              <div className="eyebrow">{c.hero.eyebrow}</div>
+              <h2 className="ep-list-h">{c.hero.title}</h2>
+            </div>
             <div className="insight-articles wrap">
               <Reveal className="if-span">
                 <motion.article

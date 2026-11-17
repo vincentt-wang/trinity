@@ -42,6 +42,11 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 const RATE_PER_HOUR = 40 // per IP per hour: covers a workshop room on one Wi-Fi, stops a script. RATE_LIMIT var overrides (dev).
 const MAIL_TIMEOUT_MS = 8000
 const PERSONAL_SITE = 'https://vincent.easeai.com.tw'
+// 261117: pitch deck upload rides in the JSON as base64 and goes out ONLY as a Resend attachment
+// to NOTIFY_TO. KV keeps the fields and the file name, never the file itself. R2 is not enabled.
+const DECK_MAX = 15 * 1024 * 1024
+const DECK_EXT = /\.(pdf|ppt|pptx|key)$/i
+const HTTPS_RE = /^https:\/\/[^\s.]+\.[^\s]+$/i
 
 // Field order = order in both emails. [key, zh label, en label, max chars]
 const ANALYZE_FIELDS = [
@@ -64,6 +69,7 @@ const ANALYZE_FIELDS = [
   ['markets', '目標市場', 'Target markets', 300],
   ['funding', '募資輪次', 'Funding round', 100],
   ['deck', 'Pitch deck 連結', 'Pitch deck link', 500],
+  ['deckFile', '簡報檔（附件）', 'Pitch deck file', 200],
   ['plan', '你申請的服務', 'What you asked for', 40],
   ['reportLang', '報告語言', 'Report language', 10],
   ['consentTrack', '資料走向', 'Who sees it', 40],
@@ -117,10 +123,20 @@ async function intake(request, env) {
   if (hits >= (Number(env.RATE_LIMIT) || RATE_PER_HOUR)) return json({ ok: false, error: 'busy' }, 429)
   await env.STORE.put(rlKey, String(hits + 1), { expirationTtl: 3600 })
 
-  let answers, letter
+  let answers, letter, deck = null
   if (kind === 'analyze') {
     answers = {}
     for (const [k, , , max] of ANALYZE_FIELDS) answers[k] = clean(raw[k], max)
+    // required deck file (base64) + https website, checked here as well as in the form
+    const df = body.deckFile && typeof body.deckFile === 'object' ? body.deckFile : null
+    const fname = clean(df && df.name, 200)
+    const b64 = df && typeof df.b64 === 'string' ? df.b64.replace(/\s/g, '') : ''
+    if (!fname || !DECK_EXT.test(fname) || !b64 || !/^[A-Za-z0-9+/]+=*$/.test(b64)) return json({ ok: false, error: 'deck_missing' }, 400)
+    const bytes = Math.floor(b64.length * 3 / 4) - (b64.endsWith('==') ? 2 : b64.endsWith('=') ? 1 : 0)
+    if (bytes > DECK_MAX) return json({ ok: false, error: 'deck_too_big' }, 413)
+    if (!HTTPS_RE.test(answers.website)) return json({ ok: false, error: 'website' }, 400)
+    answers.deckFile = `${fname} (${(bytes / 1048576).toFixed(1)} MB)`
+    deck = { filename: fname, content: b64 }
     if (!PLANS[answers.plan]) answers.plan = 'free'
     if (answers.plan === 'free') answers.reportLang = ''
     else if (answers.reportLang !== 'zh' && answers.reportLang !== 'en') answers.reportLang = lang
@@ -138,7 +154,7 @@ async function intake(request, env) {
 
   const ts = new Date().toISOString()
   const id = makeId(letter, ts)
-  const record = { id, kind, lang, ts, answers, mail: { confirm: 'pending', notify: 'pending' }, ua: clean(request.headers.get('User-Agent'), 200) }
+  const record = { id, kind, lang, ts, answers, src: clean(body.s, 60), mail: { confirm: 'pending', notify: 'pending' }, ua: clean(request.headers.get('User-Agent'), 200) }
 
   // 1) durable copy first
   await env.STORE.put('in:' + id, JSON.stringify(record))
@@ -153,11 +169,14 @@ async function intake(request, env) {
 
   // 2) confirmation to the submitter, then 3) notification to Vincent (carries the confirmation status)
   const to = answers.email
-  record.mail.confirm = await sendMail(env, kind === 'analyze' ? confirmAnalyze(env, record) : confirmWaitlist(env, record), to, env.PUBLIC_EMAIL)
-  record.mail.notify = await sendMail(env, notifyVincent(env, record), env.NOTIFY_TO, to)
+  const c1 = await sendMail(env, kind === 'analyze' ? confirmAnalyze(env, record) : confirmWaitlist(env, record), to, env.PUBLIC_EMAIL)
+  record.mail.confirm = c1.status
+  const n1 = await sendMail(env, notifyVincent(env, record), env.NOTIFY_TO, to, deck ? [deck] : undefined)
+  record.mail.notify = n1.status
+  record.mailIds = { confirm: c1.id, notify: n1.id }
   await env.STORE.put('in:' + id, JSON.stringify(record))
 
-  return json({ ok: true, id, mail: record.mail })
+  return json({ ok: true, id, mail: record.mail, mailIds: record.mailIds })
 }
 
 async function list(url, env) {
@@ -176,10 +195,14 @@ async function list(url, env) {
 
 /* ---------- mail transport ---------- */
 
-/** Returns a status string, never throws: 'sent' | 'failed <why>' | 'skipped_nokey' */
-async function sendMail(env, msg, to, replyTo) {
+/** Returns { status, id }, never throws. status: 'sent' | 'failed <why>' | 'skipped_nokey'; id = Resend message id. */
+async function sendMail(env, msg, to, replyTo, attachments) {
+  const r = await sendMailRaw(env, msg, to, replyTo, attachments)
+  return typeof r === 'string' ? { status: r, id: '' } : r
+}
+async function sendMailRaw(env, msg, to, replyTo, attachments) {
   if (!to) return 'skipped_noaddr'
-  const payload = { from: env.MAIL_FROM, to: [to], reply_to: replyTo || undefined, subject: msg.subject, html: msg.html, text: msg.text }
+  const payload = { from: env.MAIL_FROM, to: [to], reply_to: replyTo || undefined, subject: msg.subject, html: msg.html, text: msg.text, attachments: attachments || undefined }
   const ctrl = new AbortController()
   const timer = setTimeout(() => ctrl.abort(), MAIL_TIMEOUT_MS)
   try {
@@ -194,8 +217,8 @@ async function sendMail(env, msg, to, replyTo) {
       body: JSON.stringify(payload),
       signal: ctrl.signal,
     })
-    if (r.ok) return 'sent'
     const j = await r.json().catch(() => ({}))
+    if (r.ok) return { status: 'sent', id: String(j.id || '') }
     return 'failed ' + r.status + ' ' + (j.message || j.name || '')
   } catch (e) {
     return 'failed ' + (e && e.name === 'AbortError' ? 'timeout' : String((e && e.message) || e)).slice(0, 80)
@@ -338,7 +361,8 @@ function notifyVincent(env, rec) {
     .filter(Boolean)
     .map((t) => `<span style="display:inline-block;${F}font-size:13px;font-weight:600;color:#1d4ed8;background:#eef2ff;border:1px solid #c7d2fe;border-radius:999px;padding:3px 10px;margin:0 6px 6px 0">${esc(t)}</span>`).join('')
   const inner = block(`
-<div style="color:#8a97a5;font-size:13.5px">${esc(taipei(rec.ts))} · 編號 ${idBadge(rec.id)}</div>
+<div style="color:#8a97a5;font-size:13.5px">送出時間 ${esc(taipei(rec.ts))} · 編號 ${idBadge(rec.id)}</div>
+<div style="color:#5a6b7c;font-size:13.5px;margin-top:4px">來源 s：<b>${esc(rec.src || '（無）')}</b>${isA && a.website ? ` · 網站：<a href="${esc(a.website)}">${esc(a.website)}</a>` : ''}${isA && a.deckFile ? ` · 簡報附件：${esc(a.deckFile)}` : ''}</div>
 <div style="margin:8px 0 4px">${chips}</div>
 ${isA ? `<p style="margin:8px 0 0"><b>${esc(a.company)}</b>：${esc(a.oneLine)}</p>` : ''}
 <p style="margin:12px 0 0"><a href="mailto:${esc(a.email)}?subject=${encodeURIComponent('Re: ' + (isA ? `Trinity Check ${rec.id} · ${a.company}` : `Trinity 原則卡 ${rec.id}`))}" style="display:inline-block;${F}font-size:15px;font-weight:700;color:#fff;background:#0b1623;text-decoration:none;padding:10px 18px;border-radius:8px">回信給 ${esc(isA ? a.name : a.email)}</a>
@@ -351,7 +375,7 @@ ${h3('存放位置')}
   const subject = isA
     ? `Trinity ${rec.id}｜${a.company}｜${PLANS[a.plan].zh}${PLANS[a.plan].price ? ' ' + PLANS[a.plan].price : ''}`
     : `Trinity ${rec.id}｜原則卡等候名單｜${a.email}`
-  const text = `${subject}\n${taipei(rec.ts)}\n${isA ? answersText(a, 'zh') : a.email}\n確認信：${rec.mail.confirm}\nKV in:${rec.id}`
+  const text = `${subject}\n送出時間 ${taipei(rec.ts)}\n來源 s：${rec.src || '（無）'}\n${isA ? answersText(a, 'zh') : a.email}\n確認信：${rec.mail.confirm}\nKV in:${rec.id}`
   return { subject, html: shell(isA ? `新案子：${esc(who)}` : `原則卡名單 +1：${esc(who)}`, inner), text }
 }
 
