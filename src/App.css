@@ -1546,3 +1546,9 @@ html[lang^=zh] .ep-quote blockquote::before{content:"「"}html[lang^=zh] .ep-quo
 .ep-cta p{white-space:pre-line}
 .nav-row .nav-lbl{position:relative;display:inline-block}
 .nav-row .nav-dd-btn .nav-caret{right:auto;left:100%;margin-left:5px}
+
+/* EP03 起的分節長文：條目卡（真實例子＋出處） */
+.ep-items{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:12px}
+.ep-items li{border:1px solid var(--line);border-radius:16px;background:var(--bg-card);box-shadow:var(--shadow);padding:16px 18px}
+.ep-items h3{margin:0 0 6px;font-family:var(--font-disp);font-size:1.08rem;font-weight:700;color:var(--ink)}
+.ep-items p{margin:0;font-size:1.02rem;line-height:1.7;color:var(--ink)}

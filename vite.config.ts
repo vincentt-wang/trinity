@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import fs from 'node:fs'
 import path from 'node:path'
 import { EPISODES } from './src/episodeData.ts'
-import { EP_LONG } from './src/epArticles.ts'
+import { EP_LONG, EP_SEC } from './src/epArticles.ts'
 
 /* Production-only CSP: GitHub Pages cannot set response headers, so the policy
  * ships as a meta tag. Injected only at build time — the Vite dev server needs
@@ -66,7 +66,7 @@ function episodePagesPlugin(): Plugin {
         const url = `${SITE}/insight/${e.slug}`
         if (e.published) {
           const title = `${e.en.title} · Trinity Check`
-          const desc = EP_LONG[e.slug]?.ogDesc || e.en.desc
+          const desc = EP_LONG[e.slug]?.ogDesc || EP_SEC[e.slug]?.ogDesc || e.en.desc
           const img = fs.existsSync(path.join(outDir, 'ep', `${e.slug}-og.jpg`)) ? `${SITE}/ep/${e.slug}-og.jpg` : `${SITE}/ep/${e.slug}.jpg`
           h = h.replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
           h = h.replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${url}" />`)

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useLang } from './i18n'
 import { EPISODES, type Episode } from './episodeData'
-import { EP_LONG } from './epArticles'
+import { EP_LONG, EP_SEC } from './epArticles'
 
 /** Only episodes Vincent has approved (published: true) are listed or linked (261117). */
 export const PUBLISHED_EPISODES = EPISODES.filter((e) => e.published)
@@ -87,7 +87,7 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
   const idx = PUBLISHED_EPISODES.findIndex((x) => x.slug === ep.slug)
   const prev = PUBLISHED_EPISODES[idx - 1]
   const next = PUBLISHED_EPISODES[idx + 1]
-  const long = EP_LONG[ep.slug]?.[lang]
+  const long = EP_LONG[ep.slug]?.[lang] || EP_SEC[ep.slug]?.[lang]
   const src = `ins-${ep.slug}`
 
   useEffect(() => { trackView('/insight/' + ep.slug) }, [ep.slug])
@@ -122,7 +122,7 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
       <div className="ep-video">
         <video key={ep.slug} controls playsInline preload="metadata" poster={`/ep/${ep.slug}.jpg`} src={`/ep/${ep.slug}.mp4`} />
       </div>
-      {long ? <LongBody ep={ep} t={t} /> : (
+      {EP_SEC[ep.slug] ? <SecBody ep={ep} t={t} /> : long ? <LongBody ep={ep} t={t} /> : (
         <>
           <section className="id-sec ep-body">
             <h2>{t.short}</h2>
@@ -224,6 +224,70 @@ function LongBody({ ep, t }: { ep: Episode; t: (typeof T)['en'] }) {
         <div className="ep-qby">{c.quoteBy}</div>
         <blockquote>{c.quote}</blockquote>
         {lang === 'zh' && c.quoteOrig && <div className="ep-qorig">{t.origLabel}：{c.quoteOrig}</div>}
+        <p className="ep-ask">{c.ask}</p>
+      </section>
+      <section className="id-sec">
+        <h2>{a.sourcesH}</h2>
+        <ol className="ep-srcs ep-srcs-long">
+          {a.sources.map((s, i) => (
+            <li key={i}>
+              <p className="ep-src-what">{s.what}</p>
+              <div className="ep-src-link">
+                <span className={`ep-lv ${s.level === 'p' ? 'p' : 's'}`}>{a.levels[s.level]}</span>{' '}
+                <a href={s.url} target="_blank" rel="noopener">{s.label}</a>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="ep-srcnote">{a.srcNote}</p>
+      </section>
+    </div>
+  )
+}
+
+
+/** Sectioned long-form article (EP03 on): opening, sections with paragraphs or sourced items, the quote, annotated sources. */
+function SecBody({ ep, t }: { ep: Episode; t: (typeof T)['en'] }) {
+  const { lang } = useLang()
+  const c = ep[lang]
+  const a = EP_SEC[ep.slug][lang]
+  return (
+    <div className="ep-long">
+      <section className="id-sec ep-body">
+        {a.open.map((p, i) => <p key={i} dangerouslySetInnerHTML={{ __html: p }} />)}
+      </section>
+      {a.sections.map((s) => (
+        <section className="id-sec ep-body" key={s.h}>
+          <h2>{s.h}</h2>
+          {s.lead && <p className="ep-sec-lead">{s.lead}</p>}
+          {s.seats && (
+            <>
+              <div className="ep-seats" aria-label={s.seats.cap}>
+                {Array.from({ length: 10 }, (_, i) => <span key={i} className={i < s.seats!.on ? 'on' : ''} />)}
+              </div>
+              <p className="ep-seats-cap">{s.seats.cap}</p>
+            </>
+          )}
+          {s.paras?.map((p, i) => <p key={i} dangerouslySetInnerHTML={{ __html: p }} />)}
+          {s.items && (
+            <ol className="ep-items">
+              {s.items.map((it) => (
+                <li key={it.k}>
+                  <h3>{it.k}</h3>
+                  <p dangerouslySetInnerHTML={{ __html: it.v }} />
+                  <span className="ep-news-s">{it.src}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+          {s.note && <p className="ep-srcnote">{s.note}</p>}
+        </section>
+      ))}
+      <section className="ep-quote">
+        <div className="ep-qby">{c.quoteBy}</div>
+        <blockquote>{c.quote}</blockquote>
+        {lang === 'zh' && c.quoteOrig && <div className="ep-qorig">{t.origLabel}：{c.quoteOrig}</div>}
+        {a.quoteNote && <p className="ep-qnote">{a.quoteNote}</p>}
         <p className="ep-ask">{c.ask}</p>
       </section>
       <section className="id-sec">

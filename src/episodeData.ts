@@ -179,66 +179,68 @@ export const EPISODES: Episode[] = [
   "n": 3,
   "published": false,
   "en": {
-   "title": "Do rich men always cheat?",
-   "term": "Power, not money",
-   "desc": "Two studies answer the stereotype. The link to cheating is power and the balance of it, not the size of the paycheck.",
+   "title": "Can Jensen Huang come back?",
+   "term": "Getting back together",
+   "desc": "Getting back with an ex is common. Founders get back with their companies too. It is not shares that decide it. It is the board.",
    "body": [
-    "He picked the restaurant, planned every trip, never hesitated. You loved that. Then he took a job in another city and told you after.",
-    "A 2011 online survey of 1,561 professionals found that the more power people held at work, the more they cheated, and <mark>it held for women too</mark>. The researchers' explanation: power raises confidence that you could attract someone else.",
-    "And money alone? Christin Munsch's 2015 study, corrected in 2018, put the rate for men who out-earn their wives at about 2.5 to 2.9 percent, close to the 2.6 percent for couples who earn the same. The highest was men fully supported by their wives: about 5.7 percent, <mark>roughly twice as high</mark>.",
-    "So it's not the amount of money. It's power, and the balance of it. Startups hand founders a lot of power."
+    "In one study, 45 percent of young couples who broke up got back together. So can a founder get back with his company?",
+    "Musk, Trump and over 170,000 petition names want Jensen Huang back. The board reportedly says no.",
+    "Steve Jobs was pushed out of Apple and came back twelve years later. Sam Altman was fired by OpenAI and back in five days. Elon Musk was replaced at X.com, PayPal's predecessor, on his honeymoon, and never went back.",
+    "Shares didn't decide it. Jobs owned one share. Musk owned 13 percent and still couldn't. <mark>The board decided.</mark>",
+    "Jensen gave up his board seat too. To rejoin, six of ten directors must say yes. And reportedly, the board won't bring him back as CEO."
    ],
-   "quoteBy": "Peter Thiel, Zero to One (2014), The Founder's Paradox",
-   "quote": "The single greatest danger for a founder is to become so certain of his own myth that he loses his mind.",
-   "quoteNote": "His next sentence matters too: an equally insidious danger is to lose all sense of myth.",
-   "ask": "What do you think?"
+   "quoteBy": "Steve Jobs, Stanford commencement address, 2005",
+   "quote": "I had been rejected, but I was still in love.",
+   "quoteNote": "",
+   "ask": "Can Jensen come back? What do you think?"
   },
   "zh": {
-   "title": "有錢的男人都會劈腿？",
-   "term": "權力，不是錢",
-   "desc": "兩份研究回答這個刻板印象：跟出軌有關的是權力與權力的平衡，不是錢多錢少。",
+   "title": "黃仁勳回得來嗎？",
+   "term": "復合",
+   "desc": "跟前任復合很常見，創辦人也會回到自己的公司。決定的不是股份，是董事會。",
    "body": [
-    "他會自己選餐廳、排好每趟旅行，從不猶豫，你很愛。後來他接了外縣市的工作，事後才告訴你。",
-    "2011 年一份 1,561 位上班族的線上問卷發現：職位權力越大，出軌越多，<mark>女性也一樣</mark>。研究者的解釋是自信，位子高了，覺得自己還能吸引別人。",
-    "那光是錢呢？Christin Munsch 2015 年的研究，2018 年做過勘誤：賺得比太太多的男人，出軌比例大約 2.5 到 2.9%，跟夫妻收入一樣的 2.6% 差不多。最高的反而是完全靠太太養的男人，大約 5.7%，<mark>將近兩倍</mark>。",
-    "所以不是錢多錢少，是權力，還有權力的平衡。而新創給創辦人的權力很大。"
+    "一份研究裡，分手的年輕情侶有 45% 復合了。那創辦人，回得去自己的公司嗎？",
+    "馬斯克、川普、超過十七萬個自填連署都要黃仁勳回來；據報導，董事會說不要。",
+    "Jobs 被擠出 Apple，十二年後回來。Altman 被 OpenAI 開除，五天就回來。Musk 度蜜月時被換掉 X.com（PayPal 前身）執行長，再也沒回去。",
+    "決定的不是股份。Jobs 只有一股；Musk 持有 13%，還是回不去。<mark>決定的是董事會。</mark>",
+    "黃仁勳連董事席也辭了。要回來，十位董事要六位點頭。據報導，董事會不打算讓他回任執行長。"
    ],
-   "quoteBy": "Peter Thiel，《Zero to One》（2014）〈The Founder's Paradox〉",
-   "quote": "創辦人最大的危險，是太相信自己的神話，最後失去理智。",
-   "quoteNote": "他在同一段的下一句也提醒：完全不信神話，一樣危險。",
-   "ask": "你怎麼想？",
-   "quoteOrig": "The single greatest danger for a founder is to become so certain of his own myth that he loses his mind."
+   "quoteBy": "Steve Jobs，2005 年史丹佛畢業演講",
+   "quote": "我被拒絕了，但我還愛著。",
+   "quoteNote": "",
+   "ask": "黃仁勳回得來嗎？你怎麼想？",
+   "quoteOrig": "I had been rejected, but I was still in love."
   },
   "sources": [
    {
-    "label": "Lammers et al., Power Increases Infidelity Among Men and Women, Psychological Science 2011;22(9):1191-7",
+    "label": "Halpern-Meekin et al., Relationship Churning in Emerging Adulthood, Journal of Adolescent Research 28(2), 2013",
     "levelZh": "一手",
     "levelEn": "Primary",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/21771963/"
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3924753"
    },
    {
-    "label": "Association for Psychological Science press release on the same study, 2011-04-26 (how the 1,561 were surveyed)",
+    "label": "Apple 1998 proxy statement, Jobs holds 1 share",
     "levelZh": "一手",
     "levelEn": "Primary",
-    "url": "https://www.psychologicalscience.org/news/releases/when-it-comes-to-infidelity-does-power-trump-gender.html"
+    "url": "https://www.sec.gov/Archives/edgar/data/320193/0001047469-98-010062.txt"
    },
    {
-    "label": "Munsch, Her Support, His Support, American Sociological Review 2015, and the 2018 correction (archived author copy)",
+    "label": "PayPal 2002 IPO prospectus, Musk 13.0 percent",
     "levelZh": "一手",
     "levelEn": "Primary",
-    "url": "https://web.archive.org/web/2019/http://www.christinlmunsch.com/wp-content/uploads/2018/05/asrcorrection.pdf"
+    "url": "https://www.sec.gov/Archives/edgar/data/1103415/000091205702006471/a2071068z424b4.htm"
    },
    {
-    "label": "Peter Thiel, Zero to One, ch. 14, authorized excerpt in The Irish Times, 2014-10-30",
-    "levelZh": "一手",
-    "levelEn": "Primary",
-    "url": "https://www.irishtimes.com/business/technology/the-paradox-of-founders-outsiders-who-become-insiders-1.1980748"
-   },
-   {
-    "label": "Pre-correction numbers in the 2015 UConn press release (15 percent and 5 percent) are not used",
-    "levelZh": "已排除",
-    "levelEn": "Excluded",
+    "label": "CNBC, Nvidia board is not considering bringing Jensen Huang back as CEO, 2026-11-16",
+    "levelZh": "媒體報導",
+    "levelEn": "News report",
     "url": null
+   },
+   {
+    "label": "Steve Jobs, Stanford commencement address, 2005-06-12",
+    "levelZh": "一手",
+    "levelEn": "Primary",
+    "url": "https://news.stanford.edu/stories/2005/06/youve-got-find-love-jobs-says"
    }
   ]
  },
