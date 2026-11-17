@@ -47,7 +47,7 @@ export function EpisodeList() {
           const c = e[lang]
           return (
             <a key={e.slug} className="ep-card" href={`/insight/${e.slug}`} onClick={(ev) => { ev.preventDefault(); go(e.slug) }}>
-              <img src={`/ep/${e.slug}.jpg`} alt="" width={1280} height={720} loading="lazy" decoding="async" />
+              <img src={`/ep/${e.slug}.jpg`} alt="" width={1080} height={1920} loading="lazy" decoding="async" />
               <div className="ep-card-b">
                 <div className="ep-kick">EP {nn(e.n)} · {c.term}</div>
                 <h3>{c.title}</h3>

@@ -105,7 +105,7 @@ export const COPY = {
       ],
     },
     dims: {
-      eyebrow: 'The 60 dimensions', h2: '60 dimensions, 3 lenses', lead: '',
+      eyebrow: 'The 60 dimensions', h2: '60 dimensions, 3\u00a0lenses', lead: '',
       sub: 'weighted dimensions, scored across three lenses', dimsWord: 'dimensions',
       lensMeta: {
         e: { label: 'Desirability', q: 'Is the need real, sharp and shared by enough people to pay?' },
@@ -157,7 +157,7 @@ export const COPY = {
       eyebrow: 'Who built this',
       name: 'Vincent Wang',
       role: 'Founding AO \u00b7 EvoScale Capital',
-      lead: 'Built by Vincent Wang, Founding AO at EvoScale Capital and Program Director at GVA. I review startups every month; Trinity writes down how I judge them. My own work, separate from any fund\u2019s decisions.',
+      lead: 'Built by Vincent Wang, Founding AO at EvoScale Capital and Program Director at Global Venture Accelerator. I review startups every month; Trinity writes down how I judge them. My own work, separate from any fund\u2019s decisions.',
       note: 'Trinity is my own work. It is not any fund\u2019s product, and it is kept separate from any fund\u2019s investment decisions.',
       site: 'More about Vincent',
       creds: [
@@ -723,7 +723,7 @@ export const COPY = {
       eyebrow: '這是誰做的',
       name: 'Vincent Wang',
       role: 'EvoScale Capital · Founding AO',
-      lead: '我是 Vincent Wang，EvoScale Capital 創始 AO、GVA 計畫總監。每個月都在看新創案，Trinity 是我判案的方法；個人作品，不代表任何基金。',
+      lead: '我是 Vincent Wang，EvoScale Capital 創始 AO、Global Venture Accelerator 計畫總監。每個月都在看新創案，Trinity 是我判案的方法；個人作品，不代表任何基金。',
       note: 'Trinity 是我個人的東西，不是任何基金的產品，也與任何基金的投資決定分開。',
       site: '更多關於 Vincent',
       creds: [
