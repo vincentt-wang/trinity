@@ -1453,12 +1453,11 @@ html[lang^=zh] .ep-quote blockquote::before{content:"「"}html[lang^=zh] .ep-quo
 .ep-bbg{font-size:.98rem;line-height:1.6;color:var(--ink-soft)}
 @media(max-width:700px){
   .ep-bhead{display:none}
-  .ep-brow{grid-template-columns:1fr auto;gap:4px 12px;padding:14px 16px}
-  .ep-bbg{grid-column:1/-1}
-  .ep-bsince{text-align:right}
+  .ep-brow{grid-template-columns:1fr;gap:2px;padding:14px 16px}
+  .ep-bbg{margin-top:4px}
 }
-.ep-seats{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
-.ep-seats span{width:30px;height:30px;border-radius:50%;border:2px solid var(--line-strong);background:var(--bg-card)}
+.ep-seats{display:flex;flex-wrap:nowrap;gap:clamp(5px,1.6vw,10px);margin-top:16px;max-width:100%}
+.ep-seats span{flex:0 1 30px;aspect-ratio:1;min-width:0;border-radius:50%;border:2px solid var(--line-strong);background:var(--bg-card)}
 .ep-seats span.on{background:var(--earth);border-color:var(--earth)}
 .ep-seats-cap{margin-top:8px !important;font-size:.95rem !important;color:var(--ink-dim,#8a97a5) !important}
 .ep-body b{font-weight:700;color:var(--ink)}
