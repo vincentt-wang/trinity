@@ -917,7 +917,7 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
     return () => { window.removeEventListener('popstate', sync); window.removeEventListener('trinity:route', sync) }
   }, [])
   const ep = epSlug ? EPISODES.find((e) => e.slug === epSlug) || null : null
-  // /insight#notes (nav "Engine notes") scrolls past the episodes to the engine articles
+  // /insight#notes (method articles) scrolls past the episodes to the engine articles
   useEffect(() => {
     if (ep || open !== null || location.hash !== '#notes') return
     const t = setTimeout(() => document.getElementById('notes')?.scrollIntoView({ behavior: 'smooth' }), 500)
@@ -935,7 +935,7 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
   useEffect(() => {
     if (ep) return
     const base = 'Trinity Check'
-    let title = lang === 'zh' ? '洞察觀點 · 引擎怎麼想' : 'Insight · How the engine thinks'
+    let title = lang === 'zh' ? '文章 · 怎麼看一個創業點子' : 'Articles · How to read a startup idea'
     let desc = c.hero.lead
     if (open === -1) { title = c.featured.title; desc = c.featured.standfirst }
     else if (open !== null) { const a = c.articles[open]; title = a.title; desc = ARTICLE_PROSE[lang][open]?.standfirst || a.body }
@@ -989,8 +989,8 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
             <EpisodeList />
 
             <div className="wrap ins-notes-head" id="notes">
-              <div className="eyebrow">{c.hero.eyebrow}</div>
-              <h2 className="ep-list-h">{c.hero.title}</h2>
+              <div className="eyebrow">{c.hero.methods}</div>
+              <h2 className="ep-list-h">{c.hero.methodsH}</h2>
             </div>
             <div className="insight-articles wrap">
               <Reveal className="if-span">

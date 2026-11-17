@@ -1473,3 +1473,76 @@ html[lang^=zh] .ep-quote blockquote::before{content:"「"}html[lang^=zh] .ep-quo
 .ep-src-link{margin-top:4px;font-size:.94rem;line-height:1.6}
 .ep-np{min-height:60vh}
 .ep-np .btn{margin-top:26px}
+
+/* ===== 261117 PM nav: five items, one column width, centred text ===== */
+.nav-row{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;align-items:center}
+.nav-row>.nav-dd,.nav-row>.nav-item{min-width:0}
+.nav-row .nav-item{position:relative;display:flex;justify-content:center;align-items:center;box-sizing:border-box;width:100%;min-width:7.2em;height:40px;padding:0 18px;font:inherit;font-size:.98rem;font-weight:500;letter-spacing:.01em;color:var(--ink-soft);white-space:nowrap;text-align:center;text-decoration:none;border-radius:10px;transition:color .2s,background .2s}
+.nav-row .nav-item:hover{color:var(--ink);background:rgba(37,99,235,.06)}
+.nav-row .nav-item::after{left:22%;right:22%;bottom:4px}
+.nav-row .nav-item.on{color:var(--ink)}
+.nav-row .nav-item.on::after{transform:scaleX(1)}
+.nav.on-dark .nav-row .nav-item{color:rgba(255,255,255,.86)}
+.nav.on-dark .nav-row .nav-item:hover,.nav.on-dark .nav-row .nav-item.on{color:#fff;background:rgba(255,255,255,.08)}
+/* the caret hangs outside the word so "Engine" stays optically centred like the others */
+.nav-row .nav-dd-btn{gap:0}
+.nav-row .nav-dd-btn .nav-caret{position:absolute;right:8px;top:50%;margin-top:-.5em;line-height:1}
+.nav-row .nav-dd{width:100%}
+.nav-row .nav-dd-menu{min-width:188px}
+.nav-center .nav-dd-menu a{text-align:left}
+.nav-center .nav-dd-menu a.on{color:var(--ink);background:var(--bg-soft,#eef1fb)}
+@media(max-width:1180px){.nav-row .nav-item{min-width:5.6em;padding:0 10px;font-size:.94rem}}
+.nav-mobile>a{display:block}
+
+/* ===== 261117 PM dims heading: two lines, lens line big, count line ink ===== */
+.dims-h2{display:flex;flex-direction:column;gap:.12em}
+.dims-h2-a{font-size:clamp(2.6rem,6vw,4.4rem);line-height:1;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em}
+.dims-h2-b{font-size:clamp(1.7rem,3.4vw,2.5rem);line-height:1.1;color:var(--ink)}
+/* evidence section lead wraps (the old one-liner was nowrap) */
+.stack-stage .sec-head .lead{white-space:normal;max-width:38ch}
+
+/* ===== 261117 PM founder: three equal link cards ===== */
+.fdr-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:28px}
+.fdr-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:96px;padding:0 10px;border:1px solid rgba(14,18,48,.12);border-radius:14px;background:#fff;color:var(--ink);text-decoration:none;text-align:center;transition:border-color .2s,transform .2s var(--ease),box-shadow .2s}
+.fdr-card:hover{border-color:var(--earth);transform:translateY(-2px);box-shadow:var(--shadow)}
+.fdr-card-t{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-disp);font-weight:700;font-size:.9rem;line-height:1.2;white-space:nowrap}
+.fdr-card-ic{flex:none;width:24px;height:24px;object-fit:contain;display:block}
+.fdr-card-ic.sq{border-radius:5px}
+.fdr-card-ic.face{border-radius:50%;object-fit:cover;object-position:50% 22%}
+.fdr-card-r{display:inline-flex;align-items:center;gap:6px;font-size:.92rem;color:var(--ink-soft);white-space:nowrap}
+.fdr-card-arr{font-size:.85em;opacity:.55;transition:transform .2s var(--ease),opacity .2s}
+.fdr-card:hover .fdr-card-arr{opacity:1;transform:translate(2px,-2px)}
+@media(max-width:1100px) and (min-width:821px){.fdr-card-t{font-size:.84rem}.fdr-card-ic{width:22px;height:22px}}
+@media(max-width:640px){.fdr-cards{grid-template-columns:1fr}.fdr-card{height:76px}}
+.flink-ext{font-size:.85em;opacity:.6}
+
+/* ===== 261117 PM course waitlist dialog ===== */
+.cw-back{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:16px;background:rgba(10,12,26,.5);backdrop-filter:blur(4px)}
+.cw{position:relative;width:min(560px,100%);max-height:calc(100svh - 32px);overflow:auto;padding:30px clamp(20px,4vw,34px) 28px;border-radius:20px;background:#fff;color:var(--ink);box-shadow:0 30px 80px -30px rgba(10,12,40,.55);text-align:left}
+.cw h2{font-size:clamp(1.6rem,3.4vw,2rem);font-weight:700;margin:10px 0 0}
+.cw-lead{margin:10px 0 0;color:var(--ink-soft);line-height:1.7;font-size:1rem}
+.cw-x{position:absolute;top:12px;right:14px;width:38px;height:38px;border:0;border-radius:50%;background:transparent;font-size:1.6rem;line-height:1;color:var(--ink-soft);cursor:pointer}
+.cw-x:hover{background:var(--bg-soft,#eef1fb);color:var(--ink)}
+.cw form{display:flex;flex-direction:column;gap:16px;margin:0}
+.cw-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+@media(max-width:520px){.cw-row{grid-template-columns:1fr}}
+.cw-f{display:flex;flex-direction:column;gap:7px;border:0;padding:0;margin:0;min-width:0}
+.cw-f>span,.cw-f legend{font-size:.95rem;font-weight:600;color:var(--ink);padding:0}
+.cw-f small{margin-left:8px;font-weight:500;color:var(--ink-soft);opacity:.8}
+.cw-f input{font:inherit;font-size:1rem;padding:11px 13px;border:1px solid var(--line-strong,#cfd5e6);border-radius:10px;background:#fff;color:var(--ink);min-width:0}
+.cw-f input:focus{outline:2px solid rgba(37,99,235,.35);outline-offset:1px;border-color:#2563eb}
+.cw-topics legend{margin-bottom:8px}
+.cw-chips{display:flex;flex-wrap:wrap;gap:8px}
+.cw-chip{font:inherit;font-size:.95rem;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid var(--line-strong,#cfd5e6);background:#fff;color:var(--ink-soft);cursor:pointer;transition:.18s var(--ease)}
+.cw-chip:hover{border-color:#2563eb;color:var(--ink)}
+.cw-chip.on{background:#0e1230;border-color:#0e1230;color:#fff}
+.cw-err{margin:0;color:#b42318;font-size:.95rem;line-height:1.6}
+.cw-err a{color:inherit;font-weight:700}
+.cw-send{align-self:flex-start;margin-top:4px}
+.cw-ok p{margin:12px 0 22px;color:var(--ink-soft);line-height:1.7}
+.fdr-card{position:relative}
+.fdr-card-arr{position:absolute;top:9px;right:12px}
+@media(max-width:1000px){.nav-row{display:none}}
+.ep-cta p{white-space:pre-line}
+.nav-row .nav-lbl{position:relative;display:inline-block}
+.nav-row .nav-dd-btn .nav-caret{right:auto;left:100%;margin-left:5px}

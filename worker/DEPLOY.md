@@ -9,6 +9,7 @@ trinity.easeai.com.tw 上每一個表單都送到這支 Worker：`POST /api/inta
 | /analyze 完整報告 US$100 | analyze | report | R- |
 | /analyze 報告＋Meet US$200 | analyze | report-meet | M- |
 | /deck 原則卡等候名單 | waitlist | （只有 email） | W- |
+| 頁尾「教材購買」等候名單（261117） | course | （name、email、topics、note） | C- |
 
 ## 部署（一行）
 ```

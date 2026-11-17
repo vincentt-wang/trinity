@@ -74,8 +74,8 @@ export const DIMENSIONS: Record<'e' | 'm' | 's', Dim[]> = {
 
 export const COPY = {
   en: {
-    nav: { engine: 'Engine', howItWorks: 'How it works', stack: 'The stack', dims: '60 dimensions', fit: 'Where you fit', insight: 'How it thinks', insightPage: 'Engine notes', episodes: 'Episodes', services: 'Services', freeHint: 'First one free', deck: 'Principle deck', oneOnOne: 'One-on-one', vincent: 'Vincent', cta: 'Analyze my idea' },
-    hero: { eyebrow: 'Innovation Trinity · Feasibility Engine', titleA: 'From an idea to', titleB: 'an ', titleHl: 'investable startup', lead: 'Feed your idea to the Trinity engine. See where it really stands across 60 dimensions, and exactly who to talk to next.', ctaPrimary: 'Analyze my idea', ctaGhost: 'See how it works' },
+    nav: { engine: 'Engine', dims: 'Dimensions', evidence: 'Evidence', principles: 'Principles', articles: 'Articles', top: 'Back to top', sec: { celestial: 'Three lenses', engine: 'How it works', why: 'Why Trinity', ba: 'Before & after', founder: 'Who built it' } as Record<string, string>, cta: 'Analyze my idea' },
+    hero: { eyebrow: 'Innovation Trinity · Feasibility Engine', titleA: 'From an idea to', titleB: 'an ', titleHl: 'investable startup', lead: 'Share your idea with Trinity. See where it really stands across 60 dimensions, and who to talk to next.', ctaPrimary: 'Analyze my idea', ctaGhost: 'See how it works' },
     lenses: {
       eyebrow: 'How the engine thinks', h2: 'Three lenses, three questions', lead: 'An investable startup needs three things to hold at once. Miss one and the engine tells you.',
       items: [
@@ -94,7 +94,7 @@ export const COPY = {
       verdictH: 'One clear verdict', verdictP: 'Where you stand, and what to fix first.',
     },
     stack: {
-      eyebrow: 'The Trinity stack', h2: 'Innovation, engineered', lead: '',
+      eyebrow: 'Evidence', h2: 'No proof, no points', lead: 'Every call has to point to something real. A read goes through six checks before you see it.',
       layers: [
         { n: '01', h: 'Dimension scoring', p: '60 weighted dimensions, each scored from evidence.' },
         { n: '02', h: 'Blind lenses', p: 'No lens sees the other two while scoring.' },
@@ -105,7 +105,7 @@ export const COPY = {
       ],
     },
     dims: {
-      eyebrow: 'The 60 dimensions', h2: '60 dimensions, 3\u00a0lenses', lead: '',
+      eyebrow: '', h2: '3 lenses, 60 dimensions', h2a: '3 lenses', h2b: '60 dimensions', lead: '',
       sub: 'weighted dimensions, scored across three lenses', dimsWord: 'dimensions',
       lensMeta: {
         e: { label: 'Desirability', q: 'Is the need real, sharp and shared by enough people to pay?' },
@@ -113,30 +113,20 @@ export const COPY = {
         s: { label: 'Viability', q: 'Will the model fund itself and let the venture endure?' },
       },
     },
-    fit: {
-      eyebrow: 'Where you fit', h2: 'Your analysis, turned into a move', lead: '',
-      roomAtPre: 'The room at ', roomAtPost: '', who: 'Who you would talk to', readsBy: 'The engine reads you by',
-      stages: [
-        { label: 'Pre-seed', room: 'Accelerators & angels', desc: 'Conviction on the founder and a sharp wedge, before the metrics exist.', read: 'Founder strength + the FMF signal' },
-        { label: 'Seed', room: 'Thesis-driven seed funds', desc: 'A non-obvious insight and the first real signs of pull.', read: 'Early retention + payback mechanics' },
-        { label: 'Series A', room: 'Metrics-led growth VCs', desc: 'Repeatable traction and unit economics that actually work.', read: 'PMF proof + unit economics' },
-        { label: 'Growth', room: 'Late-stage & crossover funds', desc: 'A proven engine, now the question is how efficiently it scales.', read: 'Rule of 40 + capital efficiency' },
-      ],
-    },
     why: {
       eyebrow: 'Why founders choose Trinity', h2: 'An honest read you can act on', lead: 'Most tools flatter you. Trinity is built to tell you where you actually stand.',
       cards: [
-        { h: 'A verdict, not vibes', p: 'A clear call gated on evidence, instead of a flattering gut feeling.' },
-        { h: 'Scored across 60 dimensions', p: 'Every weighted dimension is a solid algorithm, not a one-line prompt.' },
-        { h: 'Your stage and the right room', p: 'The funding stage you are really at, and the investor type that buys it.' },
-        { h: 'Honest gating, no inflated scores', p: 'The engine cannot be talked into a high number it has not earned.' },
+        { h: 'A verdict, not vibes', p: 'A clear call backed by evidence, not a flattering gut feeling.' },
+        { h: 'Scored across 60 dimensions', p: 'Each dimension has its own scoring rules, not a one-line prompt.' },
+        { h: 'Your stage, the right investors', p: 'The funding stage you are actually at, and the kind of investor who will care.' },
+        { h: 'No inflated scores', p: 'A great pitch cannot talk its way into points the evidence does not back.' },
       ],
     },
     ba: {
       eyebrow: 'Before and after', h2: 'From guesswork to a clear move', lead: 'The same idea, read two ways. One leaves you guessing; the other hands you the next step.',
       without: 'Without Trinity', withT: 'With Trinity',
       rows: [
-        { k: 'Your read of the idea', before: 'A gut feeling and a flattering self-score.', after: 'A D / F / V verdict, gated on real evidence.' },
+        { k: 'Your read of the idea', before: 'A gut feeling and a flattering self-score.', after: 'A D / F / V verdict grounded in real evidence.' },
         { k: 'Who to raise from', before: 'A guessed list of famous VCs.', after: 'Named funds matched to your stage and strongest lens.' },
         { k: 'What to do on Monday', before: 'Polish the deck again and hope.', after: 'The top three things to fix, in priority order.' },
       ],
@@ -157,7 +147,8 @@ export const COPY = {
       eyebrow: 'Who built this',
       name: 'Vincent Wang',
       role: 'Founding AO \u00b7 EvoScale Capital',
-      lead: 'Built by Vincent Wang, Founding AO at EvoScale Capital and Program Director at Global Venture Accelerator. I review startups every month; Trinity writes down how I judge them. My own work, separate from any fund\u2019s decisions.',
+      lead: 'I review startups every month. Trinity is the way I judge them, written down so you can use it too. It\u2019s my own project and stays separate from any fund\u2019s investment decisions.',
+      roles: ['Founding AO', 'Program Director', 'Know more about me'],
       note: 'Trinity is my own work. It is not any fund\u2019s product, and it is kept separate from any fund\u2019s investment decisions.',
       site: 'More about Vincent',
       creds: [
@@ -165,8 +156,8 @@ export const COPY = {
         { k: 'Design for Taiwan', v: '1st place, and speaker at its 10th year' },
         { k: 'Silicon Valley design study visits', v: 'Stanford \u00b7 UC Berkeley \u00b7 IDEO \u00b7 CCA' },
         { k: 'Strategy & entrepreneurship course', v: 'Five chapters of original interactive material and live exercises' },
-        { k: 'Stanford ASES Taiwan', v: 'On the organising team' },
-        { k: 'StarWorks Ventures', v: 'Co-designed the Fellowship founder programme' },
+        { k: 'Stanford ASES Taiwan', v: 'On the organizing team' },
+        { k: 'StarWorks Ventures', v: 'Co-designed the Fellowship founder program' },
       ],
     },
     services: {
@@ -210,15 +201,14 @@ export const COPY = {
       paths: [
         { h: 'Analyze my idea', p: 'Your D / F / V verdict, stage and top-three fixes.' },
         { h: 'See how it works', p: 'The engine, step by step, from lenses to verdict.' },
-        { h: 'Where you fit', p: 'The stage and the investors that match your idea.' },
       ],
     },
     footer: 'Innovation Trinity · Feasibility Engine',
     foot: {
-      channels: 'Follow', learn: 'Learn', start: 'Start', soon: 'Soon',
+      channels: 'Follow', learn: 'Learn', start: 'Start',
       chans: ['Instagram', 'YouTube', 'Podcast'],
-      workshop: 'Workshop', materials: 'Course materials', insight: 'How the engine thinks', vincent: 'Vincent Wang, personal site',
-      startLine: 'One idea in, three verdicts out. Your first read is free.',
+      workshop: 'Workshops', materials: 'Course materials', insight: 'Articles', vincent: 'Vincent Wang, personal site',
+      startLine: 'Send one idea, get three reads back. The first one is free.',
       analyze: 'Analyze my idea',
     },
     analyze: {
@@ -333,7 +323,7 @@ export const COPY = {
         more: [
           { kind: 'contact', h: 'An hour with Vincent', p: 'US$100 for sixty minutes on one question. Booked on his personal site.', cta: 'vincent.easeai.com.tw' },
           { kind: 'deck', h: 'The Principle Deck', p: 'The same 60 dimensions as 60 cards. Waitlist only, nothing charged.', cta: 'Join the waitlist' },
-          { kind: 'insight', h: 'How the engine thinks', p: 'Six short pages on how the three lenses are read and crossed.', cta: 'Read' },
+          { kind: 'insight', h: 'Articles', p: 'Short reads on how the three lenses are read and crossed.', cta: 'Read' },
         ],
         home: 'Back to home',
       },
@@ -342,9 +332,12 @@ export const COPY = {
       back: 'Home',
       cta: 'Analyze my idea',
       hero: {
-        eyebrow: 'Under the hood',
-        title: 'How the engine thinks',
-        lead: 'Trinity is not one prompt and a vibe. It is a disciplined engine that reasons the way the best investors do: three lenses read blind, cross-checked, gated on evidence, then converged into one honest verdict.',
+        eyebrow: 'Articles',
+        title: 'How to read a startup idea',
+        videos: 'Video articles',
+        methods: 'Method articles',
+        methodsH: 'How Trinity reads an idea',
+        lead: 'Video articles take one startup idea per episode. Method articles show how Trinity reads an idea.',
       },
       featured: {
         tag: 'Featured research',
@@ -640,13 +633,13 @@ export const COPY = {
     },
   },
   zh: {
-    nav: { engine: '引擎', howItWorks: '運算原理', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', insight: '引擎怎麼想', insightPage: '引擎筆記', episodes: '影片與文章', services: '服務', freeHint: '第一次免費', deck: '原則卡', oneOnOne: '一對一', vincent: 'Vincent', cta: '分析我的點子' },
-    hero: { eyebrow: '創新三元 · 可行性引擎', titleA: '從一個點子', titleB: '到值得投資的', titleHl: '新創', lead: '把你的點子餵給 Trinity 引擎，看它在 60 個維度上真正的位置，以及下一步該找誰談。', ctaPrimary: '分析我的點子', ctaGhost: '看它怎麼運作' },
+    nav: { engine: '創業引擎', dims: '分析維度', evidence: '證據把關', principles: '原則卡片', articles: '文章', top: '回到頂端', sec: { celestial: '三個透鏡', engine: '運算原理', why: '選擇理由', ba: '前後對照', founder: '關於作者' } as Record<string, string>, cta: '分析我的點子' },
+    hero: { eyebrow: '創新三元 · 可行性引擎', titleA: '從一個點子', titleB: '到值得投資的', titleHl: '新創', lead: '把你的點子交給 Trinity，看它在 60 個維度上真正的位置，以及下一步該找誰談。', ctaPrimary: '分析我的點子', ctaGhost: '看它怎麼運作' },
     lenses: {
       eyebrow: '引擎怎麼思考', h2: '三個透鏡，三個問題', lead: '一家值得投資的新創，需要三件事同時成立。少一個，引擎會告訴你。',
       items: [
         { tag: '欲求性', h: '有人想要嗎', p: '從人出發。痛點夠真，且夠多人共有、願意用也願意付嗎。', q: '這是真實的需求嗎？' },
-        { tag: '可行性', h: '你做得出來嗎', p: '技術、團隊與資源。這套機制真的能運轉並出貨嗎。', q: '你打造得出來嗎？' },
+        { tag: '可行性', h: '你做得出來嗎', p: '技術、團隊與資源。這套機制真的能運轉並出貨嗎。', q: '你做得出來嗎？' },
         { tag: '存續性', h: '它能自己活下去嗎', p: '商業模式能不能自己產生燃料，讓事業長久走下去。', q: '它撐得久嗎？' },
       ],
     },
@@ -660,7 +653,7 @@ export const COPY = {
       verdictH: '一個清楚的結論', verdictP: '你站在哪裡，以及該先修哪一件事。',
     },
     stack: {
-      eyebrow: 'Trinity 引擎堆疊', h2: '工程化的創新', lead: '',
+      eyebrow: '證據把關', h2: '每個判斷都要有證據', lead: '說得再好聽，拿不出證據就不算數。一份判讀要過這六關，才會交到你手上。',
       layers: [
         { n: '01', h: '維度評分', p: '60 個加權維度，各自由證據計分。' },
         { n: '02', h: '獨立透鏡', p: '評分時，每個透鏡都看不到另外兩個。' },
@@ -671,7 +664,7 @@ export const COPY = {
       ],
     },
     dims: {
-      eyebrow: '60 個維度', h2: '60 個維度、三個透鏡', lead: '',
+      eyebrow: '', h2: '三個透鏡，60 個維度', h2a: '三個透鏡', h2b: '60 個維度', lead: '',
       sub: '個加權維度，分屬三個透鏡', dimsWord: '個維度',
       lensMeta: {
         e: { label: '欲求性', q: '需求是否真實、夠尖銳，且夠多人願意付錢。' },
@@ -679,31 +672,21 @@ export const COPY = {
         s: { label: '存續性', q: '模式能否自給自足，讓事業長久走下去。' },
       },
     },
-    fit: {
-      eyebrow: '你的定位', h2: '把分析變成下一步行動', lead: '',
-      roomAtPre: '', roomAtPost: ' 階段會見的投資人', who: '你會接觸的對象', readsBy: '引擎判讀重點',
-      stages: [
-        { label: '種子前', room: '加速器與天使', desc: '在數據出現之前，投的是對創辦人與切入點的信念。', read: '創辦人強度＋FMF 訊號' },
-        { label: '種子輪', room: '論點驅動的種子基金', desc: '一個不顯而易見的洞察，加上第一批真實的拉力訊號。', read: '早期留存＋回本機制' },
-        { label: 'A 輪', room: '看數據的成長型創投', desc: '可重複的成長動能，以及真正跑得通的單位經濟。', read: 'PMF 證據＋單位經濟' },
-        { label: '成長期', room: '後期與跨界基金', desc: '引擎已被驗證，問題變成它能多有效率地擴張。', read: 'Rule of 40＋資本效率' },
-      ],
-    },
     why: {
-      eyebrow: '創辦人為什麼選 Trinity', h2: '一個你能據以行動的誠實判讀', lead: '多數工具只會奉承你，Trinity 是為了告訴你真正站在哪裡而打造。',
+      eyebrow: '創辦人為什麼選 Trinity', h2: '一份說實話、看完就能動手的判讀', lead: '多數工具只會說好話，Trinity 要告訴你真正站在哪裡。',
       cards: [
-        { h: '是結論，不是感覺', p: '一個受證據閘控的清楚判斷，而不是討喜的直覺。' },
-        { h: '橫跨 60 個維度評分', p: '每個加權維度都是扎實的演算法，不是一句提示詞。' },
-        { h: '你的階段與該進的房間', p: '你真正所處的募資階段，以及會買單的投資人類型。' },
-        { h: '誠實閘控，不灌虛分', p: '引擎不會被話術說服，給出它沒掙得的高分。' },
+        { h: '是結論，不是感覺', p: '有證據才給分，給你一個清楚的判斷，不是好聽的直覺。' },
+        { h: '橫跨 60 個維度評分', p: '每個維度都有自己的評分規則，不是一句提示詞帶過。' },
+        { h: '你的階段與該找的投資人', p: '你實際在哪個募資階段，以及哪一類投資人會有興趣。' },
+        { h: '不灌水，不給虛分', p: '說得再漂亮，沒有證據的地方分數就是上不去。' },
       ],
     },
     ba: {
       eyebrow: '使用前與使用後', h2: '從猜測，變成清楚的下一步', lead: '同一個點子，兩種讀法。一種讓你繼續猜，另一種直接給你下一步。',
       without: '沒有 Trinity', withT: '有了 Trinity',
       rows: [
-        { k: '你對點子的判讀', before: '一個直覺，加上討喜的自我評分。', after: '一個受真實證據閘控的 D／F／V 結論。' },
-        { k: '該找誰募資', before: '一份用猜的知名創投清單。', after: '對應你階段與最強透鏡、指名道姓的基金。' },
+        { k: '你對點子的判讀', before: '一個直覺，加上討喜的自我評分。', after: '一份以真實證據為準的 D／F／V 結論。' },
+        { k: '該找誰募資', before: '一份用猜的知名創投清單。', after: '對應你的階段與最強透鏡，列出具體的基金名稱。' },
         { k: '星期一該做什麼', before: '再修一次簡報，然後祈禱。', after: '最該修的三件事，依優先順序排好。' },
       ],
     },
@@ -723,7 +706,8 @@ export const COPY = {
       eyebrow: '這是誰做的',
       name: 'Vincent Wang',
       role: 'EvoScale Capital · Founding AO',
-      lead: '我是 Vincent Wang，EvoScale Capital 創始 AO、Global Venture Accelerator 計畫總監。每個月都在看新創案，Trinity 是我判案的方法；個人作品，不代表任何基金。',
+      lead: '我每個月都在看新創案。Trinity 是我判案的方法，寫下來讓你也能用。這是我個人的作品，與任何基金的投資決定分開。',
+      roles: ['創始 AO', '計畫總監', '認識我'],
       note: 'Trinity 是我個人的東西，不是任何基金的產品，也與任何基金的投資決定分開。',
       site: '更多關於 Vincent',
       creds: [
@@ -776,15 +760,14 @@ export const COPY = {
       paths: [
         { h: '分析我的點子', p: '你的 D／F／V 結論、階段，與最該修的三件事。' },
         { h: '看它怎麼運作', p: '引擎逐步拆解，從透鏡到結論。' },
-        { h: '你的定位', p: '對應你點子的階段與投資人。' },
       ],
     },
     footer: '創新三元 · 可行性引擎',
     foot: {
-      channels: '追蹤', learn: '學習', start: '開始', soon: '即將',
+      channels: '追蹤', learn: '學習', start: '開始',
       chans: ['Instagram', 'YouTube', 'Podcast'],
-      workshop: '工作坊', materials: '教材購買', insight: '引擎怎麼想', vincent: 'Vincent Wang 個人網站',
-      startLine: '丟進一個點子，拿回三個裁決。初步判讀免費。',
+      workshop: '工作坊', materials: '教材購買', insight: '文章', vincent: 'Vincent Wang 個人網站',
+      startLine: '丟一個點子進來，拿回三個透鏡的判讀。第一次免費。',
       analyze: '分析我的點子',
     },
     analyze: {
@@ -825,14 +808,14 @@ export const COPY = {
         },
         form: {
           eyebrow: '你的點子',
-          h1: '告訴引擎你在打造什麼',
+          h1: '說說你在做什麼',
           sub: '必填題約五分鐘寫完。每多填一題選填，就多餵飽一個計分維度，判讀跟著變準。',
           s1: '關於你', s2: '用三個透鏡看你的點子', s3: '市場與模式',
           company: { l: '公司或專案名稱', ph: '例：Acme Inc.' },
           name: { l: '你的姓名與職稱', ph: '例：王小明，創辦人' },
           email: { l: 'Email', ph: 'you@company.com' },
           website: { l: '網站', ph: 'https://…' },
-          oneLine: { l: '用一句話說，你在打造什麼？', ph: '例：一個幫歐洲電商賣家申報 VAT 的 AI 助手。' },
+          oneLine: { l: '用一句話說，你在做什麼？', ph: '例：一個幫歐洲電商賣家申報 VAT 的 AI 助手。' },
           dSec: { t: '欲求性', q: '有人要嗎', d: '引擎從這裡讀痛點夠不夠尖、到底是誰在痛，以及人們真的有為它行動的證據。' },
           fSec: { t: '可行性', q: '做得出來嗎', d: '引擎從這裡讀階段誠不誠實、技術站不站得住，以及為什麼是你們這個團隊。' },
           vSec: { t: '存續性', q: '養得活自己嗎', d: '引擎從這裡讀單位經濟、定價邏輯與時機。粗略的數字也遠勝沒有數字。' },
@@ -899,7 +882,7 @@ export const COPY = {
         more: [
           { kind: 'contact', h: '跟 Vincent 談一小時', p: 'US$100，六十分鐘只談一題。在他的個人網站預約。', cta: 'vincent.easeai.com.tw' },
           { kind: 'deck', h: '創業原則卡', p: '同樣的 60 個維度做成 60 張卡。只收等候名單，不收錢。', cta: '加入等候名單' },
-          { kind: 'insight', h: '引擎怎麼想', p: '六篇短文，講三個透鏡怎麼讀、怎麼交叉。', cta: '去讀' },
+          { kind: 'insight', h: '文章', p: '幾篇短文，講三個透鏡怎麼讀、怎麼交叉。', cta: '去讀' },
         ],
         home: '回到首頁',
       },
@@ -908,9 +891,12 @@ export const COPY = {
       back: '首頁',
       cta: '分析我的點子',
       hero: {
-        eyebrow: '引擎內部',
-        title: '引擎怎麼想',
-        lead: 'Trinity 不是一句提示詞加上一種感覺，而是一台紀律化的引擎，用頂尖投資人的方式推理：三個透鏡盲評、交叉查核、受證據閘控，最後收斂成一個誠實的裁決。',
+        eyebrow: '文章',
+        title: '怎麼看一個創業點子',
+        videos: '影片文章',
+        methods: '方法文章',
+        methodsH: 'Trinity 怎麼讀一個點子',
+        lead: '影片文章一集講一個創業觀念，方法文章講 Trinity 怎麼讀一個點子。',
       },
       featured: {
         tag: '精選研究',

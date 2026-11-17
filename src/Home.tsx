@@ -4,7 +4,8 @@ import { Reveal } from './lib/Reveal'
 import { useLenis, scrollToId } from './lib/useLenis'
 import { usePresentation, registerDims } from './lib/presentation'
 import { HeroNetwork } from './lib/HeroNetwork'
-import { Nav } from './lib/Nav'
+import { Nav, NAV_SECTIONS } from './lib/Nav'
+import CourseWaitlist from './CourseWaitlist'
 import { DimsNetwork } from './lib/DimsNetwork'
 import { DIM_MEET, DIM_EDGES } from './dimsGraph'
 import { Aurora } from './lib/Aurora'
@@ -14,7 +15,7 @@ import { CountUp, MaskLines, Stagger } from './lib/anim'
 import { useLang } from './i18n'
 import { COPY, DIMENSIONS } from './copy'
 import Pitch from './Pitch'
-import { ABOUT_URL, PERSONAL_SITE, FOLLOW } from './intake'
+import { ABOUT_URL, PERSONAL_SITE, FOLLOW, WORKSHOP_URL } from './intake'
 
 const LOGO = (
   <svg viewBox="0 0 32 32" aria-hidden>
@@ -304,7 +305,7 @@ function DimsSection() {
       <div className="wrap dims-overlay">
         <div className="dims-copy">
           <Reveal>
-            <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2>{c.lead && <p className="lead">{c.lead}</p>}</div>
+            <div className="sec-head"><h2 className="dims-h2"><span className="dims-h2-a">{c.h2a}</span><span className="dims-h2-b">{c.h2b}</span></h2>{c.lead && <p className="lead">{c.lead}</p>}</div>
           </Reveal>
           <div className="lenstabs lenstabs-row">
             {DIM_KEYS.map((x) => (
@@ -404,102 +405,6 @@ function StackSection() {
             </motion.div>
           </div>
         </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ---------- Where you fit: interactive stage explorer ---------- */
-const FIRMS = [
-  [{ n: 'Y Combinator', geo: 'US' }, { n: 'Techstars', geo: 'US' }, { n: 'AppWorks', geo: 'TW' }],
-  [{ n: 'a16z', geo: 'US' }, { n: 'First Round', geo: 'US' }, { n: 'Hive Ventures', geo: 'TW' }],
-  [{ n: 'Accel', geo: 'US' }, { n: 'Lightspeed', geo: 'US' }, { n: 'Cherubic Ventures', geo: 'US / TW' }],
-  [{ n: 'Sequoia', geo: 'US' }, { n: 'Taiwania Capital', geo: 'TW' }, { n: 'CDIB Capital', geo: 'TW' }],
-] as const
-
-/* panel items rise in sequence: title first, then rows */
-const FIT_EASE = [0.2, 0.7, 0.2, 1] as const
-const FIT_ITEM = {
-  hide: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: FIT_EASE } },
-} as const
-/* node centres of the 4-col rail grid (12.5/37.5/62.5/87.5%), mapped into the
- * rail-line's own 12%-88% span, so the marker rests exactly on each node */
-const FIT_NODE_POS = ['0.7%', '33.6%', '66.4%', '99.3%']
-
-function FitSection() {
-  const { lang } = useLang()
-  const c = COPY[lang].fit
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
-  const [i, setI] = useState(0)
-  const n = c.stages.length
-  // the journey marker travels node to node, arriving at each stage's scroll midpoint
-  const marker = useTransform(scrollYProgress, [0.125, 0.375, 0.625, 0.875], FIT_NODE_POS)
-  useMotionValueEvent(scrollYProgress, 'change', (p) => {
-    setI(Math.min(n - 1, Math.max(0, Math.floor(p * n))))
-  })
-  const s = c.stages[i]
-  return (
-    <section id="fit" className="fit-scrolly">
-      <Aurora tone="cool" />
-      <div ref={ref} className="fit-track">
-        <div className="fit-stage wrap">
-          <VScrollRail progress={scrollYProgress} steps={n} active={i} />
-          <div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2>{c.lead && <p className="lead">{c.lead}</p>}</div>
-          <div className="fit">
-            <div className="fit-rail">
-              <div className="fit-rail-line">
-                <motion.div className="fit-rail-fill" style={{ width: marker }} />
-                <motion.div className="fit-marker" style={{ left: marker }} aria-hidden>
-                  <svg viewBox="-12 -12 24 24"><EarthBody r={8.5} idp="fitMk" /></svg>
-                </motion.div>
-              </div>
-              {c.stages.map((st, idx) => (
-                <button key={idx} className={`fit-node ${idx <= i ? 'on' : ''} ${idx === i ? 'cur' : ''}`} onClick={() => setI(idx)}>
-                  <motion.span
-                    className="fit-dot"
-                    animate={{ scale: idx === i ? 1.22 : idx < i ? 1 : 0.88 }}
-                    transition={{ type: 'spring', stiffness: 420, damping: 12 }}
-                  />
-                  <span className="fit-node-lbl">{st.label}</span>
-                </button>
-              ))}
-            </div>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={i}
-                className="fit-panel"
-                initial="hide"
-                animate="show"
-                exit={{ opacity: 0, x: -26, transition: { duration: 0.24, ease: FIT_EASE } }}
-                variants={{ show: { transition: { staggerChildren: 0.09 } } }}
-              >
-                <div className="fit-room">
-                  <motion.div variants={FIT_ITEM} className="eyebrow">{c.roomAtPre}{s.label}{c.roomAtPost}</motion.div>
-                  <motion.h3 variants={FIT_ITEM}>{s.room}</motion.h3>
-                  <motion.p variants={FIT_ITEM}>{s.desc}</motion.p>
-                  <motion.div variants={FIT_ITEM} className="fit-read">
-                    <span className="fit-read-l">{c.readsBy}</span>
-                    <span className="fit-read-v">{s.read}</span>
-                  </motion.div>
-                </div>
-                <motion.div className="fit-firms" variants={FIT_ITEM}>
-                  <div className="fit-firms-cap">{c.who}</div>
-                  <motion.div className="fit-firm-list" variants={{ show: { transition: { staggerChildren: 0.08 } } }}>
-                    {FIRMS[i].map((f) => (
-                      <motion.div key={f.n} className="fit-firm" variants={{ hide: { opacity: 0, x: 20 }, show: { opacity: 1, x: 0, transition: { duration: 0.4, ease: FIT_EASE } } }}>
-                        <span className="fit-firm-n">{f.n}</span>
-                        <span className="fit-firm-geo">{f.geo}</span>
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </motion.div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
         </div>
       </div>
     </section>
@@ -612,16 +517,18 @@ function FounderSection() {
               <div className="eyebrow">{c.eyebrow}</div>
               <h2 className="fdr-name">{c.name}</h2>
               <p className="fdr-lead">{c.lead}</p>
-              <div className="fdr-tiles">
-                <a className="fdr-tile" href="https://evoscalecapital.com" target="_blank" rel="noopener" data-cta="founder:evoscale" aria-label="EvoScale Capital">
-                  <img src={`${B}img/evoscale.png`} alt="EvoScale Capital" width={600} height={125} loading="lazy" decoding="async" />
-                </a>
-                <a className="fdr-tile fdr-tile-gva" href="https://gva.tw" target="_blank" rel="noopener" data-cta="founder:gva" aria-label="Global Venture Accelerator">
-                  <img src={`${B}img/gva-rocket.png`} alt="" width={428} height={429} loading="lazy" decoding="async" />
-                  <span>Global Venture Accelerator</span>
-                </a>
+              <div className="fdr-cards">
+                {[
+                  { k: 'evoscale', href: 'https://evoscalecapital.com', img: `${B}img/evoscale-mark.png`, cls: 'sq', t: 'EvoScale Capital', r: c.roles[0] },
+                  { k: 'gva', href: 'https://gva.tw', img: `${B}img/gva-rocket.png`, cls: 'sq', t: 'Global Venture Accelerator', r: c.roles[1] },
+                  { k: 'about', href: ABOUT_URL, img: `${B}img/vincent.jpg`, cls: 'face', t: 'Vincent Wang', r: c.roles[2] },
+                ].map((x) => (
+                  <a key={x.k} className="fdr-card" href={x.href} target="_blank" rel="noopener" data-cta={'founder:' + x.k}>
+                    <span className="fdr-card-t"><img className={'fdr-card-ic ' + x.cls} src={x.img} alt="" width={40} height={40} loading="lazy" decoding="async" />{x.t}</span>
+                    <span className="fdr-card-r">{x.r}<span className="fdr-card-arr" aria-hidden>↗</span></span>
+                  </a>
+                ))}
               </div>
-              <a className="btn btn-primary fdr-btn" href={ABOUT_URL} target="_blank" rel="noopener" data-cta="founder:about">{c.site} →</a>
             </div>
           </div>
         </Reveal>
@@ -667,12 +574,14 @@ const CHAN_ICONS = [
   <><path d="M16.5 11.2c-.4-2.4-2-3.6-4.3-3.6-2.6 0-4.3 1.9-4.3 4.6s1.7 4.5 4.2 4.5c2.3 0 3.6-1.3 3.6-3.1 0-2.2-2.4-2.6-4.4-2.2-1.3.3-2 1-2 1.9 0 1 .9 1.6 2 1.6 2.1 0 3.1-1.7 3.1-4.3" /><path d="M19.5 8.5C18.3 5.3 15.6 3.5 12 3.5c-5 0-8.5 3.4-8.5 8.5s3.5 8.5 8.5 8.5c3.4 0 6-1.6 7.3-4.5" /></>,
 ]
 
-function Footer({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; onInsight: () => void; onMaterials: () => void }) {
+function Footer({ onAnalyze, onInsight }: { onAnalyze: () => void; onInsight: () => void }) {
   const { lang } = useLang()
   const c = COPY[lang]
   const f = c.foot
+  const [course, setCourse] = useState(false)
   return (
     <footer>
+      <AnimatePresence>{course && <CourseWaitlist onClose={() => setCourse(false)} />}</AnimatePresence>
       <HeroNetwork variant="ambient" />
       <div className="wrap">
         <Stagger className="foot-grid" gap={0.08}>
@@ -695,8 +604,8 @@ function Footer({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; 
           <div className="foot-col">
             <div className="foot-h">{f.learn}</div>
             <div className="foot-list">
-              <span className="flink" aria-disabled="true">{f.workshop}<span className="fpill">{f.soon}</span></span>
-              <button className="flink real" onClick={onMaterials}>{f.materials}<span className="fpill">{f.soon}</span></button>
+              <a className="flink real" href={WORKSHOP_URL} target="_blank" rel="noopener" data-cta="foot:workshop">{f.workshop}<span className="flink-ext" aria-hidden>↗</span></a>
+              <button className="flink real" data-cta="foot:materials" onClick={() => setCourse(true)}>{f.materials}<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg></button>
               <button className="flink real" onClick={onInsight}>
                 {f.insight}
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
@@ -773,7 +682,7 @@ function useNavTheme() {
   return dark
 }
 
-export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; onInsight: () => void; onMaterials: () => void }) {
+export default function Home({ onAnalyze, onInsight }: { onAnalyze: () => void; onInsight: () => void; onMaterials: () => void }) {
   useLenis()
   usePresentation()
   const { lang } = useLang()
@@ -781,17 +690,17 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
   const navDark = useNavTheme()
   const [pitchOpen, setPitchOpen] = useState(false)
   const heroMag = useMagnetic<HTMLButtonElement>()
-  const active = useActiveSection(['dims', 'engine', 'stack', 'fit'])
+  const active = useActiveSection([...NAV_SECTIONS])
   // returning from a sub-page via a section hash (#engine…) scrolls there on mount
   useEffect(() => {
     const h = location.hash.replace(/^#\/?/, '')
-    if (h && ['engine', 'stack', 'dims', 'fit', 'celestial', 'why', 'ba', 'founder', 'cta', 'top'].includes(h)) {
+    if (h && ['engine', 'stack', 'dims', 'celestial', 'why', 'ba', 'founder', 'cta', 'top'].includes(h)) {
       const t = setTimeout(() => scrollToId('#' + h), 620)
       return () => clearTimeout(t)
     }
   }, [])
   useEffect(() => {
-    document.title = lang === 'zh' ? 'Trinity Check — 從一個點子到值得投資的新創' : 'Trinity Check — From an idea to an investable startup'
+    document.title = lang === 'zh' ? 'Trinity Check｜從一個點子到值得投資的新創' : 'Trinity Check — From an idea to an investable startup'
   }, [lang])
 
   return (
@@ -835,8 +744,6 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
 
       <StackSection />
 
-      <FitSection />
-
       <WhyFounders />
 
       <BeforeAfter />
@@ -866,7 +773,7 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
         </div>
       </section>
 
-      <Footer onAnalyze={onAnalyze} onInsight={onInsight} onMaterials={onMaterials} />
+      <Footer onAnalyze={onAnalyze} onInsight={onInsight} />
 
       <AnimatePresence>
         {pitchOpen && <Pitch onClose={() => setPitchOpen(false)} />}

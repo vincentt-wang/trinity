@@ -10,6 +10,7 @@
  *
  * kind = 'analyze'  (the 19-question form; answers.plan = free | report | report-meet)
  *      = 'waitlist' (the principle-deck list; answers.email only)
+ *      = 'course'   (course-materials waitlist from the footer; name, email, topics, note)
  *
  * What happens on every submission, in this order:
  *   1. validate + rate-limit, assign an id like  R-261115-7K3Q  (letter = plan/kind)
@@ -54,7 +55,7 @@ const ANALYZE_FIELDS = [
   ['name', '姓名與職稱', 'Name and role', 200],
   ['email', 'Email', 'Email', 200],
   ['website', '網站', 'Website', 500],
-  ['oneLine', '一句話說你在打造什麼', 'In one line', 600],
+  ['oneLine', '一句話說你在做什麼', 'In one line', 600],
   ['pain', '你解決的痛點', 'The pain you solve', 4000],
   ['customer', '你最先拿下的客群', 'The customer you win first', 4000],
   ['evidence', '需求的證據', 'Proof of demand', 4000],
@@ -111,7 +112,7 @@ async function intake(request, env) {
   let body
   try { body = await request.json() } catch { return json({ ok: false, error: 'bad_json' }, 400) }
   if (body.hp) return json({ ok: true, id: fakeId(), mail: { confirm: 'skipped', notify: 'skipped' } }) // honeypot: bots see success, nothing stored
-  const kind = body.kind === 'waitlist' ? 'waitlist' : body.kind === 'analyze' ? 'analyze' : null
+  const kind = body.kind === 'waitlist' ? 'waitlist' : body.kind === 'analyze' ? 'analyze' : body.kind === 'course' ? 'course' : null
   if (!kind) return json({ ok: false, error: 'bad_kind' }, 400)
   const lang = body.lang === 'zh' ? 'zh' : 'en'
   const raw = body.answers && typeof body.answers === 'object' ? body.answers : {}
@@ -145,6 +146,12 @@ async function intake(request, env) {
       return json({ ok: false, error: 'missing' }, 400)
     }
     letter = PLANS[answers.plan].letter
+  } else if (kind === 'course') {
+    // 261117 PM: course-materials waitlist from the footer. name + email + topics required, note optional.
+    answers = { name: clean(raw.name, 120), email: clean(raw.email, 200).toLowerCase(), topics: clean(raw.topics, 400), note: clean(raw.note, 600) }
+    if (!answers.name || !answers.topics) return json({ ok: false, error: 'missing' }, 400)
+    if (!EMAIL_RE.test(answers.email)) return json({ ok: false, error: 'email' }, 400)
+    letter = 'C'
   } else {
     const email = clean(raw.email, 200).toLowerCase()
     if (!EMAIL_RE.test(email)) return json({ ok: false, error: 'email' }, 400)
@@ -169,7 +176,7 @@ async function intake(request, env) {
 
   // 2) confirmation to the submitter, then 3) notification to Vincent (carries the confirmation status)
   const to = answers.email
-  const c1 = await sendMail(env, kind === 'analyze' ? confirmAnalyze(env, record) : confirmWaitlist(env, record), to, env.PUBLIC_EMAIL)
+  const c1 = await sendMail(env, kind === 'analyze' ? confirmAnalyze(env, record) : kind === 'course' ? confirmCourse(env, record) : confirmWaitlist(env, record), to, env.PUBLIC_EMAIL)
   record.mail.confirm = c1.status
   const n1 = await sendMail(env, notifyVincent(env, record), env.NOTIFY_TO, to, deck ? [deck] : undefined)
   record.mail.notify = n1.status
@@ -353,7 +360,38 @@ ${ol([
   return { subject, html: shell(title, block(first) + `<tr><td style="padding:6px 28px"><hr style="border:0;border-top:1px solid #eef1f4;margin:0"></td></tr>` + block(second)), text }
 }
 
+function confirmCourse(env, rec) {
+  const a = rec.answers
+  const zh = `
+${h3('收到了什麼')}
+${esc(a.name)}，你已加入教材的等候名單。<br>
+想要的主題：<b>${esc(a.topics)}</b>${a.note ? `<br>你留的話：${esc(a.note)}` : ''}
+${h3('接下來')}
+${ol([
+  '目前不收費，等候名單不是訂單。',
+  '教材準備好時，Vincent 會先寫信告訴你內容與價格，由你決定要不要買。',
+  `想補充或退出名單，直接回這封信，或寫到 ${env.PUBLIC_EMAIL}。`,
+].map(esc))}`
+  const en = `
+${h3('What we received')}
+Thanks, ${esc(a.name)}. You are on the waitlist for the course materials.<br>
+Topics: <b>${esc(a.topics)}</b>${a.note ? `<br>Your note: ${esc(a.note)}` : ''}
+${h3('What happens next')}
+${ol([
+  'Nothing is charged. The waitlist is not an order.',
+  'When the materials are ready, Vincent will email you what is inside and the price first. You decide then.',
+  `To add something or leave the list, reply to this email or write to ${env.PUBLIC_EMAIL}.`,
+].map(esc))}`
+  const first = rec.lang === 'zh' ? zh : en
+  const second = rec.lang === 'zh' ? en : zh
+  const title = rec.lang === 'zh' ? `已加入教材等候名單 ${idBadge(rec.id)}` : `You are on the course list ${idBadge(rec.id)}`
+  const subject = rec.lang === 'zh' ? `已加入教材等候名單 ${rec.id}｜Trinity` : `You are on the course materials waitlist ${rec.id} | Trinity`
+  const text = `${rec.lang === 'zh' ? '已加入教材等候名單' : 'You are on the course materials waitlist'} ${rec.id}\n${a.name} · ${a.email}\n${a.topics}${a.note ? '\n' + a.note : ''}\n\n目前不收費；教材準備好時會先寫信告訴你內容與價格，由你決定。\nNothing is charged; when the materials are ready you get an email with contents and price first, and decide then.`
+  return { subject, html: shell(title, block(first) + `<tr><td style="padding:6px 28px"><hr style="border:0;border-top:1px solid #eef1f4;margin:0"></td></tr>` + block(second)), text }
+}
+
 function notifyVincent(env, rec) {
+  if (rec.kind === 'course') return notifyCourse(env, rec)
   const a = rec.answers
   const isA = rec.kind === 'analyze'
   const who = isA ? `${a.name}（${a.company}）` : a.email
@@ -377,6 +415,24 @@ ${h3('存放位置')}
     : `Trinity ${rec.id}｜原則卡等候名單｜${a.email}`
   const text = `${subject}\n送出時間 ${taipei(rec.ts)}\n來源 s：${rec.src || '（無）'}\n${isA ? answersText(a, 'zh') : a.email}\n確認信：${rec.mail.confirm}\nKV in:${rec.id}`
   return { subject, html: shell(isA ? `新案子：${esc(who)}` : `原則卡名單 +1：${esc(who)}`, inner), text }
+}
+
+function notifyCourse(env, rec) {
+  const a = rec.answers
+  const inner = block(`
+<div style="color:#8a97a5;font-size:13.5px">送出時間 ${esc(taipei(rec.ts))} · 編號 ${idBadge(rec.id)}</div>
+<div style="color:#5a6b7c;font-size:13.5px;margin-top:4px">來源 s：<b>${esc(rec.src || '（無）')}</b> · 填表語言 ${esc(rec.lang)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px">
+${[['名字', a.name], ['Email', a.email], ['想要的主題', a.topics], ['一句話', a.note || '（沒填）']].map(([k, v]) => `<tr><td style="${F}font-size:14px;color:#8a97a5;padding:8px 14px 8px 0;vertical-align:top;white-space:nowrap;border-top:1px solid #eef1f4">${esc(k)}</td><td style="${F}font-size:15px;line-height:1.6;color:#0b1623;padding:8px 0;border-top:1px solid #eef1f4">${esc(v)}</td></tr>`).join('')}
+</table>
+<p style="margin:14px 0 0"><a href="mailto:${esc(a.email)}?subject=${encodeURIComponent('Re: Trinity 教材 ' + rec.id)}" style="display:inline-block;${F}font-size:15px;font-weight:700;color:#fff;background:#0b1623;text-decoration:none;padding:10px 18px;border-radius:8px">回信給 ${esc(a.name)}</a></p>
+${h3('對方收到的確認信')}
+<span style="${F}font-size:14px;color:${rec.mail.confirm === 'sent' ? '#0e7a55' : '#b45309'}">${esc(rec.mail.confirm)}</span>
+${h3('存放位置')}
+<span style="${F}font-size:13.5px;color:#8a97a5">KV in:${esc(rec.id)}</span>`)
+  const subject = `Trinity ${rec.id}｜教材等候名單｜${a.name}｜${a.topics}`
+  const text = `${subject}\n送出時間 ${taipei(rec.ts)}\n來源 s：${rec.src || '（無）'}\n名字：${a.name}\nEmail：${a.email}\n主題：${a.topics}\n一句話：${a.note || '（沒填）'}\n確認信：${rec.mail.confirm}\nKV in:${rec.id}`
+  return { subject, html: shell(`教材名單 +1：${esc(a.name)}`, inner), text }
 }
 
 /* ---------- helpers ---------- */

@@ -4,7 +4,7 @@
  * server proxies /api to wrangler dev on :8787. Errors are thrown, never swallowed:
  * the page that called us decides how to show "not sent" and keeps the user's answers.
  */
-export type IntakeKind = 'analyze' | 'waitlist'
+export type IntakeKind = 'analyze' | 'waitlist' | 'course'
 export type MailStatus = { confirm: string; notify: string }
 export type IntakeOk = { ok: true; id: string; mail: MailStatus; mailIds?: { confirm: string; notify: string } }
 export type DeckFile = { name: string; type: string; size: number; b64: string }
@@ -20,6 +20,7 @@ const API_BASE = (import.meta.env.VITE_INTAKE_API as string | undefined) || ''
 export const PUBLIC_EMAIL = 'vincent@easeai.com.tw'
 export const PERSONAL_SITE = 'https://vincent.easeai.com.tw/?s=trinity-nav'
 export const ABOUT_URL = 'https://vincent.easeai.com.tw/?s=trinity-about'
+export const WORKSHOP_URL = 'https://vincent.easeai.com.tw/?s=trinity-footer'
 export const ONE_ON_ONE_NAV = 'https://vincent.easeai.com.tw/contact/?s=trinity-nav'
 export const ONE_ON_ONE_PROD = 'https://vincent.easeai.com.tw/contact/?s=trinity-prod'
 export const EPISODES_URL = 'https://venturerelations.pages.dev/?s=trinity-nav'

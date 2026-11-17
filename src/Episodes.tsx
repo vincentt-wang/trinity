@@ -13,28 +13,28 @@ import { setSource, trackCta, trackView } from './lib/track'
 
 const T = {
   en: {
-    eyebrow: 'Episodes', h2: 'Startup ideas, one short at a time',
+    eyebrow: 'Video articles', h2: 'Startup ideas, one short at a time',
     lead: 'Each episode starts with something you have lived through, then gets to the startup idea and a real case. Every claim is sourced.',
     watch: 'Watch and read', back: 'All episodes', short: 'The short version', sources: 'Sources',
     srcNote: 'Only primary sources are linked. Secondary reports are listed with their level and used only as the narration describes them.',
     next: 'Next', prev: 'Previous',
     npKick: 'Not published yet', npH: 'This piece isn\'t published yet.', npP: 'It will show up on the Insight page once it goes live.', npBack: 'See published pieces',
     origLabel: 'Original',
-    ctaH: 'Want your own idea read this way?',
-    ctaP: 'Trinity reads one startup idea through 60 dimensions, the same way Vincent reviews startups. The first read is free.',
-    ctaBtn: 'Analyze my idea', follow: 'Follow',
+    ctaH: 'Working on an idea of your own?',
+    ctaP: 'Trinity can take a first look, the same way Vincent reads startups.\nYour first read is free.',
+    ctaBtn: 'Take a first look', follow: 'Follow',
   },
   zh: {
-    eyebrow: '影片與文章', h2: '一集一個創業觀念',
+    eyebrow: '影片文章', h2: '一集一個創業觀念',
     lead: '每集從一段你經歷過的事開始，接到一個創業的詞和一個真實案例。每集都有出處。',
     watch: '看影片與文字', back: '全部集數', short: '這集講什麼', sources: '出處',
     srcNote: '只有一手來源附連結；二手報導標出等級，旁白也照這個層級講。',
     next: '下一集', prev: '上一集',
     npKick: '尚未發布', npH: '這篇還沒發布。', npP: '發布之後會出現在洞察觀點頁。', npBack: '看已發布的文章',
     origLabel: '原文',
-    ctaH: '想讓你的點子也這樣被看一次？',
-    ctaP: 'Trinity 用 60 個維度看一個創業點子，跟 Vincent 看新創案的方法一樣。初步判讀免費。',
-    ctaBtn: '分析我的點子', follow: '追蹤',
+    ctaH: '手上也有一個點子嗎？',
+    ctaP: '讓 Trinity 先幫你看一眼，用的是 Vincent 看新創的同一套方法。\n第一次免費。',
+    ctaBtn: '讓 Trinity 看看', follow: '追蹤',
   },
 }
 
