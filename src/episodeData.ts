@@ -1,11 +1,13 @@
 // 由 scripts/gen_episodes.py 從 V怪客影片/06_網站/vr_content.py 產生，不要手改。
 // body 內含 <mark>，是我們自己寫的正本文字。
+// published：Vincent 准許發布才改成 true。false 的集數不出現在列表、網址顯示未發布並 noindex（重跑本腳本會保留這個值）。
 export type EpLang = { title: string; term: string; desc: string; body: string[]; quoteBy: string; quote: string; quoteNote: string; ask: string; quoteOrig?: string }
-export type Episode = { slug: string; n: number; en: EpLang; zh: EpLang; sources: { label: string; levelZh: string; levelEn: string; url: string | null }[] }
+export type Episode = { slug: string; n: number; published: boolean; en: EpLang; zh: EpLang; sources: { label: string; levelZh: string; levelEn: string; url: string | null }[] }
 export const EPISODES: Episode[] = [
  {
   "slug": "ep01",
   "n": 1,
+  "published": true,
   "en": {
    "title": "Who decides if Jensen Huang gets his seat back?",
    "term": "Board composition",
@@ -87,6 +89,7 @@ export const EPISODES: Episode[] = [
  {
   "slug": "ep02",
   "n": 2,
+  "published": false,
   "en": {
    "title": "Can someone new replace the one who knew you for years?",
    "term": "Founder-market fit",
@@ -174,6 +177,7 @@ export const EPISODES: Episode[] = [
  {
   "slug": "ep03",
   "n": 3,
+  "published": false,
   "en": {
    "title": "Do rich men always cheat?",
    "term": "Power, not money",
@@ -241,6 +245,7 @@ export const EPISODES: Episode[] = [
  {
   "slug": "ep04",
   "n": 4,
+  "published": false,
   "en": {
    "title": "If you disappeared tomorrow, who'd actually miss you?",
    "term": "Product-market fit",
@@ -318,6 +323,7 @@ export const EPISODES: Episode[] = [
  {
   "slug": "ep05",
   "n": 5,
+  "published": false,
   "en": {
    "title": "Why could Nvidia's board let Jensen Huang go?",
    "term": "Governance",
@@ -399,6 +405,7 @@ export const EPISODES: Episode[] = [
  {
   "slug": "ep06",
   "n": 6,
+  "published": false,
   "en": {
    "title": "Do risk-takers cheat more?",
    "term": "Risk-taking founders",

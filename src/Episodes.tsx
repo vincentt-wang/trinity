@@ -1,6 +1,10 @@
 import { useEffect } from 'react'
 import { useLang } from './i18n'
 import { EPISODES, type Episode } from './episodeData'
+import { EP_LONG } from './epArticles'
+
+/** Only episodes Vincent has approved (published: true) are listed or linked (261117). */
+export const PUBLISHED_EPISODES = EPISODES.filter((e) => e.published)
 import { routeTo } from './router'
 import { FOLLOW } from './intake'
 import { setSource, trackCta, trackView } from './lib/track'
@@ -14,6 +18,8 @@ const T = {
     watch: 'Watch and read', back: 'All episodes', short: 'The short version', sources: 'Sources',
     srcNote: 'Only primary sources are linked. Secondary reports are listed with their level and used only as the narration describes them.',
     next: 'Next', prev: 'Previous',
+    npKick: 'Not published yet', npH: 'This piece isn\'t published yet.', npP: 'It will show up on the Insight page once it goes live.', npBack: 'See published pieces',
+    origLabel: 'Original',
     ctaH: 'Want your own idea read this way?',
     ctaP: 'Trinity reads one startup idea through 60 dimensions, the same way Vincent reviews startups. The first read is free.',
     ctaBtn: 'Analyze my idea', follow: 'Follow',
@@ -24,6 +30,8 @@ const T = {
     watch: '看影片與文字', back: '全部集數', short: '這集講什麼', sources: '出處',
     srcNote: '只有一手來源附連結；二手報導標出等級，旁白也照這個層級講。',
     next: '下一集', prev: '上一集',
+    npKick: '尚未發布', npH: '這篇還沒發布。', npP: '發布之後會出現在洞察觀點頁。', npBack: '看已發布的文章',
+    origLabel: '原文',
     ctaH: '想讓你的點子也這樣被看一次？',
     ctaP: 'Trinity 用 60 個維度看一個創業點子，跟 Vincent 看新創案的方法一樣。初步判讀免費。',
     ctaBtn: '分析我的點子', follow: '追蹤',
@@ -43,7 +51,7 @@ export function EpisodeList() {
       <h2 className="ep-list-h">{t.h2}</h2>
       <p className="ep-list-lead">{t.lead}</p>
       <div className="ep-grid">
-        {EPISODES.map((e) => {
+        {PUBLISHED_EPISODES.map((e) => {
           const c = e[lang]
           return (
             <a key={e.slug} className="ep-card" href={`/insight/${e.slug}`} onClick={(ev) => { ev.preventDefault(); go(e.slug) }}>
@@ -76,9 +84,10 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
   const { lang } = useLang()
   const t = T[lang]
   const c = ep[lang]
-  const idx = EPISODES.findIndex((x) => x.slug === ep.slug)
-  const prev = EPISODES[idx - 1]
-  const next = EPISODES[idx + 1]
+  const idx = PUBLISHED_EPISODES.findIndex((x) => x.slug === ep.slug)
+  const prev = PUBLISHED_EPISODES[idx - 1]
+  const next = PUBLISHED_EPISODES[idx + 1]
+  const long = EP_LONG[ep.slug]?.[lang]
   const src = `ins-${ep.slug}`
 
   useEffect(() => { trackView('/insight/' + ep.slug) }, [ep.slug])
@@ -87,6 +96,7 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
     let m = document.querySelector('meta[name="description"]') as HTMLMetaElement | null
     if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m) }
     m.content = c.desc
+    setRobots(null)
   }, [ep, c])
 
   const analyze = (e: React.MouseEvent) => {
@@ -107,34 +117,38 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
       <header className="id-head">
         <div className="ep-kick">EP {nn(ep.n)} · {c.term}</div>
         <h1 className="id-title">{c.title}</h1>
-        <p className="id-lead">{c.desc}</p>
+        {!long && <p className="id-lead">{c.desc}</p>}
       </header>
       <div className="ep-video">
         <video key={ep.slug} controls playsInline preload="metadata" poster={`/ep/${ep.slug}.jpg`} src={`/ep/${ep.slug}.mp4`} />
       </div>
-      <section className="id-sec ep-body">
-        <h2>{t.short}</h2>
-        {c.body.map((p, i) => <p key={i} dangerouslySetInnerHTML={{ __html: p }} />)}
-      </section>
-      <section className="ep-quote">
-        <div className="ep-qby">{c.quoteBy}</div>
-        <blockquote>{c.quote}</blockquote>
-        {lang === 'zh' && c.quoteOrig && <div className="ep-qorig">原文：{c.quoteOrig}</div>}
-        {c.quoteNote && <p className="ep-qnote">{c.quoteNote}</p>}
-        <p className="ep-ask">{c.ask}</p>
-      </section>
-      <section className="id-sec">
-        <h2>{t.sources}</h2>
-        <ol className="ep-srcs">
-          {ep.sources.map((s, i) => (
-            <li key={i}>
-              <span className={`ep-lv ${s.levelZh === '一手' ? 'p' : 's'}`}>{lang === 'zh' ? s.levelZh : s.levelEn}</span>{' '}
-              {s.url ? <a href={s.url} target="_blank" rel="noopener">{s.label}</a> : s.label}
-            </li>
-          ))}
-        </ol>
-        <p className="ep-srcnote">{t.srcNote}</p>
-      </section>
+      {long ? <LongBody ep={ep} t={t} /> : (
+        <>
+          <section className="id-sec ep-body">
+            <h2>{t.short}</h2>
+            {c.body.map((p, i) => <p key={i} dangerouslySetInnerHTML={{ __html: p }} />)}
+          </section>
+          <section className="ep-quote">
+            <div className="ep-qby">{c.quoteBy}</div>
+            <blockquote>{c.quote}</blockquote>
+            {lang === 'zh' && c.quoteOrig && <div className="ep-qorig">原文：{c.quoteOrig}</div>}
+            {c.quoteNote && <p className="ep-qnote">{c.quoteNote}</p>}
+            <p className="ep-ask">{c.ask}</p>
+          </section>
+          <section className="id-sec">
+            <h2>{t.sources}</h2>
+            <ol className="ep-srcs">
+              {ep.sources.map((s, i) => (
+                <li key={i}>
+                  <span className={`ep-lv ${s.levelZh === '一手' ? 'p' : 's'}`}>{lang === 'zh' ? s.levelZh : s.levelEn}</span>{' '}
+                  {s.url ? <a href={s.url} target="_blank" rel="noopener">{s.label}</a> : s.label}
+                </li>
+              ))}
+            </ol>
+            <p className="ep-srcnote">{t.srcNote}</p>
+          </section>
+        </>
+      )}
       <div className="ep-cta">
         <div>
           <h2>{t.ctaH}</h2>
@@ -147,6 +161,114 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
         {next ? <a className="nx" href={`/insight/${next.slug}`} onClick={(e) => { e.preventDefault(); go(next.slug) }}>{t.next}: EP {nn(next.n)} →</a> : <a href="/insight" onClick={(e) => { e.preventDefault(); go(null) }}>{t.back}</a>}
       </nav>
       <FollowRow label={t.follow} />
+    </article>
+  )
+}
+
+/** Long-form article (EP01 first): opening, metaphor, the board, the vote math, latest news, Buffett, annotated sources. */
+function LongBody({ ep, t }: { ep: Episode; t: (typeof T)['en'] }) {
+  const { lang } = useLang()
+  const c = ep[lang]
+  const a = EP_LONG[ep.slug][lang]
+  return (
+    <div className="ep-long">
+      <section className="id-sec ep-body">
+        {a.open.map((p, i) => <p key={i} dangerouslySetInnerHTML={{ __html: p }} />)}
+      </section>
+      <section className="id-sec ep-body">
+        <h2>{a.metaphorH}</h2>
+        {a.metaphor.map((p, i) => <p key={i} dangerouslySetInnerHTML={{ __html: p }} />)}
+      </section>
+      <section className="id-sec">
+        <h2>{a.boardH}</h2>
+        <p className="ep-sec-lead">{a.boardLead}</p>
+        <div className="ep-board" role="table" aria-label={a.boardH}>
+          <div className="ep-brow ep-bhead" role="row">
+            <span role="columnheader">{a.colName}</span><span role="columnheader">{a.colSince}</span><span role="columnheader">{a.colBg}</span>
+          </div>
+          {a.directors.map((d) => (
+            <div className="ep-brow" role="row" key={d.name}>
+              <span className="ep-bname" role="cell">{d.name}</span>
+              <span className="ep-bsince" role="cell">{d.since}</span>
+              <span className="ep-bbg" role="cell">{d.bg}</span>
+            </div>
+          ))}
+        </div>
+        <p className="ep-srcnote">{a.boardNote}</p>
+      </section>
+      <section className="id-sec ep-body">
+        <h2>{a.votesH}</h2>
+        <div className="ep-seats" aria-label={a.seatsCap}>
+          {Array.from({ length: 10 }, (_, i) => <span key={i} className={i < 6 ? 'on' : ''} />)}
+        </div>
+        <p className="ep-seats-cap">{a.seatsCap}</p>
+        {a.votes.map((p, i) => <p key={i} dangerouslySetInnerHTML={{ __html: p }} />)}
+      </section>
+      <section className="id-sec">
+        <h2>{a.newsH}</h2>
+        <p className="ep-sec-lead">{a.newsLead}</p>
+        <ol className="ep-news">
+          {a.updates.map((u, i) => (
+            <li key={i}>
+              <span className="ep-news-d">{u.date}</span>
+              <div>
+                <p>{u.text}</p>
+                <span className="ep-news-s">{u.src}</span>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="ep-srcnote">{a.newsNote}</p>
+      </section>
+      <section className="ep-quote">
+        <div className="ep-qby">{c.quoteBy}</div>
+        <blockquote>{c.quote}</blockquote>
+        {lang === 'zh' && c.quoteOrig && <div className="ep-qorig">{t.origLabel}：{c.quoteOrig}</div>}
+        <p className="ep-ask">{c.ask}</p>
+      </section>
+      <section className="id-sec">
+        <h2>{a.sourcesH}</h2>
+        <ol className="ep-srcs ep-srcs-long">
+          {a.sources.map((s, i) => (
+            <li key={i}>
+              <p className="ep-src-what">{s.what}</p>
+              <div className="ep-src-link">
+                <span className={`ep-lv ${s.level === 'p' ? 'p' : 's'}`}>{a.levels[s.level]}</span>{' '}
+                <a href={s.url} target="_blank" rel="noopener">{s.label}</a>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="ep-srcnote">{a.srcNote}</p>
+      </section>
+    </div>
+  )
+}
+
+/** Set or clear <meta name="robots"> for client-side navigation. The static HTML at /insight/epNN carries the real tag. */
+export function setRobots(content: string | null) {
+  let m = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null
+  if (!m) { m = document.createElement('meta'); m.name = 'robots'; document.head.appendChild(m) }
+  m.content = content || 'index,follow,max-image-preview:large'
+}
+
+/** Neutral page for an episode URL that exists but is not published yet (noindex). */
+export function EpisodeNotPublished() {
+  const { lang } = useLang()
+  const t = T[lang]
+  useEffect(() => {
+    document.title = (lang === 'zh' ? '尚未發布' : 'Not published yet') + ' · Trinity Check'
+    setRobots('noindex,nofollow')
+    return () => setRobots(null)
+  }, [lang])
+  return (
+    <article className="insight-detail ep-detail ep-np" data-lens="e">
+      <header className="id-head">
+        <div className="ep-kick">{t.npKick}</div>
+        <h1 className="id-title">{t.npH}</h1>
+        <p className="id-lead">{t.npP}</p>
+      </header>
+      <a className="btn btn-primary" href="/insight" onClick={(e) => { e.preventDefault(); go(null) }}>{t.npBack} →</a>
     </article>
   )
 }

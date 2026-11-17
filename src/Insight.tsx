@@ -8,7 +8,7 @@ import { useLang, type Lang } from './i18n'
 import { Nav } from './lib/Nav'
 import { COPY } from './copy'
 import { ARTICLE_PROSE, type ProseSection } from './insightArticles'
-import { EpisodeList, EpisodeDetail } from './Episodes'
+import { EpisodeList, EpisodeDetail, EpisodeNotPublished } from './Episodes'
 import { EPISODES } from './episodeData'
 import { epSlugFromLocation } from './router'
 
@@ -968,7 +968,7 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
             exit={{ opacity: 0, y: -14 }}
             transition={{ duration: 0.42, ease: EASE }}
           >
-            <EpisodeDetail ep={ep} />
+            {ep.published ? <EpisodeDetail ep={ep} /> : <EpisodeNotPublished />}
           </motion.div>
         ) : open === null ? (
           <motion.div
