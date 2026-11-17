@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useLang } from '../i18n'
 import { COPY } from '../copy'
 import { scrollToId, scrollToTop } from './useLenis'
@@ -18,64 +18,39 @@ export const ENGINE_SECTIONS = ['celestial', 'engine', 'why', 'ba', 'founder'] a
 /** Every home section the nav can light up (scrollspy). */
 export const NAV_SECTIONS = ['celestial', 'dims', 'engine', 'stack', 'why', 'ba', 'founder'] as const
 
-type Sub = { id: string; label: string }
 
 /**
- * The one nav used everywhere (261117 PM):
- *   logo · Engine▾ · Dimensions · Evidence · Principles · Articles · [EN/中] [Analyze my idea]
- * Engine: hover opens the menu on desktop, a click on the word goes to the top of home,
- * a click outside (or Esc) closes. The five items share one column width so the row reads even.
- * Mobile: the same five rows in the burger menu; Engine expands in place.
+ * The one nav used everywhere (261117 late): five flat items, no dropdown.
+ *   logo · Engine · Dimensions · Evidence · Principles · Articles · [EN/中] [Analyze my idea]
+ * On home, a click glides to the section (eased scroll, never a jump).
  */
 export function Nav({ sub = false, active = '', navDark = false }: { sub?: boolean; active?: string; navDark?: boolean }) {
   const { lang, setLang } = useLang()
   const n = COPY[lang].nav
   const [open, setOpen] = useState(false)
-  const [drop, setDrop] = useState(false)
-  const [mdrop, setMdrop] = useState(false)
-  const navRef = useRef<HTMLElement>(null)
 
-  useEffect(() => {
-    if (!drop) return
-    const off = (e: MouseEvent) => { if (navRef.current && !navRef.current.contains(e.target as Node)) setDrop(false) }
-    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setDrop(false) }
-    document.addEventListener('mousedown', off)
-    document.addEventListener('keydown', esc)
-    return () => { document.removeEventListener('mousedown', off); document.removeEventListener('keydown', esc) }
-  }, [drop])
-
-  const close = () => { setOpen(false); setDrop(false); setMdrop(false) }
-  const section = (id: string) => { if (sub) routeTo('home', '#' + id); else { scrollToId('#' + id, true); presentationResync() } close() }
+  const close = () => setOpen(false)
+  // same page: glide there (no jump); from a sub-page: route home, Home scrolls to the hash
+  const section = (id: string) => { if (sub) routeTo('home', '#' + id); else { scrollToId('#' + id); presentationResync() } close() }
   const viewTo = (v: View, q = '') => { window.dispatchEvent(new CustomEvent('trinity:navview', { detail: v })); routeTo(v, q); window.scrollTo(0, 0); close() }
-  const home = () => { if (sub) routeTo('home'); else { scrollToTop(); presentationResync() } close() }
+  const home = () => { if (sub) routeTo('home'); else { scrollToTop(false); presentationResync() } close() }
 
-  const subs: Sub[] = ENGINE_SECTIONS.map((id) => ({ id, label: n.sec[id] }))
   const engineOn = (ENGINE_SECTIONS as readonly string[]).includes(active)
-  const flat = [
+  const items = [
+    { key: 'engine', label: n.engine, href: '/', on: engineOn, go: home },
     { key: 'dims', label: n.dims, href: '/#dims', on: active === 'dims', go: () => section('dims') },
     { key: 'stack', label: n.evidence, href: '/#stack', on: active === 'stack', go: () => section('stack') },
     { key: 'deck', label: n.principles, href: '/deck', on: false, go: () => viewTo('materials') },
     { key: 'insight', label: n.articles, href: '/insight', on: false, go: () => viewTo('insight') },
   ]
-  const subLink = (s: Sub) => (
-    <a key={s.id} href={'/#' + s.id} role="menuitem" className={active === s.id ? 'on' : ''} onClick={(e) => { e.preventDefault(); section(s.id) }}>{s.label}</a>
-  )
 
   return (
-    <nav ref={navRef} className={`nav${navDark ? ' on-dark' : ''}${open ? ' menu-open' : ''}`} lang={lang === 'zh' ? 'zh-Hant' : 'en'}>
+    <nav className={`nav${navDark ? ' on-dark' : ''}${open ? ' menu-open' : ''}`} lang={lang === 'zh' ? 'zh-Hant' : 'en'}>
       <div className="nav-in">
         <a className="brand" href="/" onClick={(e) => { e.preventDefault(); home() }}>{LOGO} TRINITY</a>
         <div className="nav-links nav-center nav-row">
-          <div className={`nav-dd${drop ? ' open' : ''}`} onMouseEnter={() => setDrop(true)} onMouseLeave={() => setDrop(false)}>
-            <a href="/" className={`nav-item nav-dd-btn${engineOn ? ' on' : ''}`} aria-haspopup="true" aria-expanded={drop}
-              onFocus={() => setDrop(true)}
-              onClick={(e) => { e.preventDefault(); home() }}>
-              <span className="nav-lbl">{n.engine}<span className="nav-caret" aria-hidden>▾</span></span>
-            </a>
-            <div className="nav-dd-menu" role="menu">{subs.map(subLink)}</div>
-          </div>
-          {flat.map((it) => (
-            <a key={it.key} href={it.href} className={`nav-item${it.on ? ' on' : ''}`} onFocus={() => setDrop(false)}
+          {items.map((it) => (
+            <a key={it.key} href={it.href} className={`nav-item${it.on ? ' on' : ''}`}
               onClick={(e) => { e.preventDefault(); it.go() }}>{it.label}</a>
           ))}
         </div>
@@ -89,16 +64,7 @@ export function Nav({ sub = false, active = '', navDark = false }: { sub?: boole
         </div>
       </div>
       <div className={`nav-mobile${open ? ' open' : ''}`}>
-        <div className={`nav-mgroup${mdrop ? ' open' : ''}`}>
-          <button type="button" className="nav-mgroup-btn" aria-expanded={mdrop} onClick={() => setMdrop((d) => !d)}>
-            {n.engine}<span className="nav-caret" aria-hidden>▾</span>
-          </button>
-          <div className="nav-mgroup-list">
-            <a href="/" onClick={(e) => { e.preventDefault(); home() }}>{n.top}</a>
-            {subs.map(subLink)}
-          </div>
-        </div>
-        {flat.map((it) => (
+        {items.map((it) => (
           <a key={it.key} href={it.href} onClick={(e) => { e.preventDefault(); it.go() }}>{it.label}</a>
         ))}
         <button className="nav-mobile-cta" data-cta="nav:analyze" onClick={() => viewTo('analyze')}>{n.cta}</button>
