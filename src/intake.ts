@@ -13,9 +13,21 @@ export class IntakeError extends Error {
   constructor(code: string) { super(code); this.code = code }
 }
 
+import { source } from './lib/track'
+
 const API_BASE = (import.meta.env.VITE_INTAKE_API as string | undefined) || ''
 export const PUBLIC_EMAIL = 'vincent@easeai.com.tw'
-export const PERSONAL_SITE = 'https://vincent.easeai.com.tw'
+export const PERSONAL_SITE = 'https://vincent.easeai.com.tw/?s=trinity-nav'
+export const ABOUT_URL = 'https://vincent.easeai.com.tw/?s=trinity-about'
+export const ONE_ON_ONE_NAV = 'https://vincent.easeai.com.tw/contact/?s=trinity-nav'
+export const ONE_ON_ONE_PROD = 'https://vincent.easeai.com.tw/contact/?s=trinity-prod'
+export const EPISODES_URL = 'https://venturerelations.pages.dev/?s=trinity-nav'
+export const FOLLOW = [
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/vincent-wang-yuyu' },
+  { name: 'YouTube', href: 'https://www.youtube.com/@venturerelations' },
+  { name: 'Instagram', href: 'https://www.instagram.com/venturerelations/' },
+  { name: 'Threads', href: 'https://www.threads.net/@venturerelations' },
+] as const
 export const CONTACT_URL = 'https://vincent.easeai.com.tw/contact/?s=trinity'
 
 export async function submitIntake(kind: IntakeKind, lang: 'en' | 'zh', answers: Record<string, unknown>): Promise<IntakeOk> {
@@ -25,7 +37,7 @@ export async function submitIntake(kind: IntakeKind, lang: 'en' | 'zh', answers:
     const r = await fetch(`${API_BASE}/api/intake`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ kind, lang, answers }),
+      body: JSON.stringify({ kind, lang, answers: { ...answers, s: source() }, s: source() }),
       signal: ctrl.signal,
     })
     let j: Partial<IntakeOk> & { error?: string } | null = null

@@ -13,6 +13,12 @@
  * Keying by email means re-signups overwrite instead of duplicating, and nothing
  * is lost: GET /waitlist?token=… returns every entry to email when the deck ships.
  *
+ * 3) Source / CTA tracking (261117)
+ *    POST /e           -> {k: view|cta, p, s}  (JSON or text/plain body; sendBeacon-friendly)
+ *                         one KV key per UTC day "ev:YYYY-MM-DD" = {"k|p|s": count}
+ *    GET  /e?token=…&d=YYYY-MM-DD -> that day's counts (token-gated, reuses WAITLIST_TOKEN)
+ *    CORS open (*): the personal site and the V site post here too.
+ *
  * Abuse controls (the public number must track real submissions):
  *  - POST only from allow-listed Origins (403 otherwise)
  *  - counter: one increment per IP per hour, global cap 25/UTC-day
@@ -34,6 +40,33 @@ export default {
     const origin = req.headers.get('Origin') || ''
     const h = cors(origin)
     if (req.method === 'OPTIONS') return new Response(null, { headers: h })
+
+    // ── tracking ──
+    if (url.pathname === '/e') {
+      const oh = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET,POST,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Content-Type': 'application/json' }
+      if (req.method === 'OPTIONS') return new Response(null, { headers: oh })
+      if (req.method === 'GET') {
+        if (!env.WAITLIST_TOKEN || url.searchParams.get('token') !== env.WAITLIST_TOKEN) {
+          return new Response(JSON.stringify({ err: 'unauthorized' }), { status: 401, headers: oh })
+        }
+        const d = (url.searchParams.get('d') || new Date().toISOString().slice(0, 10)).slice(0, 10)
+        return new Response((await env.COUNTER.get('ev:' + d)) || '{}', { headers: oh })
+      }
+      if (req.method !== 'POST') return new Response(JSON.stringify({ err: 'method' }), { status: 405, headers: oh })
+      let b = {}
+      try { b = JSON.parse(await req.text()) } catch { /* keep {} */ }
+      const k = b.k === 'cta' ? 'cta' : 'view'
+      const clip = (v, n) => String(v || '').replace(/[|\n\r]/g, ' ').slice(0, n)
+      const field = k + '|' + clip(b.p, 80) + '|' + clip(b.s, 60)
+      const key = 'ev:' + new Date().toISOString().slice(0, 10)
+      let day = {}
+      try { day = JSON.parse((await env.COUNTER.get(key)) || '{}') } catch { day = {} }
+      if (day[field] !== undefined || Object.keys(day).length < 2000) {
+        day[field] = (day[field] || 0) + 1
+        await env.COUNTER.put(key, JSON.stringify(day), { expirationTtl: 60 * 60 * 24 * 400 })
+      }
+      return new Response(JSON.stringify({ ok: true }), { headers: oh })
+    }
 
     // ── waitlist ──
     if (url.pathname === '/waitlist') {

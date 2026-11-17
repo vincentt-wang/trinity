@@ -1345,3 +1345,40 @@ footer .wrap{position:relative;z-index:1}
 .mat-err-code{display:block;margin-top:8px;font-size:.8rem;opacity:.7;font-family:ui-monospace,Menlo,monospace}
 /* the desktop nav already runs out of room under ~1380px (measured on the live site: 1240px wide, links end at 1332px); keep the extra link off until there is room, it stays in the mobile menu, footer, founder card and product cards */
 @media(max-width:1380px){.nav-ext{display:none}}
+
+/* ============ 2026-11-17: 4-entry nav with dropdowns, slim founder strip, follow row ============ */
+@media(max-width:1380px){.nav-ext{display:inline-block}}
+.nav-dd{position:relative}
+.nav-dd-btn{position:relative;display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:500;color:var(--ink-soft);background:none;border:0;padding:8px 16px;cursor:pointer;white-space:nowrap;transition:color .2s}
+@media(max-width:1080px){.nav-dd-btn{padding:8px 11px}}
+.nav-dd-btn:hover,.nav-dd.open .nav-dd-btn,.nav-dd-btn.on{color:var(--ink)}
+.nav.on-dark .nav-dd-btn{color:#fff}
+.nav-caret{font-size:.72em;opacity:.65;transition:transform .25s var(--ease)}
+.nav-dd.open .nav-caret,.nav-mgroup.open .nav-caret{transform:rotate(180deg)}
+.nav-dd-menu{position:absolute;top:100%;left:50%;min-width:210px;display:flex;flex-direction:column;padding:8px;margin-top:4px;border:1px solid var(--line);border-radius:14px;background:rgba(251,252,255,.98);box-shadow:0 18px 40px -18px rgba(14,18,48,.35);opacity:0;visibility:hidden;transform:translate(-50%,-6px);transition:opacity .2s,transform .2s var(--ease),visibility .2s}
+.nav-dd-menu::before{content:"";position:absolute;left:0;right:0;top:-10px;height:10px}
+.nav-dd.open .nav-dd-menu{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.nav-center .nav-dd-menu a{padding:10px 14px;border-radius:9px;color:var(--ink-soft);font-weight:500}
+.nav-center .nav-dd-menu a::after{display:none}
+.nav-center .nav-dd-menu a:hover{background:var(--bg-soft,#eef1fb);color:var(--ink)}
+.nav.on-dark .nav-dd-menu{background:rgba(12,14,30,.97);border-color:rgba(255,255,255,.12)}
+.nav.on-dark .nav-center .nav-dd-menu a{color:#e6e9ff}
+.nav.on-dark .nav-center .nav-dd-menu a:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-mgroup{display:flex;flex-direction:column;border-bottom:1px solid var(--line)}
+.nav.on-dark .nav-mgroup{border-color:rgba(255,255,255,.09)}
+.nav-mgroup-btn{display:flex;justify-content:space-between;align-items:center;font:inherit;font-size:1.1rem;font-weight:600;color:var(--ink-soft);background:none;border:0;padding:15px 2px;cursor:pointer;text-align:left}
+.nav.on-dark .nav-mgroup-btn{color:#e6e9ff}
+.nav-mgroup-list{display:none;flex-direction:column;padding:0 0 10px 14px}
+.nav-mgroup.open .nav-mgroup-list{display:flex}
+.nav-mobile .nav-mgroup-list a{font-size:1rem;font-weight:500;padding:11px 2px;border-bottom:0}
+.nav-mobile.open{overflow-y:auto}
+
+.fdr-slim{max-width:860px;margin:0 auto;text-align:center}
+.fdr-slim .fdr-lead{margin:16px auto 0;max-width:62ch}
+.fdr-logos{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:18px 44px;margin-top:30px}
+.fdr-logo{display:inline-flex;align-items:center;gap:10px;color:var(--ink);font-weight:700;text-decoration:none}
+.fdr-logo img{display:block;height:34px;width:auto;object-fit:contain}
+.fdr-logo .fdr-av{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.fdr-slim .fdr-site{margin-top:26px}
+
+a.fchan{cursor:pointer;text-decoration:none}

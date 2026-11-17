@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { captureSource, installCtaTracking } from './lib/track'
 
 // Canonicalise the host. A trailing dot (trinity.easeai.com.tw.) — which some
 // devices keep in the address bar and then propagate to every link you share —
@@ -15,6 +16,9 @@ import App from './App.tsx'
     location.replace(location.protocol + '//' + CANON + location.pathname + location.search + location.hash)
   }
 }
+
+captureSource()
+installCtaTracking()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

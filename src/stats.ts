@@ -1,3 +1,8 @@
+// 261117: the homepage stats band no longer reads this file. It shows a fixed
+// "100+ startups reviewed by Vincent" (copy.ts stats.labels[0], Home.tsx StatsBand),
+// so a live max(counter, local) can never surface an odd number like 101+.
+// The counter below still records submissions for internal use only.
+//
 // Single source of truth for the headline "track record" number.
 // Sourced from B2B/Review: 9 single-company analyses + 2 batch briefs of 9 = 27.
 // The canonical global number is bumped here in stats.ts with each real HITL

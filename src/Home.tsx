@@ -11,12 +11,11 @@ import { Aurora } from './lib/Aurora'
 import { Celestial, CelStars, EarthBody, MoonBody, SunBody, MiniSystem } from './lib/Celestial'
 import { DrawArcs, ParallaxRings } from './lib/Ambient'
 import { CountUp, MaskLines, Stagger } from './lib/anim'
-import { analyzedCount, fetchAnalyzed } from './stats'
 import { useLang } from './i18n'
 import { COPY, DIMENSIONS } from './copy'
 import Pitch from './Pitch'
 import { routeTo } from './router'
-import { CONTACT_URL, PERSONAL_SITE } from './intake'
+import { ABOUT_URL, ONE_ON_ONE_PROD, PERSONAL_SITE, FOLLOW } from './intake'
 
 const LOGO = (
   <svg viewBox="0 0 32 32" aria-hidden>
@@ -595,73 +594,27 @@ function BeforeAfter() {
 }
 
 
-/* ---------- Founder card ---------- */
+/* ---------- Founder strip (261117: one paragraph + three logos) ---------- */
 function FounderSection() {
   const { lang } = useLang()
   const c = COPY[lang].founder
-  const o = COPY[lang].orgs
+  const B = import.meta.env.BASE_URL
   return (
     <section className="sec founder-sec" id="founder">
       <Aurora tone="cool" />
       <div className="wrap">
         <Reveal>
-          <div className="fdr">
-            <div className="fdr-photo">
-              <img src={`${import.meta.env.BASE_URL}img/vincent.jpg`} alt={c.name} width={793} height={900} loading="lazy" decoding="async" />
-              <span className="fdr-ring" aria-hidden />
+          <div className="fdr-slim">
+            <div className="eyebrow">{c.eyebrow}</div>
+            <p className="fdr-lead">{c.lead}</p>
+            <div className="fdr-logos">
+              <span className="fdr-logo"><img src={`${B}img/evoscale.png`} alt="EvoScale Capital" width={600} height={125} loading="lazy" decoding="async" /></span>
+              <span className="fdr-logo"><img src={`${B}img/gva-rocket.png`} alt="GVA" width={428} height={429} loading="lazy" decoding="async" /><span>GVA</span></span>
+              <a className="fdr-logo" href={ABOUT_URL} target="_blank" rel="noopener" data-cta="founder:avatar"><img className="fdr-av" src={`${B}img/vincent.jpg`} alt="Vincent Wang" width={793} height={900} loading="lazy" decoding="async" /><span>Vincent Wang</span></a>
             </div>
-            <div className="fdr-body">
-              <div className="eyebrow">{c.eyebrow}</div>
-              <h2 className="fdr-name">{c.name}</h2>
-              <div className="fdr-role">{c.role}</div>
-              <img className="fdr-mark" src={`${import.meta.env.BASE_URL}img/evoscale.png`} alt="EvoScale Capital" width={600} height={125} loading="lazy" decoding="async" />
-              <p className="fdr-lead">{c.lead}</p>
-              <div className="fdr-creds">
-                {c.creds.map((r, i) => (
-                  <div className="fdr-cred" key={i}><b>{r.k}</b><span>{r.v}</span></div>
-                ))}
-              </div>
-              <div className="fdr-taught"><b>{o.taughtLabel}</b>{o.taught}</div>
-              <p className="fdr-note">{c.note}</p>
-              <a className="fdr-site" href={PERSONAL_SITE} target="_blank" rel="noopener">{c.site} ↗</a>
-            </div>
+            <a className="fdr-site" href={ABOUT_URL} target="_blank" rel="noopener" data-cta="founder:about">{c.site} →</a>
           </div>
         </Reveal>
-      </div>
-    </section>
-  )
-}
-
-/* ---------- Services ---------- */
-function ServicesSection({ onAnalyze }: { onAnalyze: () => void }) {
-  const { lang } = useLang()
-  const c = COPY[lang].services
-  return (
-    <section className="sec services-sec" id="services">
-      <ParallaxRings />
-      <div className="wrap">
-        <Reveal><div className="sec-head"><div className="eyebrow">{c.eyebrow}</div><h2>{c.h2}</h2><p className="lead">{c.lead}</p></div></Reveal>
-        <Stagger className="svc-grid">
-          {c.cards.map((s, i) => (
-            <div className={`svc svc-${i}`} key={i}>
-              <div className="svc-top">
-                <span className="svc-tag">{s.tag}</span>
-                <span className="svc-meta">{s.meta}</span>
-              </div>
-              <h3>{s.h}</h3>
-              <ul className="svc-list">
-                {s.items.map((x, j) => <li key={j}>{x}</li>)}
-              </ul>
-              <div className="svc-foot">{s.foot}</div>
-              {i === 2
-                ? <button className="btn btn-primary svc-cta" onClick={onAnalyze}>{COPY[lang].nav.cta}</button>
-                : i === 0
-                  ? <a className="btn btn-ghost svc-cta" href={CONTACT_URL} target="_blank" rel="noopener">{s.cta} ↗</a>
-                  : <a className="btn btn-ghost svc-cta" href={`mailto:${c.email}?subject=${encodeURIComponent(s.h)}`}>{s.cta}</a>}
-            </div>
-          ))}
-        </Stagger>
-        <Reveal delay={0.1}><p className="svc-disc">{c.disclaimer}</p></Reveal>
       </div>
     </section>
   )
@@ -671,15 +624,9 @@ function ServicesSection({ onAnalyze }: { onAnalyze: () => void }) {
 function StatsBand() {
   const { lang } = useLang()
   const labels = COPY[lang].stats.labels
-  // live global count from the Worker; local base+bump until it answers (or when offline)
-  const [analyzed, setAnalyzed] = useState(analyzedCount())
-  useEffect(() => {
-    let on = true
-    fetchAnalyzed().then((n) => { if (on && n) setAnalyzed(Math.max(n, analyzedCount())) })
-    return () => { on = false }
-  }, [])
+  // 261117: fixed headline number, no live counter (a live max() could show 101+)
   const items = [
-    { v: analyzed, plus: true },
+    { v: 100, plus: true },
     { v: 60, plus: false },
     { v: 3, plus: false },
     { v: 2, plus: false },
@@ -718,8 +665,8 @@ function ProductsSection({ onMaterials }: { onMaterials: () => void }) {
               <h3>{p.h}</h3>
               <p className="prod-p">{p.p}</p>
               {i === 1
-                ? <a className="btn btn-ghost svc-cta" href={CONTACT_URL} target="_blank" rel="noopener">{p.cta} ↗</a>
-                : <button className={`btn ${i === 0 ? 'btn-primary' : 'btn-ghost'} svc-cta`} onClick={go[i] ?? undefined}>{p.cta}</button>}
+                ? <a className="btn btn-ghost svc-cta" href={ONE_ON_ONE_PROD} target="_blank" rel="noopener" data-cta="prod:one-on-one">{p.cta} ↗</a>
+                : <button className={`btn ${i === 0 ? 'btn-primary' : 'btn-ghost'} svc-cta`} data-cta={i === 0 ? 'prod:report' : 'prod:deck'} onClick={go[i] ?? undefined}>{p.cta}</button>}
             </div>
           ))}
         </Stagger>
@@ -731,12 +678,14 @@ function ProductsSection({ onMaterials }: { onMaterials: () => void }) {
 
 /* ---------- Footer: brand + channels + learn + start ---------- */
 const CHAN_ICONS = [
-  /* Instagram: rounded square + lens + dot */
-  <><rect x="3.5" y="3.5" width="17" height="17" rx="4.5" /><circle cx="12" cy="12" r="4" /><circle cx="16.9" cy="7.1" r="1.15" fill="currentColor" stroke="none" /></>,
+  /* LinkedIn: rounded square + "in" */
+  <><rect x="3.5" y="3.5" width="17" height="17" rx="3" /><path d="M8 10.5v6M8 7.6v.01M11.5 16.5v-6M11.5 13c0-1.6 1-2.6 2.4-2.6s2.1 1 2.1 2.6v3.5" /></>,
   /* YouTube: rounded rect + play triangle */
   <><rect x="2.5" y="6" width="19" height="13" rx="3.5" /><path d="M10.2 9.6l4.8 2.9-4.8 2.9z" fill="currentColor" stroke="none" /></>,
-  /* Podcast: mic + stand */
-  <><rect x="9" y="3.5" width="6" height="10.5" rx="3" /><path d="M5.5 11.5a6.5 6.5 0 0013 0" /><path d="M12 18v2.8" /></>,
+  /* Instagram: rounded square + lens + dot */
+  <><rect x="3.5" y="3.5" width="17" height="17" rx="4.5" /><circle cx="12" cy="12" r="4" /><circle cx="16.9" cy="7.1" r="1.15" fill="currentColor" stroke="none" /></>,
+  /* Threads: "@"-like loop */
+  <><path d="M16.5 11.2c-.4-2.4-2-3.6-4.3-3.6-2.6 0-4.3 1.9-4.3 4.6s1.7 4.5 4.2 4.5c2.3 0 3.6-1.3 3.6-3.1 0-2.2-2.4-2.6-4.4-2.2-1.3.3-2 1-2 1.9 0 1 .9 1.6 2 1.6 2.1 0 3.1-1.7 3.1-4.3" /><path d="M19.5 8.5C18.3 5.3 15.6 3.5 12 3.5c-5 0-8.5 3.4-8.5 8.5s3.5 8.5 8.5 8.5c3.4 0 6-1.6 7.3-4.5" /></>,
 ]
 
 function Footer({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; onInsight: () => void; onMaterials: () => void }) {
@@ -756,12 +705,11 @@ function Footer({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; 
           <div className="foot-col">
             <div className="foot-h">{f.channels}</div>
             <div className="foot-list">
-              {f.chans.map((name, i) => (
-                <span className="fchan" key={name} aria-disabled="true">
+              {FOLLOW.map((ch, i) => (
+                <a className="fchan" key={ch.name} href={ch.href} target="_blank" rel="noopener" data-cta={'follow:' + ch.name}>
                   <span className="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{CHAN_ICONS[i]}</svg></span>
-                  <span className="fchan-n">{name}</span>
-                  <span className="fpill">{f.soon}</span>
-                </span>
+                  <span className="fchan-n">{ch.name}</span>
+                </a>
               ))}
             </div>
           </div>
@@ -779,7 +727,7 @@ function Footer({ onAnalyze, onInsight, onMaterials }: { onAnalyze: () => void; 
           <div className="foot-col">
             <div className="foot-h">{f.start}</div>
             <p className="foot-start-p">{f.startLine}</p>
-            <button className="btn btn-primary foot-cta" onClick={onAnalyze}>{f.analyze}</button>
+            <button className="btn btn-primary foot-cta" data-cta="foot:analyze" onClick={onAnalyze}>{f.analyze}</button>
           </div>
         </Stagger>
       </div>
@@ -854,11 +802,11 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
   const navDark = useNavTheme()
   const [pitchOpen, setPitchOpen] = useState(false)
   const heroMag = useMagnetic<HTMLButtonElement>()
-  const active = useActiveSection(['engine', 'stack', 'dims', 'fit', 'services'])
+  const active = useActiveSection(['dims', 'engine', 'stack', 'fit'])
   // returning from a sub-page via a section hash (#engine…) scrolls there on mount
   useEffect(() => {
     const h = location.hash.replace(/^#\/?/, '')
-    if (h && ['engine', 'stack', 'dims', 'fit', 'celestial', 'why', 'ba', 'cta', 'top'].includes(h)) {
+    if (h && ['engine', 'stack', 'dims', 'fit', 'celestial', 'why', 'ba', 'founder', 'products', 'cta', 'top'].includes(h)) {
       const t = setTimeout(() => scrollToId('#' + h), 620)
       return () => clearTimeout(t)
     }
@@ -892,7 +840,7 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
           <Reveal delay={0.45}><p className="hero-lead">{c.hero.lead}</p></Reveal>
           <Reveal delay={0.58}>
             <div className="hero-cta hero-cta-center">
-              <button ref={heroMag} className="btn btn-primary" onClick={onAnalyze}>{c.hero.ctaPrimary}</button>
+              <button ref={heroMag} className="btn btn-primary" data-cta="home:hero" onClick={onAnalyze}>{c.hero.ctaPrimary}</button>
               <a className="btn btn-ghost" href="#engine" onClick={(e) => { e.preventDefault(); scrollToId('#engine') }}>{c.hero.ctaGhost}</a>
             </div>
           </Reveal>
@@ -916,7 +864,7 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
 
       <FounderSection />
 
-      <ServicesSection onAnalyze={onAnalyze} />
+      <ProductsSection onMaterials={onMaterials} />
 
       <section id="cta" className="sec sec-dark cta-sec">
         <div className="cta-glow" aria-hidden />
@@ -931,7 +879,7 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
           </Reveal>
           <Reveal delay={0.12}>
             <div className="cta-final">
-              <button className="cta-mega" onClick={onAnalyze}>
+              <button className="cta-mega" data-cta="home:cta-mega" onClick={onAnalyze}>
                 <span className="cta-mega-glow" aria-hidden />
                 <span className="cta-mega-label">{c.nav.cta}</span>
                 <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6l6 6-6 6" /></svg>
@@ -940,8 +888,6 @@ export default function Home({ onAnalyze, onInsight, onMaterials }: { onAnalyze:
           </Reveal>
         </div>
       </section>
-
-      <ProductsSection onMaterials={onMaterials} />
 
       <Footer onAnalyze={onAnalyze} onInsight={onInsight} onMaterials={onMaterials} />
 

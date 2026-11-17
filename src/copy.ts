@@ -74,7 +74,7 @@ export const DIMENSIONS: Record<'e' | 'm' | 's', Dim[]> = {
 
 export const COPY = {
   en: {
-    nav: { howItWorks: 'The engine', stack: 'The stack', dims: 'The 60 dimensions', fit: 'Where you fit', services: 'Work with me', insight: 'How it thinks', deck: 'The deck', vincent: 'Vincent', cta: 'Analyze my idea' },
+    nav: { engine: 'Engine', howItWorks: 'How it works', stack: 'The stack', dims: '60 dimensions', fit: 'Where you fit', insight: 'How it thinks', insightPage: 'Under the hood', episodes: 'Episodes', pricing: 'Pricing', report: 'Report', deck: 'Principle deck', oneOnOne: 'One-on-one', vincent: 'Vincent', cta: 'Analyze my idea' },
     hero: { eyebrow: 'Innovation Trinity · Feasibility Engine', titleA: 'From an idea to', titleB: 'an ', titleHl: 'investable startup', lead: 'Feed your idea to the Trinity engine. See where it really stands across 60 dimensions, and exactly who to talk to next.', ctaPrimary: 'Analyze my idea', ctaGhost: 'See how it works' },
     lenses: {
       eyebrow: 'How the engine thinks', h2: 'Three lenses, three questions', lead: 'An investable startup needs three things to hold at once. Miss one and the engine tells you.',
@@ -152,14 +152,14 @@ export const COPY = {
       ],
       lensName: { e: 'Desirability', m: 'Feasibility', s: 'Viability', a: 'One system' },
     },
-    stats: { labels: ['startups analyzed', 'dimensions scored', 'independent lenses', 'markets: US + TW'] },
+    stats: { labels: ['startups reviewed by Vincent', 'dimensions scored', 'independent lenses', 'markets: US + TW'] },
     founder: {
       eyebrow: 'Who built this',
       name: 'Vincent Wang',
       role: 'Founding AO \u00b7 EvoScale Capital',
-      lead: 'I sit in deal reviews every month and watch founders get judged. Trinity is that judgement written down: the same three lenses I use on real cases, and the same course I teach at universities and founder communities.',
+      lead: 'Built by Vincent Wang, Founding AO at EvoScale Capital and Program Director at GVA. I review startups every month; Trinity writes down how I judge them. My own work, separate from any fund\u2019s decisions.',
       note: 'Trinity is my own work. It is not any fund\u2019s product, and it is kept separate from any fund\u2019s investment decisions.',
-      site: 'More about Vincent, and the one-on-one, on vincent.easeai.com.tw',
+      site: 'More about Vincent',
       creds: [
         { k: 'EvoScale Capital', v: 'Founding AO, in deal review every month' },
         { k: 'Design for Taiwan', v: '1st place, and speaker at its 10th year' },
@@ -215,7 +215,7 @@ export const COPY = {
     },
     footer: 'Innovation Trinity · Feasibility Engine',
     foot: {
-      channels: 'Channels', learn: 'Learn', start: 'Start', soon: 'Soon',
+      channels: 'Follow', learn: 'Learn', start: 'Start', soon: 'Soon',
       chans: ['Instagram', 'YouTube', 'Podcast'],
       workshop: 'Workshop', materials: 'Course materials', insight: 'How the engine thinks', vincent: 'Vincent Wang, personal site',
       startLine: 'One idea in, three verdicts out. Your first read is free.',
@@ -638,7 +638,7 @@ export const COPY = {
     },
   },
   zh: {
-    nav: { howItWorks: '運算引擎', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', services: '合作方式', insight: '引擎怎麼想', deck: '原則卡', vincent: 'Vincent', cta: '分析我的點子' },
+    nav: { engine: '引擎', howItWorks: '運算原理', stack: '引擎堆疊', dims: '60 個維度', fit: '你的定位', insight: '引擎怎麼想', insightPage: '引擎內部', episodes: '影片與文章', pricing: '價格', report: '評案報告', deck: '原則卡', oneOnOne: '一對一', vincent: 'Vincent', cta: '分析我的點子' },
     hero: { eyebrow: '創新三元 · 可行性引擎', titleA: '從一個點子', titleB: '到值得投資的', titleHl: '新創', lead: '把你的點子餵給 Trinity 引擎，看它在 60 個維度上真正的位置，以及下一步該找誰談。', ctaPrimary: '分析我的點子', ctaGhost: '看它怎麼運作' },
     lenses: {
       eyebrow: '引擎怎麼思考', h2: '三個透鏡，三個問題', lead: '一家值得投資的新創，需要三件事同時成立。少一個，引擎會告訴你。',
@@ -716,14 +716,14 @@ export const COPY = {
       ],
       lensName: { e: '欲求性', m: '可行性', s: '存續性', a: '一個系統' },
     },
-    stats: { labels: ['家新創已分析', '個維度評分', '個獨立透鏡', '個市場：美國＋台灣'] },
+    stats: { labels: ['Vincent 看過的新創案', '個維度評分', '個獨立透鏡', '個市場：美國＋台灣'] },
     founder: {
       eyebrow: '這是誰做的',
       name: 'Vincent Wang',
       role: 'EvoScale Capital · Founding AO',
-      lead: '我每個月固定坐在評案的位置上，看創辦人怎麼被判斷。Trinity 就是那套判斷寫下來的樣子：跟我看真實案子用的是同一組三透鏡，也跟我在大學與社群開的課是同一套。',
+      lead: '我是 Vincent Wang，EvoScale Capital 創始 AO、GVA 計畫總監。每個月都在看新創案，Trinity 是我判案的方法；個人作品，不代表任何基金。',
       note: 'Trinity 是我個人的東西，不是任何基金的產品，也與任何基金的投資決定分開。',
-      site: '更多關於 Vincent，以及一對一預約，在 vincent.easeai.com.tw',
+      site: '更多關於 Vincent',
       creds: [
         { k: 'EvoScale Capital', v: '創始 AO，每個月固定看團隊做評案' },
         { k: 'Design for Taiwan', v: '競賽首獎，並在十週年擔任講者' },
@@ -779,7 +779,7 @@ export const COPY = {
     },
     footer: '創新三元 · 可行性引擎',
     foot: {
-      channels: '頻道', learn: '學習', start: '開始', soon: '即將',
+      channels: '追蹤', learn: '學習', start: '開始', soon: '即將',
       chans: ['Instagram', 'YouTube', 'Podcast'],
       workshop: '工作坊', materials: '教材購買', insight: '引擎怎麼想', vincent: 'Vincent Wang 個人網站',
       startLine: '丟進一個點子，拿回三個裁決。初步判讀免費。',
