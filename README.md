@@ -1,3 +1,13 @@
+# Trinity 部署
+
+部署一律用 `npm run deploy:cf`，它會先跑 `scripts/check_story_meta.py`，集數文章有生產過程或自我保留的文字（沒畫、查無、推算、樣本、our reading、left out 等）就 exit 1 停下來。
+
+手動部署時，`DEPLOY_TARGET=cf npx vite build` 不會觸發 npm 的 prebuild，要先自己跑：
+
+```
+python3 scripts/check_story_meta.py && DEPLOY_TARGET=cf npx vite build && npx wrangler pages deploy dist --project-name=trinity --branch=main
+```
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.

@@ -81,7 +81,7 @@ const EP03_ZH: StoryLang = {
   recapH: '影片的結論：董事會說了算',
   recap: [
     'Jobs 1985 年被擠出 Apple，回去靠的是 Apple 買下 NeXT；馬斯克被 X.com 換掉後，再也沒回去。影片的結論只有一句：<mark>除非創辦人握有投票權，不然董事會說了算。</mark>祖克柏握有 Meta 61% 的投票權，黃仁勳持股 3.58%，連董事席也辭了。要回董事會，十位董事要六位點頭；這十位是誰，<a href="/insight/ep01">EP01</a> 一位一位列過。',
-    '影片定稿時，董事會的態度還只有匿名報導。11 月 17 日，兩邊都公開表態了。',
+    '11 月 17 日，黃仁勳和董事會都公開表態了。',
   ],
   sections: [
     {
@@ -89,10 +89,9 @@ const EP03_ZH: StoryLang = {
       paras: [
         '美東時間 11 月 17 日上午，黃仁勳在 X 發了一篇長文。他先認錯：沒有做到 Nvidia 對每個人的要求，私生活上犯了嚴重的錯，會配合董事會的獨立調查。',
         '接著他寫，如果董事會認為他回來，對股東、員工、公司和美國最好，他「很榮幸回應這些呼聲，回任執行長」。他講的是執行長，<b>董事席一個字都沒提</b>。',
-        '大約五個半小時後，Nvidia 開第三季財報電話會議。董事長 Harvey Jones 一開場就說，董事會一致接受他的辭職，<mark>「不打算讓 Jensen 回任執行長」</mark>。前一天各家報導只能引述匿名人士，這次是董事長具名、公開講，錄音查得到。',
+        '大約五個半小時後，Nvidia 開第三季財報電話會議。董事長 Harvey Jones 一開場就說，董事會一致接受他的辭職，<mark>「不打算讓 Jensen 回任執行長」</mark>。',
         '他也說，接班人選內部、外部都會找，不會為了快而隨便定人。現在代理執行長的是財務長 Colette Kress；她是誰，創辦人那種懂這一行的深度交不交得出去，<a href="/insight/ep02">EP02</a> 談過。',
       ],
-      note: '董事長這句話沒有公開的表決紀錄，是他以董事長身分代表董事會發言。',
     },
     {
       h: '董事會說不，股東手上還有四條路',
@@ -110,16 +109,15 @@ const EP03_ZH: StoryLang = {
         'Proxy access 是最便宜的一條。他持股 3.58%，跨過 3% 的門檻，持有時間也早就超過三年。',
         '卡住的是獨立性。Nasdaq 規則規定，三年內當過公司員工的人，不算獨立董事，從離職那天起算。他 2026 年 11 月卸任，<mark>要到 2029 年才算獨立</mark>。這條路他能送兩位盟友進董事會，送不了自己。',
         '兩位盟友就算當選，十席裡也只占兩席，過半要六席。現任十位董事的經歷和年資，<a href="/insight/ep01">EP01</a> 列過。',
-        '要提名自己，只能走第一條：自費打代理權之爭。提名窗口在前一年股東會週年日前 120 到 90 天。Nvidia 2026 年股東會在 6 月 24 日，推算 2027 年的窗口大約是 <b>2 月 24 日到 3 月 26 日</b>。',
+        '要提名自己，只能走第一條：自費打代理權之爭。提名窗口在前一年股東會週年日前 120 到 90 天。Nvidia 2026 年股東會在 6 月 24 日，2027 年的窗口就是 <b>2 月 24 日到 3 月 26 日</b>。',
       ],
-      note: '窗口是依章程推算；如果 2027 年股東會日期移動超過 30 天，規則另算。他辭職後有沒有賣股，查無。',
     },
     {
       h: '代理權之爭，經營層比較常贏嗎？',
       paras: [
         '要看年份。委託書徵求公司 Innisfree 統計了 2024 年上半年美國走到投票的 8 場代理權之爭：<mark>7 場經營層一席都沒丟</mark>。唯一的例外是鐵路公司 Norfolk Southern。',
-        '2023 年卻反過來。同一家公司的另一份統計：市值 10 億美元以上的大型公司，代理權之爭經營層全拿的比例只有 25%，2020 到 2022 年是 68.4%。不過 2023 年這類大公司只有 4 場，25% 就是 4 場裡 1 場。',
-        'Innisfree 兩邊的案子都接，算不上利益方，但 8 場和 4 場都是小樣本。比較穩的講法是：經營層有主場優勢，但大公司的挑戰者，近年贏得比以前多。',
+        '2023 年卻反過來。同一家公司的另一份統計：市值 10 億美元以上的大型公司，2023 年打了 4 場代理權之爭，經營層全拿的只有 1 場，25%；2020 到 2022 年，這個比例是 68.4%。',
+        '經營層仍有主場優勢，但大公司的挑戰者，近年贏得比以前多。',
       ],
     },
     {
@@ -145,10 +143,9 @@ const EP03_ZH: StoryLang = {
     {
       h: 'Roy 拿 43% 達到目的，Hewlett 拿 48.6% 輸了',
       paras: [
-        '把 Roy Disney 和 Walter Hewlett 擺在一起看。兩個人都出身創辦人家族，都繞過董事會直接找股東。Roy 只號召拒投，沒提任何候選人，拿到 43%；Hewlett 正面打代理權之爭，拿到 48.6%。',
+        '把 Roy Disney 和 Walter Hewlett 擺在一起看。兩個人都出身創辦人家族，都繞過董事會直接找股東。Roy 只號召股東拒投執行長 Eisner，沒提任何候選人，43% 的投票股數拒投；Hewlett 正面打代理權之爭，反對併購的票，初步計票是 48.6%。',
         '票比較少的 Roy，結果比較接近他要的：當晚董事會自己拔掉 Eisner 的董事長，Eisner 2005 年 9 月離任。票比較多的 Hewlett，併購照樣過關。<mark>差別不在票數，在董事會有沒有動。</mark>',
       ],
-      note: '兩個數字量的不是同一件事：43% 是拒投執行長的比例，48.6% 是反對併購的初步計票。這裡比的是結局，不是票數高低。',
     },
     {
       h: '接下來幾個月，能改變結果的只有董事會',
@@ -209,7 +206,7 @@ const EP03_ZH: StoryLang = {
     { what: 'Papa John\'s 董事會通過毒丸。', label: 'Fortune，2018-07-23', url: U.pjPill, level: 'n' },
     { what: 'Schnatter 和解離開董事會。', label: 'NBC News，2019-03-05', url: U.pjExit, level: 'n' },
   ],
-  srcNote: '一手指原始文件、本人貼文或會議錄音。媒體報導都標了等級，文中只照它們的層級引用。',
+  srcNote: '一手指原始文件、本人貼文或會議錄音。',
 }
 
 const EP03_EN: StoryLang = {
@@ -224,7 +221,7 @@ const EP03_EN: StoryLang = {
   recapH: 'What the video says: the board decides',
   recap: [
     'Steve Jobs was pushed out of Apple in 1985 and got back because Apple bought NeXT. Elon Musk, replaced at X.com, never went back. The video\'s point fits in one line: <mark>unless a founder controls the votes, the board decides.</mark> Mark Zuckerberg controls 61 percent of Meta\'s votes. Jensen Huang owns 3.58 percent, and he gave up his board seat too. Getting back on takes six of ten directors, and <a href="/insight/ep01">EP01</a> goes through who those ten are.',
-    'When the video was made, the board\'s stance came only from unnamed sources. On November 17, both sides went on the record.',
+    'On November 17, Jensen and the board both stated their positions in public.',
   ],
   sections: [
     {
@@ -232,10 +229,9 @@ const EP03_EN: StoryLang = {
       paras: [
         'On the morning of November 17, Eastern time, Jensen Huang posted a long statement on X. He opened with an apology. He said he fell short of Nvidia\'s standards, made serious mistakes in his personal life, and will cooperate with the board\'s independent investigation.',
         'Then he wrote that if the board decides his return is in the best interest of shareholders, employees, the company and America, he "would be honored to answer these calls and return as CEO." He talked about the CEO job. <b>He never mentioned his board seat.</b>',
-        'About five and a half hours later, Nvidia held its third-quarter earnings call. Chair Harvey Jones opened it. He said the board unanimously accepted the resignation and <mark>"does not intend to reinstate Jensen as CEO."</mark> The day before, reporters could only cite unnamed sources. This time the chair said it on the record, and the recording is public.',
+        'About five and a half hours later, Nvidia held its third-quarter earnings call. Chair Harvey Jones opened it. He said the board unanimously accepted the resignation and <mark>"does not intend to reinstate Jensen as CEO."</mark>',
         'He added that the board will look at internal and external candidates, and won\'t rush the pick. For now the interim CEO is CFO Colette Kress. <a href="/insight/ep02">EP02</a> looks at who she is, and whether a founder\'s depth in the business can be handed over.',
       ],
-      note: 'There is no public record of a board vote on this. Jones spoke for the board as its chair.',
     },
     {
       h: 'When the board says no, shareholders still have four moves',
@@ -253,16 +249,15 @@ const EP03_EN: StoryLang = {
         'Proxy access is the cheapest route. At 3.58 percent, he clears the 3 percent bar, and he has held his stock far longer than three years.',
         'Independence is the problem. Under Nasdaq rules, anyone employed by the company in the past three years is not an independent director, counting from the day the job ended. He left in November 2026, so <mark>he can\'t count as independent until 2029</mark>. This route can put two allies on the board. It can\'t put him there.',
         'Even if both allies win, that\'s two of ten seats, and a majority takes six. <a href="/insight/ep01">EP01</a> lists the ten sitting directors and how long each has served.',
-        'To nominate himself, he needs route one: a full proxy fight on his own dime. Nominations open 120 days and close 90 days before the anniversary of last year\'s annual meeting. Nvidia met on June 24, 2026, so the 2027 window runs roughly <b>February 24 to March 26</b>.',
+        'To nominate himself, he needs route one: a full proxy fight on his own dime. Nominations open 120 days and close 90 days before the anniversary of last year\'s annual meeting. Nvidia met on June 24, 2026, so the 2027 window runs <b>February 24 to March 26</b>.',
       ],
-      note: 'The window is our reading of the bylaws. If the 2027 meeting date moves by more than 30 days, different rules apply. We could not find whether he has sold shares since resigning.',
     },
     {
       h: 'Does management usually win a proxy fight?',
       paras: [
         'Depends on the year. Proxy solicitor Innisfree counted eight US proxy fights that went to a vote in the first half of 2024. In <mark>seven, management kept every seat</mark>. The one exception was railroad Norfolk Southern.',
-        '2023 went the other way. In another Innisfree count, management swept only 25 percent of proxy fights at companies worth more than $1 billion. From 2020 to 2022, it was 68.4 percent. But there were only four large-company fights in 2023, so 25 percent is one of four.',
-        'Innisfree works for both sides, so it has no stake here, but eight fights and four fights are both small samples. The safer read: management has home-field advantage, and challengers at big companies have been winning more often.',
+        '2023 went the other way. In another Innisfree count, companies worth more than $1 billion faced four proxy fights in 2023, and management swept only one, or 25 percent. From 2020 to 2022, the sweep rate was 68.4 percent.',
+        'Management still has home-field advantage, but challengers at big companies have been winning more often.',
       ],
     },
     {
@@ -288,10 +283,9 @@ const EP03_EN: StoryLang = {
     {
       h: 'Roy got what he wanted with 43 percent. Hewlett lost with 48.6.',
       paras: [
-        'Put Roy Disney next to Walter Hewlett. Both came from founding families, and both went around the board to shareholders. Roy only asked them to withhold votes, with no nominees of his own, and got 43 percent. Hewlett ran a full proxy fight and got 48.6 percent.',
+        'Put Roy Disney next to Walter Hewlett. Both came from founding families, and both went around the board to shareholders. Roy only asked them to withhold votes from CEO Michael Eisner, with no nominees of his own, and 43 percent of the votes cast did. Hewlett ran a full proxy fight against the merger, and the preliminary count had 48.6 percent voting no.',
         'Roy, with fewer votes, came closer to what he wanted. That same night the board took the chairman title from Eisner, and Eisner left in September 2005. Hewlett, with more votes, watched the deal go through anyway. <mark>The difference wasn\'t the vote count. It was whether the board moved.</mark>',
       ],
-      note: 'The two numbers measure different things: 43 percent withheld support from the CEO, 48.6 percent voted against the merger in the preliminary count. The comparison is about outcomes, not which number is bigger.',
     },
     {
       h: 'For the next few months, only the board can change the outcome',
@@ -352,7 +346,7 @@ const EP03_EN: StoryLang = {
     { what: 'Papa John\'s adopts a poison pill.', label: 'Fortune, Jul 23, 2018', url: U.pjPill, level: 'n' },
     { what: 'Schnatter settles and leaves the board.', label: 'NBC News, Mar 5, 2019', url: U.pjExit, level: 'n' },
   ],
-  srcNote: 'Primary means the original document, the person\'s own post, or the call recording. News reports are labeled, and the article uses them only as far as they go.',
+  srcNote: 'Primary means the original document, the person\'s own post, or the call recording.',
 }
 
 /* ───────────────────────── EP01 ───────────────────────── */
@@ -378,12 +372,12 @@ const EP01_ZH: StoryLang = {
       paras: [
         'Harvey Jones 1993 年進 Nvidia 董事會，跟公司同一年起步。11 月 12 日，他成了 Nvidia 史上第一位董事會主席。',
         '11 月 17 日，黃仁勳在 X 表態：如果董事會認為他回來，對股東、員工、公司和美國最好，他很榮幸回任執行長。同一天的財報電話會議，開口回應的就是 Jones。他說董事會一致接受辭職，<mark>「不打算讓 Jensen 回任執行長」</mark>。',
-        '影片問的是朋友圈站哪一邊。這次的答案，來自從 1993 年就坐在董事會裡的人。',
+        '影片問的是朋友圈站哪一邊。11 月 17 日的答案，來自從 1993 年就坐在董事會裡的人。',
       ],
     },
     {
       h: '十位董事是誰',
-      lead: '依加入年份排列。經歷出自 Nvidia 2026 年股東會委託書與官網董事頁。',
+      lead: '依加入年份排列。',
       items: [
         { k: 'Harvey C. Jones，1993', v: '1981 年共同創辦 Daisy Systems；1987 到 1998 年帶領晶片設計軟體公司 Synopsys，其中七年任執行長；共同創辦 Tensilica。2026 年 11 月出任董事會主席。' },
         { k: 'Tench Coxe，1993', v: '1989 到 2020 年任創投 Sutter Hill Ventures 董事總經理。' },
@@ -409,7 +403,7 @@ const EP01_ZH: StoryLang = {
       h: '有禮貌的董事會，很難開口換人',
       paras: [
         '巴菲特 2002 年寫給股東的信說，一屋子有禮貌的董事，幾乎不可能開口問要不要換執行長。',
-        'Nvidia 這次是黃仁勳自己先辭職，董事會接受。辭職的經過還在董事會的獨立調查裡，董事長說財報會議上不回答。',
+        '在 Nvidia，是黃仁勳自己先辭職，董事會接受。辭職的經過還在董事會的獨立調查裡，董事長說財報會議上不回答。',
         '所以問題倒過來了：不是董事會敢不敢換掉他，而是董事會願不願意讓他回來。坐了三十年的董事跟他最熟。熟，可以是幫他的理由，也可以是避嫌的理由。',
       ],
     },
@@ -419,15 +413,14 @@ const EP01_ZH: StoryLang = {
         { k: '11/13', v: '兩位 Nvidia 股東，Altimeter 的 Brad Gerstner 與 Atreides 的 Gavin Baker，去信董事會，要求接班程序慢一點，把他回任留在選項裡。', src: 'Semafor，11/16' },
         { k: '11/16', v: 'CNBC 引述一位知情人士：董事會沒有考慮讓他回任執行長。', src: 'CNBC，11/16' },
         { k: '11/17 上午', v: '黃仁勳在 X 表態，願意回任執行長，沒有提董事席。', src: '黃仁勳 X 貼文' },
-        { k: '11/17 傍晚', v: '董事長 Harvey Jones 在財報會議開場，具名說董事會不打算讓他回任執行長。', src: 'CNBC Television 直播' },
+        { k: '11/17 傍晚', v: '董事長 Harvey Jones 在財報會議開場說，董事會不打算讓他回任執行長。', src: 'CNBC Television 直播' },
       ],
-      note: '時間是美東時間，查到 2026 年 11 月 18 日。',
     },
   ],
   chartAfter: 0,
   chart: {
     h: '十位董事，各坐了幾年',
-    lead: '以 2026 年減去加入年份。藍色那一列，是 11 月 17 日開口說不的董事長。',
+    lead: '以 2026 年減去這一任的加入年份。藍色那一列，是 11 月 17 日開口說不的董事長。',
     max: 35,
     rows: [
       { label: 'Harvey Jones', v: 33, show: '33 年', hl: true },
@@ -441,7 +434,7 @@ const EP01_ZH: StoryLang = {
       { label: 'Melissa Lora', v: 3, show: '3 年' },
       { label: 'Suzanne Nora Johnson', v: 0.4, show: '不到 1 年' },
     ],
-    note: '自算，誤差正負一年；平均約 14.8 年，中位數 10 年。Stevens 1993 到 2006 年的第一段任期沒算進去。出處：Nvidia 2026 年委託書「Director Since」欄、2026 年 5 月 8-K。',
+    note: '出處：Nvidia 2026 年委託書、Nvidia 2026 年 5 月 8-K。',
   },
   poll: {
     id: 'ep01-board',
@@ -458,7 +451,7 @@ const EP01_ZH: StoryLang = {
   sources: [
     { what: 'Nvidia 官方公告：辭職、代理執行長、首任董事會主席。', label: 'Nvidia Newsroom〈NVIDIA Announces CEO Transition〉，2026-11-12', url: U.newsroom, level: 'p' },
     { what: '每位董事的經歷、加入年份、委員會職務，以及「任期一年、每年改選」。', label: 'Nvidia 2026 年委託書（DEF 14A），2026-05-12', url: U.nvproxy, level: 'p' },
-    { what: '補上委託書之後才加入的 Suzanne Nora Johnson。', label: 'Nvidia Form 8-K，2026 年 5 月', url: U.k8nora, level: 'p' },
+    { what: 'Suzanne Nora Johnson 加入董事會。', label: 'Nvidia Form 8-K，2026 年 5 月', url: U.k8nora, level: 'p' },
     { what: '「十位要六位」：第 19 條補董事缺額。', label: 'Nvidia 章程，2024-03-12 修訂版', url: U.bylaws, level: 'p' },
     { what: '黃仁勳表態願意回任執行長。', label: '黃仁勳 X 貼文，2026-11-17', url: U.jensenX, level: 'p' },
     { what: '董事長在財報會議說不打算讓他回任，也不回答調查相關問題。', label: 'CNBC Television，Nvidia 財報會議直播，2026-11-17', url: U.cnbcTv, level: 'p' },
@@ -466,7 +459,7 @@ const EP01_ZH: StoryLang = {
     { what: 'Gerstner 與 Baker 的信要求什麼、沒要求什麼。', label: 'Semafor，2026-11-16', url: U.semafor, level: 'n' },
     { what: '巴菲特談有禮貌的董事會。', label: 'Berkshire Hathaway 2002 年股東信', url: U.buffett, level: 'p' },
   ],
-  srcNote: '一手指原始申報文件、本人貼文或會議錄音。媒體報導都標了等級，文中只照它們的層級引用。',
+  srcNote: '一手指原始申報文件、本人貼文或會議錄音。',
 }
 
 const EP01_EN: StoryLang = {
@@ -490,12 +483,12 @@ const EP01_EN: StoryLang = {
       paras: [
         'Harvey Jones joined Nvidia\'s board in 1993, the year the company started. On November 12, he became its first-ever board chair.',
         'On November 17, Jensen posted on X that if the board decides his return is in the best interest of shareholders, employees, the company and America, he would be honored to return as CEO. On the earnings call that same day, Jones was the one who answered. He said the board unanimously accepted the resignation and <mark>"does not intend to reinstate Jensen as CEO."</mark>',
-        'The video asks whose side the friends will take. This time the answer came from someone who has been in the room since 1993.',
+        'The video asks whose side the friends will take. On November 17, the answer came from someone who has been in the room since 1993.',
       ],
     },
     {
       h: 'Who the ten directors are',
-      lead: 'Listed by the year each one joined. Backgrounds come from Nvidia\'s 2026 proxy statement and its board pages.',
+      lead: 'Listed by the year each one joined.',
       items: [
         { k: 'Harvey C. Jones, 1993', v: 'Co-founded Daisy Systems in 1981. Led chip design software company Synopsys from 1987 to 1998, seven of those years as CEO. Co-founded Tensilica. Named board chair in November 2026.' },
         { k: 'Tench Coxe, 1993', v: 'Managing director at venture firm Sutter Hill Ventures from 1989 to 2020.' },
@@ -531,15 +524,14 @@ const EP01_EN: StoryLang = {
         { k: 'Nov 13', v: 'Two Nvidia shareholders, Brad Gerstner of Altimeter and Gavin Baker of Atreides, asked the board in a letter for a slow, deliberate search that keeps his return on the table.', src: 'Semafor, Nov 16' },
         { k: 'Nov 16', v: 'CNBC cited one person familiar with the matter: the board is not considering bringing him back as CEO.', src: 'CNBC, Nov 16' },
         { k: 'Nov 17, morning', v: 'Jensen posted on X that he would return as CEO. He did not mention the board seat.', src: 'Jensen Huang on X' },
-        { k: 'Nov 17, evening', v: 'Chair Harvey Jones opened the earnings call and said, on the record, the board does not intend to reinstate him as CEO.', src: 'CNBC Television live' },
+        { k: 'Nov 17, evening', v: 'Chair Harvey Jones opened the earnings call and said the board does not intend to reinstate him as CEO.', src: 'CNBC Television live' },
       ],
-      note: 'Eastern time. Last checked November 18, 2026.',
     },
   ],
   chartAfter: 0,
   chart: {
     h: 'How long each director has served',
-    lead: '2026 minus the year each one joined. The blue bar is the chair who said no on November 17.',
+    lead: '2026 minus the year each one began the current stint. The blue bar is the chair who said no on November 17.',
     max: 35,
     rows: [
       { label: 'Harvey Jones', v: 33, show: '33 yrs', hl: true },
@@ -553,7 +545,7 @@ const EP01_EN: StoryLang = {
       { label: 'Melissa Lora', v: 3, show: '3 yrs' },
       { label: 'Suzanne Nora Johnson', v: 0.4, show: 'Under 1' },
     ],
-    note: 'Our math, give or take a year. Average about 14.8 years, median 10. Stevens\'s first stint, 1993 to 2006, is not counted. Sources: "Director Since" in Nvidia\'s 2026 proxy; 8-K, May 2026.',
+    note: 'Sources: Nvidia 2026 proxy; Nvidia 8-K, May 2026.',
   },
   poll: {
     id: 'ep01-board',
@@ -570,7 +562,7 @@ const EP01_EN: StoryLang = {
   sources: [
     { what: 'Nvidia\'s announcement: the resignation, the interim CEO and the first board chair.', label: 'Nvidia Newsroom, "NVIDIA Announces CEO Transition," Nov 12, 2026', url: U.newsroom, level: 'p' },
     { what: 'Every director\'s bio, join year and committee role, plus one-year terms elected annually.', label: 'Nvidia 2026 proxy statement (DEF 14A), May 12, 2026', url: U.nvproxy, level: 'p' },
-    { what: 'Adds Suzanne Nora Johnson, who joined after the proxy.', label: 'Nvidia Form 8-K, May 2026', url: U.k8nora, level: 'p' },
+    { what: 'Suzanne Nora Johnson joins the board.', label: 'Nvidia Form 8-K, May 2026', url: U.k8nora, level: 'p' },
     { what: 'Six of ten: Section 19 on filling an open seat.', label: 'Nvidia bylaws, amended Mar 12, 2024', url: U.bylaws, level: 'p' },
     { what: 'Jensen offers to return as CEO.', label: 'Jensen Huang on X, Nov 17, 2026', url: U.jensenX, level: 'p' },
     { what: 'The chair says no on the earnings call and declines questions on the investigation.', label: 'CNBC Television, Nvidia earnings call live, Nov 17, 2026', url: U.cnbcTv, level: 'p' },
@@ -578,7 +570,7 @@ const EP01_EN: StoryLang = {
     { what: 'What the Gerstner and Baker letter asked for, and what it did not.', label: 'Semafor, Nov 16, 2026', url: U.semafor, level: 'n' },
     { what: 'Buffett on polite boardrooms.', label: 'Berkshire Hathaway 2002 letter to shareholders', url: U.buffett, level: 'p' },
   ],
-  srcNote: 'Primary means the original filing, the person\'s own post, or the call recording. News reports are labeled, and the article uses them only as far as they go.',
+  srcNote: 'Primary means the original filing, the person\'s own post, or the call recording.',
 }
 
 /* ───────────────────────── EP02 ───────────────────────── */
@@ -640,7 +632,7 @@ const EP02_ZH: StoryLang = {
       { label: 'Kress 在 Microsoft', v: 13, show: '13 年' },
       { label: 'Kress 在 Cisco', v: 3, show: '3 年' },
     ],
-    note: '出處：Nvidia 2026 年 10-K（黃仁勳 1985 到 1993 年在 LSI Logic）、Nvidia 官網 Colette Kress 簡介。黃仁勳在 AMD 的起始年份，Nvidia 自己的兩份文件寫法不同（1983 或 1984），所以沒畫。',
+    note: '出處：Nvidia 2026 年 10-K、Nvidia 官網 Colette Kress 簡介。',
   },
   poll: {
     id: 'ep02-successor',
@@ -665,7 +657,7 @@ const EP02_ZH: StoryLang = {
     { what: '黃仁勳表態願意回任執行長。', label: '黃仁勳 X 貼文，2026-11-17', url: U.jensenX, level: 'p' },
     { what: 'Bessent 說要大幅改組、找外部的人。', label: 'AP（PBS NewsHour 轉載），2026-11-16', url: U.ap, level: 'n' },
   ],
-  srcNote: '一手指原始文件、本人文章、貼文或會議錄音。媒體報導都標了等級，文中只照它們的層級引用。',
+  srcNote: '一手指原始文件、本人文章、貼文或會議錄音。',
 }
 
 const EP02_EN: StoryLang = {
@@ -725,7 +717,7 @@ const EP02_EN: StoryLang = {
       { label: 'Kress at Microsoft', v: 13, show: '13 yrs' },
       { label: 'Kress at Cisco', v: 3, show: '3 yrs' },
     ],
-    note: 'Sources: Nvidia 10-K, Feb 2026 (Jensen at LSI Logic, 1985 to 1993); Nvidia\'s bio of Colette Kress. Nvidia\'s own filings disagree on when Jensen started at AMD (1983 or 1984), so it is left out.',
+    note: 'Sources: Nvidia 10-K, Feb 2026; Nvidia\'s bio of Colette Kress.',
   },
   poll: {
     id: 'ep02-successor',
@@ -741,7 +733,7 @@ const EP02_EN: StoryLang = {
   levels: LV_EN,
   sources: [
     { what: 'YC on founder/market fit, and the Flexport example.', label: 'Jared Friedman, "How to Get Startup Ideas," YC Startup Library', url: U.ycFriedman, level: 'p' },
-    { what: 'Jensen\'s years at AMD and LSI Logic.', label: 'Nvidia Form 10-K, Feb 25, 2026', url: U.tenK, level: 'p' },
+    { what: 'Jensen\'s work at AMD and LSI Logic.', label: 'Nvidia Form 10-K, Feb 25, 2026', url: U.tenK, level: 'p' },
     { what: 'Kress joins in September 2013; Microsoft, Cisco and Texas Instruments before that.', label: 'Nvidia Newsroom, Colette Kress bio', url: U.kress, level: 'p' },
     { what: 'Fit can be developed, is often overestimated, and the term comes from David Lee.', label: 'Chris Dixon, "Founder/market fit," Jun 19, 2011', url: U.dixon, level: 'p' },
     { what: 'Finding versus maximizing, and the three ingredients.', label: 'Ben Horowitz, "Why We Prefer Founding CEOs," a16z, Apr 28, 2010', url: U.horowitz, level: 'p' },
@@ -750,7 +742,7 @@ const EP02_EN: StoryLang = {
     { what: 'Jensen offers to return as CEO.', label: 'Jensen Huang on X, Nov 17, 2026', url: U.jensenX, level: 'p' },
     { what: 'Bessent on a shake-up and an outside CEO.', label: 'AP via PBS NewsHour, Nov 16, 2026', url: U.ap, level: 'n' },
   ],
-  srcNote: 'Primary means the original filing, the author\'s own essay or post, or the call recording. News reports are labeled, and the article uses them only as far as they go.',
+  srcNote: 'Primary means the original filing, the author\'s own essay or post, or the call recording.',
 }
 
 /* ───────────────────────── EP04 ───────────────────────── */
@@ -808,7 +800,7 @@ const EP04_ZH: StoryLang = {
       { label: 'Superhuman，三季之後', v: 58, show: '58%', hl: true },
       { label: 'Slack，2015 年', v: 51, show: '51%' },
     ],
-    note: '出處：Rahul Vohra〈How Superhuman Built an Engine to Find Product Market Fit〉，First Round Review，2018。Slack 數字是 Hiten Shah 2015 年的調查，731 位用戶，由同一篇文章轉述。',
+    note: '出處：Rahul Vohra〈How Superhuman Built an Engine to Find Product Market Fit〉，First Round Review，2018。',
   },
   poll: {
     id: 'ep04-weakest',
@@ -824,12 +816,12 @@ const EP04_ZH: StoryLang = {
   sourcesH: '出處',
   levels: LV_ZH,
   sources: [
-    { what: 'Sean Ellis 的「非常失望」問題與四成門檻。', label: 'Sean Ellis〈The Startup Pyramid〉，約 2009 年（Wayback 存檔）', url: U.ellis, level: 'p' },
+    { what: 'Sean Ellis 的「非常失望」問題與四成門檻。', label: 'Sean Ellis〈The Startup Pyramid〉', url: U.ellis, level: 'p' },
     { what: 'Superhuman 從 22%、33% 到 58% 的經過與四個步驟，以及 Slack 51%。', label: 'Rahul Vohra〈How Superhuman Built an Engine to Find Product Market Fit〉，First Round Review，2018', url: U.superhuman, level: 'p' },
     { what: '留存曲線要走平。', label: 'Y Combinator〈How To Keep Your Users〉，Startup School（11:54）', url: U.ycRetain, level: 'p' },
     { what: 'LTV 與 CAC。', label: 'Y Combinator〈Consumer Startup Metrics〉，Startup School（7:37）', url: U.ycMetrics, level: 'p' },
   ],
-  srcNote: '一手指作者本人的文章或演講。Slack 的數字是 Superhuman 那篇文章轉述 Hiten Shah 的調查。',
+  srcNote: '一手指作者本人的文章或演講。',
 }
 
 const EP04_EN: StoryLang = {
@@ -885,7 +877,7 @@ const EP04_EN: StoryLang = {
       { label: 'Superhuman, three quarters later', v: 58, show: '58%', hl: true },
       { label: 'Slack, 2015', v: 51, show: '51%' },
     ],
-    note: 'Source: Rahul Vohra, "How Superhuman Built an Engine to Find Product Market Fit," First Round Review, 2018. The Slack figure is Hiten Shah\'s 2015 survey of 731 users, as cited in the same article.',
+    note: 'Source: Rahul Vohra, "How Superhuman Built an Engine to Find Product Market Fit," First Round Review, 2018.',
   },
   poll: {
     id: 'ep04-weakest',
@@ -901,12 +893,12 @@ const EP04_EN: StoryLang = {
   sourcesH: 'Sources',
   levels: LV_EN,
   sources: [
-    { what: 'Sean Ellis\'s "very disappointed" question and the 40 percent bar.', label: 'Sean Ellis, "The Startup Pyramid," about 2009 (Wayback snapshot)', url: U.ellis, level: 'p' },
+    { what: 'Sean Ellis\'s "very disappointed" question and the 40 percent bar.', label: 'Sean Ellis, "The Startup Pyramid"', url: U.ellis, level: 'p' },
     { what: 'Superhuman\'s 22, 33 and 58 percent, the four steps, and Slack\'s 51 percent.', label: 'Rahul Vohra, "How Superhuman Built an Engine to Find Product Market Fit," First Round Review, 2018', url: U.superhuman, level: 'p' },
     { what: 'Retention should level off.', label: 'Y Combinator, "How To Keep Your Users," Startup School (11:54)', url: U.ycRetain, level: 'p' },
     { what: 'LTV and CAC.', label: 'Y Combinator, "Consumer Startup Metrics," Startup School (7:37)', url: U.ycMetrics, level: 'p' },
   ],
-  srcNote: 'Primary means the author\'s own essay or talk. The Slack figure is Hiten Shah\'s survey as cited in the Superhuman article.',
+  srcNote: 'Primary means the author\'s own essay or talk.',
 }
 
 export const EP_STORY: Record<string, { en: StoryLang; zh: StoryLang; ogDesc?: string }> = {

@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "check:story": "python3 scripts/check_story_meta.py",
+    "prebuild": "npm run check:story",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "DEPLOY_TARGET=cf vite build && npx wrangler@latest pages deploy dist --project-name=trinity",
-    "deploy:cf": "DEPLOY_TARGET=cf vite build && npx wrangler@latest pages deploy dist --project-name=trinity",
+    "deploy": "npm run check:story && DEPLOY_TARGET=cf vite build && npx wrangler@latest pages deploy dist --project-name=trinity",
+    "deploy:cf": "npm run check:story && DEPLOY_TARGET=cf vite build && npx wrangler@latest pages deploy dist --project-name=trinity",
     "deploy:ghredirect": "npx gh-pages -d gh-redirect --dotfiles"
   },
   "dependencies": {
