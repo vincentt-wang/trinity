@@ -1564,6 +1564,8 @@ html[lang^=zh] .ep-quote blockquote::before{content:"「"}html[lang^=zh] .ep-quo
 .st p{font-size:1.08rem;line-height:1.85;color:var(--ink);max-width:68ch;margin:14px 0 0}
 .st mark{background:linear-gradient(transparent 55%,rgba(37,99,235,.2) 55%);color:inherit;padding:0 2px}
 .st b{font-weight:700;color:var(--ink)}
+.st p a{color:var(--earth);font-weight:600;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.st p a:hover{text-decoration-thickness:2px}
 .st-lead{color:var(--ink-soft) !important}
 .st-note{font-size:1rem !important;line-height:1.65 !important;color:var(--ink-dim) !important}
 .st-recap{margin-top:34px;padding:22px 24px 26px;border:1px solid var(--line);border-radius:20px;background:var(--bg-soft)}

@@ -59,6 +59,10 @@ const U = {
   ellis: 'http://web.archive.org/web/20100101133515/http://startup-marketing.com:80/the-startup-pyramid/',
   ycRetain: 'https://www.youtube.com/watch?v=VNxBZ7ka5J0',
   ycMetrics: 'https://www.youtube.com/watch?v=fdD4y4Civp4',
+  apple98: 'https://www.sec.gov/Archives/edgar/data/320193/0001047469-98-010062.txt',
+  apple97: 'https://www.mactech.com/1997/08/07/md1-apple-keynote-ms-announcement/',
+  twtr16: 'https://www.sec.gov/Archives/edgar/data/1418091/000119312516543310/d131234ddef14a.htm',
+  pypl02: 'https://www.sec.gov/Archives/edgar/data/1103415/000091205702006471/a2071068z424b4.htm',
 }
 const LV_ZH = { p: '一手', n: '媒體報導', s: '多家轉述' }
 const LV_EN = { p: 'Primary', n: 'News report', s: 'Secondary' }
@@ -76,7 +80,8 @@ const EP03_ZH: StoryLang = {
   },
   recapH: '影片的結論：董事會說了算',
   recap: [
-    '影片從一個數字開始：美國一份研究裡，大約 45% 的年輕人分手後又復合過。公司也會跟創辦人分手。Jobs 回到 Apple，靠的是 Apple 買下 NeXT；馬斯克被 X.com 換掉後，再也沒回去。結論只有一句：<mark>除非創辦人握有投票權，不然董事會說了算。</mark>黃仁勳持股 3.58%，一股一票，連董事席也辭了。',
+    'Jobs 1985 年被擠出 Apple，回去靠的是 Apple 買下 NeXT；馬斯克被 X.com 換掉後，再也沒回去。影片的結論只有一句：<mark>除非創辦人握有投票權，不然董事會說了算。</mark>祖克柏握有 Meta 61% 的投票權，黃仁勳持股 3.58%，連董事席也辭了。要回董事會，十位董事要六位點頭；這十位是誰，<a href="/insight/ep01">EP01</a> 一位一位列過。',
+    '影片定稿時，董事會的態度還只有匿名報導。11 月 17 日，兩邊都公開表態了。',
   ],
   sections: [
     {
@@ -85,7 +90,7 @@ const EP03_ZH: StoryLang = {
         '美東時間 11 月 17 日上午，黃仁勳在 X 發了一篇長文。他先認錯：沒有做到 Nvidia 對每個人的要求，私生活上犯了嚴重的錯，會配合董事會的獨立調查。',
         '接著他寫，如果董事會認為他回來，對股東、員工、公司和美國最好，他「很榮幸回應這些呼聲，回任執行長」。他講的是執行長，<b>董事席一個字都沒提</b>。',
         '大約五個半小時後，Nvidia 開第三季財報電話會議。董事長 Harvey Jones 一開場就說，董事會一致接受他的辭職，<mark>「不打算讓 Jensen 回任執行長」</mark>。前一天各家報導只能引述匿名人士，這次是董事長具名、公開講，錄音查得到。',
-        '他也說，接班人選內部、外部都會找，不會為了快而隨便定人。',
+        '他也說，接班人選內部、外部都會找，不會為了快而隨便定人。現在代理執行長的是財務長 Colette Kress；她是誰，創辦人那種懂這一行的深度交不交得出去，<a href="/insight/ep02">EP02</a> 談過。',
       ],
       note: '董事長這句話沒有公開的表決紀錄，是他以董事長身分代表董事會發言。',
     },
@@ -104,7 +109,7 @@ const EP03_ZH: StoryLang = {
       paras: [
         'Proxy access 是最便宜的一條。他持股 3.58%，跨過 3% 的門檻，持有時間也早就超過三年。',
         '卡住的是獨立性。Nasdaq 規則規定，三年內當過公司員工的人，不算獨立董事，從離職那天起算。他 2026 年 11 月卸任，<mark>要到 2029 年才算獨立</mark>。這條路他能送兩位盟友進董事會，送不了自己。',
-        '兩位盟友就算當選，離董事會過半還很遠。',
+        '兩位盟友就算當選，十席裡也只占兩席，過半要六席。現任十位董事的經歷和年資，<a href="/insight/ep01">EP01</a> 列過。',
         '要提名自己，只能走第一條：自費打代理權之爭。提名窗口在前一年股東會週年日前 120 到 90 天。Nvidia 2026 年股東會在 6 月 24 日，推算 2027 年的窗口大約是 <b>2 月 24 日到 3 月 26 日</b>。',
       ],
       note: '窗口是依章程推算；如果 2027 年股東會日期移動超過 30 天，規則另算。他辭職後有沒有賣股，查無。',
@@ -113,9 +118,20 @@ const EP03_ZH: StoryLang = {
       h: '代理權之爭，經營層比較常贏嗎？',
       paras: [
         '要看年份。委託書徵求公司 Innisfree 統計了 2024 年上半年美國走到投票的 8 場代理權之爭：<mark>7 場經營層一席都沒丟</mark>。唯一的例外是鐵路公司 Norfolk Southern。',
-        '2023 年卻反過來。同一家公司的另一份統計：市值 10 億美元以上的大型公司，代理權之爭經營層全拿的比例只有 25%，2020 到 2022 年是 68.4%。',
-        'Innisfree 兩邊的案子都接，算不上利益方，但 8 場的樣本很小。比較穩的講法是：經營層有主場優勢，但大公司的挑戰者，近年贏得比以前多。',
+        '2023 年卻反過來。同一家公司的另一份統計：市值 10 億美元以上的大型公司，代理權之爭經營層全拿的比例只有 25%，2020 到 2022 年是 68.4%。不過 2023 年這類大公司只有 4 場，25% 就是 4 場裡 1 場。',
+        'Innisfree 兩邊的案子都接，算不上利益方，但 8 場和 4 場都是小樣本。比較穩的講法是：經營層有主場優勢，但大公司的挑戰者，近年贏得比以前多。',
       ],
+    },
+    {
+      h: '持股多，不等於回得去',
+      lead: '把被拿掉的創辦人排在一起看持股，回得去的，反而不是持股多的。',
+      items: [
+        { k: 'Steve Jobs，Apple：1 股，回來了', v: 'Apple 買下 NeXT 之後，他 1997 年回任臨時執行長。1998 年 Apple 委託書的持股表上，他只有 <b>1 股</b>。他靠的是董事會：1997 年 8 月，Apple 董事會六席換掉四席，他自己是新進的四位之一。', src: 'Apple 1998 年委託書；Apple 新聞稿，1997-08-06（MacTech 轉載）' },
+        { k: 'Jack Dorsey，Twitter：3.40%，回來了', v: '2008 年被拉下執行長，但他沒離開，接著當了七年董事長。2015 年回任執行長。2016 年委託書上，他持股 <b>3.40%</b>，一股一票，沒有特別股。', src: 'Twitter 2016 年委託書' },
+        { k: 'Elon Musk，PayPal：13.0%，沒回去', v: '2000 年 9 月，董事會讓 Peter Thiel 接任執行長。2002 年 PayPal 上市時，他仍是<b>最大股東</b>，上市前持股 13.0%，也還是董事，但沒再當回執行長。同年 eBay 收購 PayPal，他出場。', src: 'PayPal 2002 年上市公開說明書' },
+        { k: '黃仁勳，Nvidia：3.58%，董事席也辭了', v: '持股跟 Dorsey 差不多。差別在 Dorsey 被拉下執行長後一直坐在董事會裡，<b>那是他回得來的位子</b>；黃仁勳辭職時，董事席一起辭了。', src: 'Nvidia 2026 年委託書；Nvidia 官方公告，2026-11-12' },
+      ],
+      note: '回來的兩位，靠的都不是股份：Jobs 是董事會換了人，Dorsey 是人一直沒離開董事會。持股最多的 Musk 沒回去，下面持股約三成的 Schnatter 也沒有。',
     },
     {
       h: '四個前例，四種結局',
@@ -125,6 +141,14 @@ const EP03_ZH: StoryLang = {
         { k: 'Sam Altman，OpenAI，2023', v: 'OpenAI 是非營利組織控制，沒有一般股東可以投票，他的籌碼是員工。被開除後，大部分員工簽信揚言離職。五天後他回任執行長，<b>同時換上新的董事會</b>：Bret Taylor、Larry Summers、Adam D\'Angelo。他自己的董事席，要到 2024 年 3 月才回來。', src: 'OpenAI 官方 X，2023-11-22；The Verge，2024-03-08' },
         { k: 'John Schnatter，Papa John\'s，2018 到 2019', v: '創辦人。2018 年 7 月，他在內部電話會議用了種族歧視字眼，被揭露後辭去董事長。他和關係人當時持股超過 30%，董事會隨即通過毒丸（poison pill，有人持股超過門檻，其他股東就能低價增股，把他稀釋掉）。2019 年 3 月和解，他離開董事會。<b>持股約三成，也沒能回去。</b>', src: 'Fortune，2018-07-23；NBC News，2019-03-05' },
       ],
+    },
+    {
+      h: 'Roy 拿 43% 達到目的，Hewlett 拿 48.6% 輸了',
+      paras: [
+        '把 Roy Disney 和 Walter Hewlett 擺在一起看。兩個人都出身創辦人家族，都繞過董事會直接找股東。Roy 只號召拒投，沒提任何候選人，拿到 43%；Hewlett 正面打代理權之爭，拿到 48.6%。',
+        '票比較少的 Roy，結果比較接近他要的：當晚董事會自己拔掉 Eisner 的董事長，Eisner 2005 年 9 月離任。票比較多的 Hewlett，併購照樣過關。<mark>差別不在票數，在董事會有沒有動。</mark>',
+      ],
+      note: '兩個數字量的不是同一件事：43% 是拒投執行長的比例，48.6% 是反對併購的初步計票。這裡比的是結局，不是票數高低。',
     },
     {
       h: '接下來幾個月，能改變結果的只有董事會',
@@ -178,6 +202,10 @@ const EP03_ZH: StoryLang = {
     { what: 'Hewlett 敗訴後不上訴。', label: 'eWeek，2002', url: U.hpEweek, level: 'n' },
     { what: 'Altman 回任執行長、換上新董事會。', label: 'OpenAI 官方 X，2023-11-22', url: U.oaiX, level: 'p' },
     { what: 'Altman 2024 年 3 月回到董事會。', label: 'The Verge，2024-03-08', url: U.verge, level: 'n' },
+    { what: 'Jobs 1998 年只持有 1 股 Apple。', label: 'Apple 1998 年委託書（DEF 14A）', url: U.apple98, level: 'p' },
+    { what: 'Apple 1997 年 8 月董事會六席換掉四席。', label: 'Apple 新聞稿，1997-08-06（MacTech 轉載）', url: U.apple97, level: 'p' },
+    { what: 'Dorsey 當了七年董事長、2015 年回任執行長、持股 3.40%。', label: 'Twitter 2016 年委託書（DEF 14A）', url: U.twtr16, level: 'p' },
+    { what: 'Musk 卸任執行長的時間，以及上市前持股 13.0%。', label: 'PayPal 上市公開說明書（424B4），2002', url: U.pypl02, level: 'p' },
     { what: 'Papa John\'s 董事會通過毒丸。', label: 'Fortune，2018-07-23', url: U.pjPill, level: 'n' },
     { what: 'Schnatter 和解離開董事會。', label: 'NBC News，2019-03-05', url: U.pjExit, level: 'n' },
   ],
@@ -195,7 +223,8 @@ const EP03_EN: StoryLang = {
   },
   recapH: 'What the video says: the board decides',
   recap: [
-    'The video opens with one number: in one US study, about 45 percent of young adults broke up and got back together. Companies break up with founders too. Steve Jobs got back to Apple because Apple bought NeXT. Elon Musk, replaced at X.com, never went back. The point fits in one line: <mark>unless a founder controls the votes, the board decides.</mark> Jensen Huang owns 3.58 percent, one vote per share, and he gave up his board seat too.',
+    'Steve Jobs was pushed out of Apple in 1985 and got back because Apple bought NeXT. Elon Musk, replaced at X.com, never went back. The video\'s point fits in one line: <mark>unless a founder controls the votes, the board decides.</mark> Mark Zuckerberg controls 61 percent of Meta\'s votes. Jensen Huang owns 3.58 percent, and he gave up his board seat too. Getting back on takes six of ten directors, and <a href="/insight/ep01">EP01</a> goes through who those ten are.',
+    'When the video was made, the board\'s stance came only from unnamed sources. On November 17, both sides went on the record.',
   ],
   sections: [
     {
@@ -204,7 +233,7 @@ const EP03_EN: StoryLang = {
         'On the morning of November 17, Eastern time, Jensen Huang posted a long statement on X. He opened with an apology. He said he fell short of Nvidia\'s standards, made serious mistakes in his personal life, and will cooperate with the board\'s independent investigation.',
         'Then he wrote that if the board decides his return is in the best interest of shareholders, employees, the company and America, he "would be honored to answer these calls and return as CEO." He talked about the CEO job. <b>He never mentioned his board seat.</b>',
         'About five and a half hours later, Nvidia held its third-quarter earnings call. Chair Harvey Jones opened it. He said the board unanimously accepted the resignation and <mark>"does not intend to reinstate Jensen as CEO."</mark> The day before, reporters could only cite unnamed sources. This time the chair said it on the record, and the recording is public.',
-        'He added that the board will look at internal and external candidates, and won\'t rush the pick.',
+        'He added that the board will look at internal and external candidates, and won\'t rush the pick. For now the interim CEO is CFO Colette Kress. <a href="/insight/ep02">EP02</a> looks at who she is, and whether a founder\'s depth in the business can be handed over.',
       ],
       note: 'There is no public record of a board vote on this. Jones spoke for the board as its chair.',
     },
@@ -223,7 +252,7 @@ const EP03_EN: StoryLang = {
       paras: [
         'Proxy access is the cheapest route. At 3.58 percent, he clears the 3 percent bar, and he has held his stock far longer than three years.',
         'Independence is the problem. Under Nasdaq rules, anyone employed by the company in the past three years is not an independent director, counting from the day the job ended. He left in November 2026, so <mark>he can\'t count as independent until 2029</mark>. This route can put two allies on the board. It can\'t put him there.',
-        'Even if both allies win, they are a long way from a majority.',
+        'Even if both allies win, that\'s two of ten seats, and a majority takes six. <a href="/insight/ep01">EP01</a> lists the ten sitting directors and how long each has served.',
         'To nominate himself, he needs route one: a full proxy fight on his own dime. Nominations open 120 days and close 90 days before the anniversary of last year\'s annual meeting. Nvidia met on June 24, 2026, so the 2027 window runs roughly <b>February 24 to March 26</b>.',
       ],
       note: 'The window is our reading of the bylaws. If the 2027 meeting date moves by more than 30 days, different rules apply. We could not find whether he has sold shares since resigning.',
@@ -232,9 +261,20 @@ const EP03_EN: StoryLang = {
       h: 'Does management usually win a proxy fight?',
       paras: [
         'Depends on the year. Proxy solicitor Innisfree counted eight US proxy fights that went to a vote in the first half of 2024. In <mark>seven, management kept every seat</mark>. The one exception was railroad Norfolk Southern.',
-        '2023 went the other way. In another Innisfree count, management swept only 25 percent of proxy fights at companies worth more than $1 billion. From 2020 to 2022, it was 68.4 percent.',
-        'Innisfree works for both sides, so it has no stake here, but eight fights is a small sample. The safer read: management has home-field advantage, and challengers at big companies have been winning more often.',
+        '2023 went the other way. In another Innisfree count, management swept only 25 percent of proxy fights at companies worth more than $1 billion. From 2020 to 2022, it was 68.4 percent. But there were only four large-company fights in 2023, so 25 percent is one of four.',
+        'Innisfree works for both sides, so it has no stake here, but eight fights and four fights are both small samples. The safer read: management has home-field advantage, and challengers at big companies have been winning more often.',
       ],
+    },
+    {
+      h: 'A bigger stake doesn\'t get you back',
+      lead: 'Line up founders who were pushed out and look at what they owned. The ones who got back were not the ones who owned the most.',
+      items: [
+        { k: 'Steve Jobs, Apple: 1 share, came back', v: 'After Apple bought NeXT, he returned as interim CEO in 1997. In Apple\'s 1998 proxy, his line in the ownership table reads <b>1 share</b>. What he had was the board: in August 1997, four of Apple\'s six seats turned over, and he was one of the four new directors.', src: 'Apple 1998 proxy; Apple press release, Aug 6, 1997 (MacTech reprint)' },
+        { k: 'Jack Dorsey, Twitter: 3.40 percent, came back', v: 'Pushed out as CEO in 2008, he never left. He served as chairman for the next seven years and became CEO again in 2015. Twitter\'s 2016 proxy puts his stake at <b>3.40 percent</b>, one vote per share, no special class.', src: 'Twitter 2016 proxy' },
+        { k: 'Elon Musk, PayPal: 13.0 percent, never went back', v: 'In September 2000 the board made Peter Thiel CEO. When PayPal went public in 2002, Musk was still the <b>largest shareholder</b>, at 13.0 percent before the offering, and still a director. He never got the CEO job back. eBay bought PayPal that same year, and he cashed out.', src: 'PayPal IPO prospectus, 2002' },
+        { k: 'Jensen Huang, Nvidia: 3.58 percent, gave up his seat', v: 'About the same stake as Dorsey. The difference: Dorsey stayed on the board after losing the CEO job, and <b>that seat was his way back</b>. Jensen gave up his seat when he resigned.', src: 'Nvidia 2026 proxy; Nvidia announcement, Nov 12, 2026' },
+      ],
+      note: 'Neither of the two who came back did it with shares. For Jobs, the board changed. Dorsey never left it. Musk, the largest holder, didn\'t get back, and neither did Schnatter with about 30 percent, below.',
     },
     {
       h: 'Four precedents, four endings',
@@ -244,6 +284,14 @@ const EP03_EN: StoryLang = {
         { k: 'Sam Altman, OpenAI, 2023', v: 'OpenAI is controlled by a nonprofit, so there were no regular shareholders to vote. What he had was the staff. After he was fired, most employees signed a letter threatening to quit. Five days later he was back as CEO, <b>with a new board</b>: Bret Taylor, Larry Summers and Adam D\'Angelo. He didn\'t get his own board seat back until March 2024.', src: 'OpenAI on X, Nov 22, 2023; The Verge, Mar 8, 2024' },
         { k: 'John Schnatter, Papa John\'s, 2018 to 2019', v: 'The founder. In July 2018, after it came out that he used a racial slur on an internal call, he resigned as chairman. He and his affiliates owned more than 30 percent. The board quickly adopted a poison pill (a plan that lets other shareholders buy cheap stock and dilute anyone who crosses a set stake). In March 2019 he settled and left the board. <b>Owning about 30 percent wasn\'t enough to get back.</b>', src: 'Fortune, Jul 23, 2018; NBC News, Mar 5, 2019' },
       ],
+    },
+    {
+      h: 'Roy got what he wanted with 43 percent. Hewlett lost with 48.6.',
+      paras: [
+        'Put Roy Disney next to Walter Hewlett. Both came from founding families, and both went around the board to shareholders. Roy only asked them to withhold votes, with no nominees of his own, and got 43 percent. Hewlett ran a full proxy fight and got 48.6 percent.',
+        'Roy, with fewer votes, came closer to what he wanted. That same night the board took the chairman title from Eisner, and Eisner left in September 2005. Hewlett, with more votes, watched the deal go through anyway. <mark>The difference wasn\'t the vote count. It was whether the board moved.</mark>',
+      ],
+      note: 'The two numbers measure different things: 43 percent withheld support from the CEO, 48.6 percent voted against the merger in the preliminary count. The comparison is about outcomes, not which number is bigger.',
     },
     {
       h: 'For the next few months, only the board can change the outcome',
@@ -297,6 +345,10 @@ const EP03_EN: StoryLang = {
     { what: 'Hewlett decides not to appeal.', label: 'eWeek, 2002', url: U.hpEweek, level: 'n' },
     { what: 'Altman returns as CEO with a new board.', label: 'OpenAI on X, Nov 22, 2023', url: U.oaiX, level: 'p' },
     { what: 'Altman rejoins the board in March 2024.', label: 'The Verge, Mar 8, 2024', url: U.verge, level: 'n' },
+    { what: 'Jobs owned 1 share of Apple in 1998.', label: 'Apple 1998 proxy statement (DEF 14A)', url: U.apple98, level: 'p' },
+    { what: 'Four of Apple\'s six board seats turn over in August 1997.', label: 'Apple press release, Aug 6, 1997 (MacTech reprint)', url: U.apple97, level: 'p' },
+    { what: 'Dorsey as chairman for seven years, CEO again in 2015, 3.40 percent stake.', label: 'Twitter 2016 proxy statement (DEF 14A)', url: U.twtr16, level: 'p' },
+    { what: 'When Musk stopped being CEO, and his 13.0 percent stake before the IPO.', label: 'PayPal IPO prospectus (424B4), 2002', url: U.pypl02, level: 'p' },
     { what: 'Papa John\'s adopts a poison pill.', label: 'Fortune, Jul 23, 2018', url: U.pjPill, level: 'n' },
     { what: 'Schnatter settles and leaves the board.', label: 'NBC News, Mar 5, 2019', url: U.pjExit, level: 'n' },
   ],
@@ -349,7 +401,7 @@ const EP01_ZH: StoryLang = {
       h: '每年都能換，實際上很少換',
       paras: [
         'Nvidia 每位董事任期一年，每年股東會改選。理論上，股東每年都有機會換掉任何一位。',
-        '實際上，候選人是董事會自己的提名與公司治理委員會挑的，主席是 2019 年加入的律師 Stephen Neal。股東收到的委託書（proxy，寄給全體股東的投票說明與選票）上，只有公司提的名單。要換人，就得自己提名、自己拉票，也就是代理權之爭（proxy fight）。',
+        '實際上，候選人是董事會自己的提名與公司治理委員會挑的，主席是 2019 年加入的律師 Stephen Neal。股東收到的委託書（proxy，寄給全體股東的投票說明與選票）上，只有公司提的名單。要換人，就得自己提名、自己拉票，也就是代理權之爭（proxy fight）。股東手上換人的四條路，各要多少票、黃仁勳走得了哪一條，<a href="/insight/ep03">EP03</a> 一條一條算過。',
         '三個委員會的主席裡，審計的 Brooke Seawell 坐了 29 年，薪酬的 Dawn Hudson 坐了 13 年。',
       ],
     },
@@ -461,7 +513,7 @@ const EP01_EN: StoryLang = {
       h: 'Directors can be replaced every year. They rarely are.',
       paras: [
         'Every Nvidia director serves a one-year term and stands for election at each annual meeting. On paper, shareholders can replace any of them every year.',
-        'In practice, the candidates are picked by the board\'s own nominating and governance committee, chaired by Stephen Neal, a lawyer who joined in 2019. The proxy (the voting packet every shareholder gets) lists only the company\'s nominees. To change that, you nominate your own people and campaign for votes. That\'s a proxy fight.',
+        'In practice, the candidates are picked by the board\'s own nominating and governance committee, chaired by Stephen Neal, a lawyer who joined in 2019. The proxy (the voting packet every shareholder gets) lists only the company\'s nominees. To change that, you nominate your own people and campaign for votes. That\'s a proxy fight. <a href="/insight/ep03">EP03</a> walks through all four routes shareholders have, what each one takes, and which ones Jensen can use.',
         'Of the three committee chairs, audit chair Brooke Seawell has served 29 years and compensation chair Dawn Hudson 13.',
       ],
     },
@@ -572,6 +624,7 @@ const EP02_ZH: StoryLang = {
       paras: [
         '同一天上午，黃仁勳在 X 表態：如果董事會認為他回來，對股東、員工、公司和美國最好，他很榮幸回任執行長。',
         '幾個小時後，董事長在財報會議上說，董事會不打算讓他回任執行長。人選名單上，暫時沒有那位帶了 Nvidia 33 年的人。',
+        '董事會不點頭，他還有哪幾條路、各卡在哪裡，<a href="/insight/ep03">EP03</a> 一條一條算過。',
       ],
     },
   ],
@@ -656,6 +709,7 @@ const EP02_EN: StoryLang = {
       paras: [
         'That same morning, Jensen posted on X that if the board decides his return is in the best interest of shareholders, employees, the company and America, he would be honored to return as CEO.',
         'Hours later, the chair said on the earnings call that the board does not intend to reinstate him. For now, the man who ran Nvidia for 33 years is not on the list.',
+        'If the board won\'t say yes, what routes are left, and where does each one get stuck? <a href="/insight/ep03">EP03</a> works through them.',
       ],
     },
   ],

@@ -177,7 +177,7 @@ export const EPISODES: Episode[] = [
  {
   "slug": "ep03",
   "n": 3,
-  "published": false,
+  "published": true,
   "en": {
    "title": "Can Jensen Huang come back?",
    "term": "Getting back together",
