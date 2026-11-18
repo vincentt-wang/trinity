@@ -184,7 +184,7 @@ export const EPISODES: Episode[] = [
    "desc": "Getting back with an ex is common. Founders get back with their companies too. Unless a founder holds the votes, the board decides.",
    "body": [
     "In one US study, 45 percent of young adults broke up and got back together. Companies break up with founders too.",
-    "By the third funding round, half of founder CEOs are replaced. Founders are 4 percent of big-company CEOs, but 44 percent of comeback CEOs.",
+    "By the third funding round, half of founder CEOs are replaced.",
     "Jensen Huang has left Nvidia. Elon Musk and over 180,000 petition signers want him back. The board reportedly says no.",
     "Who decides? Steve Jobs was pushed out in 1985 and came back when Apple bought NeXT. Musk himself, replaced at X.com, never went back.",
     "<mark>Unless a founder controls the votes, the board decides.</mark> Mark Zuckerberg controls 61 percent of Meta's votes. Jensen holds 3.6 percent.",
@@ -201,7 +201,7 @@ export const EPISODES: Episode[] = [
    "desc": "跟前任復合很常見，創辦人也會回到自己的公司。除非創辦人握有投票權，不然董事會說了算。",
    "body": [
     "美國一份研究裡，45% 的年輕人分手後又復合了。公司也會跟創辦人分手。",
-    "募到第三輪時，一半的創辦人執行長已被換掉。美國大公司執行長裡，創辦人只佔 4%，回鍋的執行長卻有 44% 是創辦人。",
+    "募到第三輪時，一半的創辦人執行長已被換掉。",
     "黃仁勳已經離開 Nvidia。馬斯克和超過 18 萬個連署人都要他回來；據報導，董事會說不要。",
     "誰說了算？Jobs 1985 年被擠出 Apple，Apple 買下 NeXT 之後他回來了。馬斯克自己被 X.com（PayPal 前身）換掉，再也沒回去。",
     "<mark>除非創辦人手上握有投票權，不然董事會說了算。</mark>祖克柏握有 Meta 61% 的投票權，黃仁勳只有 3.6%。",
