@@ -36,24 +36,24 @@ export const NL_ISSUES: Record<string, NlIssue> = {
   },
   ep02: {
     zh: {
-      subject: '代理執行長在 Nvidia 13 年，黃仁勳 33 年',
-      opener: '現在代理 Nvidia 執行長的是財務長 Colette Kress。她 2013 年進公司，之前在財務線上做了大約 25 年。',
+      subject: 'Intel 2019 年讓財務長當執行長，兩年後換回工程師',
+      opener: 'Nvidia 代理執行長 Colette Kress 11 月 17 日交出第一份財報：營收 1,158.4 億美元，市場預期 1,091 億。這一季在 10 月底就結束了，她 11 月 12 日才接任。',
       points: [
-        'Chris Dixon 2011 年寫，創辦人與市場契合（founder-market fit，創辦人是不是這一行的專家）可以靠經驗養出來，而且常常被高估。',
-        'Ben Horowitz 的分法：專業經理人擅長把現在的產品週期做到最大，創辦人執行長擅長找到下一個。',
-        '董事長說接班人選內外都找，財政部長 Bessent 說該找外部的人。下一個週期由誰去找，才是這次選人的題目。',
+        'YC 合夥人 Jared Friedman 對創辦人與市場契合的定義只有一句：創辦人是不是這一行的專家。Kress 在 Nvidia 13 年，每一年都在當財務長。',
+        'Intel 2018 年執行長辭職，財務長 Bob Swan 先代理、2019 年轉正。2021 年董事會換上 Intel 第一任技術長 Pat Gelsinger，理由是要借重他的技術與工程專長。',
+        'Ben Horowitz 的分法：專業經理人很會把一個產品週期做到最大，創辦人執行長很會找到下一個。董事會要找的是哪一種，還沒說。',
       ],
-      chartNote: '出處：Nvidia 2026 年 10-K、Nvidia 官網 Colette Kress 簡介。',
+      chartNote: '出處：CNBC，2026-11-17。',
     },
     en: {
-      subject: 'The interim CEO has 13 years at Nvidia. Jensen had 33.',
-      opener: 'Nvidia\'s interim CEO is CFO Colette Kress. She joined in 2013 after about 25 years in finance roles.',
+      subject: 'Intel made its CFO the CEO in 2019. Two years later, it went back to an engineer.',
+      opener: 'Nvidia\'s interim CEO Colette Kress reported her first quarter on Nov 17: $115.84 billion in revenue against $109.1 billion expected. The quarter ended in late October; she took over on Nov 12.',
       points: [
-        'Chris Dixon wrote in 2011 that founder-market fit, being an expert in the thing you build, can be developed with experience and is often overestimated.',
-        'Ben Horowitz splits it this way: professional managers are good at maximizing the current product cycle. Founding CEOs are good at finding the next one.',
-        'The chair says the search covers inside and outside candidates. Treasury Secretary Bessent says it should be an outsider. Who finds the next cycle is the real question in this pick.',
+        'YC partner Jared Friedman defines founder-market fit in one line: are the founders experts in what they\'re doing? Kress has spent 13 years at Nvidia, all of them as CFO.',
+        'Intel\'s CEO resigned in 2018. CFO Bob Swan filled in, then got the job in 2019. In 2021 the board named Pat Gelsinger, Intel\'s first CTO, to draw on his technology and engineering expertise.',
+        'Ben Horowitz\'s split: professional CEOs are good at maximizing a product cycle, founding CEOs at finding the next one. Which kind Nvidia\'s board wants, it hasn\'t said.',
       ],
-      chartNote: 'Source: Nvidia 2026 Form 10-K and Nvidia\'s bio of Colette Kress.',
+      chartNote: 'Source: CNBC, 2026-11-17.',
     },
   },
   ep03: {

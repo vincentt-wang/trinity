@@ -91,36 +91,36 @@ export const EPISODES: Episode[] = [
   "n": 2,
   "published": false,
   "en": {
-   "title": "Can someone new replace the one who knew you for years?",
+   "title": "Founder-market fit: can a CFO write Nvidia's next song?",
    "term": "Founder-market fit",
-   "desc": "The new person learns your coffee order in a week. Knowing you like your ex did takes years. Can that kind of fit be handed over?",
+   "desc": "The band's songwriter is out, and the one who handles the money takes the mic. By YC's founder-market fit test, Nvidia's stand-in scores low.",
    "body": [
-    "Start over after a long relationship, and the new person learns your coffee order in a week. Knowing you like your ex did takes years.",
-    "Startups call that kind of depth <mark>founder-market fit</mark>. YC partner Jared Friedman puts the test in one line: are the founders experts in what they're doing?",
-    "Before Nvidia, Jensen Huang designed microprocessors at AMD, then spent 1985 to 1993 at chipmaker LSI Logic. He co-founded Nvidia in April 1993 and ran it for <mark>33 years</mark>.",
-    "On November 12, 2026, he resigned. Colette Kress, Nvidia's CFO since 2013, is interim CEO. The question: can that kind of fit be handed over?",
-    "Two investors wrote about it years ago, and they lean different ways. Chris Dixon wrote in 2011 that founder-market fit can be developed through experience. Ben Horowitz wrote in 2010 about why a16z prefers founding CEOs."
+    "Your band's songwriter is out. For now, the one who handles the money takes the mic.",
+    "That's Nvidia. Co-founder Jensen Huang stepped down over personal conduct, and CFO Colette Kress is filling in as interim CEO.",
+    "YC's word for what a founder brings is <mark>founder-market fit</mark>: are the founders experts in what they're doing? Run that test on the stand-in: thirteen years at Nvidia, every one of them in finance.",
+    "Her first earnings report beat forecasts, 115.8 billion dollars in sales. That quarter closed before she took over.",
+    "Intel tried this. It made its CFO the CEO in 2019. Two years later, its board went back to an engineer."
    ],
    "quoteBy": "Ben Horowitz, a16z, Why We Prefer Founding CEOs (2010)",
    "quote": "Professional CEOs are effective at maximizing, but not finding, product cycles.",
    "quoteNote": "",
-   "ask": "Can that kind of fit be handed over? What do you think?"
+   "ask": "Does Nvidia need someone to play the hits, or write the next one? What do you think?"
   },
   "zh": {
-   "title": "新的人，取代得了認識你很多年的那個人嗎？",
+   "title": "創辦人與市場契合：財務長寫得出 Nvidia 的下一首歌嗎？",
    "term": "創辦人與市場契合",
-   "desc": "新對象一週就記得你咖啡怎麼點，要像前任那樣懂你得花好幾年。這種契合，交得出去嗎？",
+   "desc": "樂團寫歌的人出局，管錢的那位拿起麥克風。用 YC 的 founder-market fit 量，Nvidia 的代理人分數不高。",
    "body": [
-    "一段長感情之後重新開始，新對象一週就記得你咖啡怎麼點。要像前任那樣懂你，得花好幾年。",
-    "新創圈把這種深度叫 <mark>founder-market fit</mark>。YC 合夥人 Jared Friedman 的檢驗只有一句：創辦人是不是他在做的這件事的專家？",
-    "創立 Nvidia 之前，黃仁勳在 AMD 設計微處理器，1985 到 1993 年在晶片公司 LSI Logic 待了八年。1993 年 4 月共同創立 Nvidia，之後帶了 <mark>33 年</mark>。",
-    "2026 年 11 月 12 日，他辭職了。2013 年起擔任 Nvidia 財務長的 Colette Kress 代理執行長。問題是：這種契合，交得出去嗎？",
-    "兩位投資人很早就寫過這件事，方向不太一樣。Chris Dixon 2011 年寫過：founder-market fit 可以靠經驗養出來。Ben Horowitz 2010 年寫過 a16z 為什麼偏好創辦人當執行長。"
+    "你們樂團寫歌的人出局了，暫時由管錢的那位拿起麥克風。",
+    "這就是 Nvidia。共同創辦人黃仁勳因個人行為下台，財務長 Colette Kress 代理執行長。",
+    "YC 把創辦人帶來的東西叫 <mark>founder-market fit</mark>：創辦人是不是這一行的專家？拿這把尺量代理人：在 Nvidia 十三年，每一年都在管財務。",
+    "她交出的第一份財報超出預期，營收 1,158 億美元。那一季結束時，她還沒接任。",
+    "Intel 試過。2019 年讓財務長當執行長，兩年後，董事會回頭找了工程師。"
    ],
    "quoteBy": "a16z 的 Ben Horowitz，〈Why We Prefer Founding CEOs〉（2010）",
    "quote": "專業經理人很會把產品週期做到最大，但不擅長找到下一個。",
    "quoteNote": "",
-   "ask": "這種契合，交得出去嗎？你怎麼想？",
+   "ask": "Nvidia 需要唱老歌的人，還是寫下一首的人？你怎麼想？",
    "quoteOrig": "Professional CEOs are effective at maximizing, but not finding, product cycles."
   },
   "sources": [
@@ -131,40 +131,40 @@ export const EPISODES: Episode[] = [
     "url": "https://www.ycombinator.com/library/8g-how-to-get-startup-ideas"
    },
    {
-    "label": "Y Combinator, How to Get and Evaluate Startup Ideas, Startup School (7:20)",
-    "levelZh": "一手",
-    "levelEn": "Primary",
-    "url": "https://www.youtube.com/watch?v=Th8JoIan4dg&t=440s"
-   },
-   {
-    "label": "Nvidia Form 10-K (2026-02-25): AMD and LSI Logic 1985 to 1993",
-    "levelZh": "一手",
-    "levelEn": "Primary",
-    "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
-   },
-   {
-    "label": "Nvidia Corporate Timeline: founded April 5, 1993",
-    "levelZh": "一手",
-    "levelEn": "Primary",
-    "url": "https://www.nvidia.com/en-us/about-nvidia/corporate-timeline/"
-   },
-   {
     "label": "Nvidia Newsroom, NVIDIA Announces CEO Transition, 2026-11-12",
     "levelZh": "一手",
     "levelEn": "Primary",
     "url": "https://nvidianews.nvidia.com/news/nvidia-announces-ceo-transition"
    },
    {
-    "label": "Colette Kress named EVP and CFO in September 2013: Nvidia SEC Form 8-K and FY2026 annual report",
+    "label": "Nvidia Newsroom, Colette Kress executive bio",
     "levelZh": "一手",
     "levelEn": "Primary",
+    "url": "https://nvidianews.nvidia.com/bios/colette-kress"
+   },
+   {
+    "label": "CNBC, Nvidia Q3 FY2027 earnings, 2026-11-17",
+    "levelZh": "媒體報導",
+    "levelEn": "News report",
     "url": null
    },
    {
-    "label": "Chris Dixon, Founder/market fit, cdixon.org, 2011-06-19",
+    "label": "Intel, CEO Brian Krzanich resigns; board appoints Bob Swan interim CEO, 2018-06-21",
     "levelZh": "一手",
     "levelEn": "Primary",
-    "url": "https://cdixon.org/2011/06/19/foundermarket-fit/"
+    "url": "https://www.intc.com/news-events/press-releases/detail/146/intel-ceo-brian-krzanich-resigns-board-appoints-bob-swan"
+   },
+   {
+    "label": "Intel, Intel names Robert Swan CEO, 2019-01-31",
+    "levelZh": "一手",
+    "levelEn": "Primary",
+    "url": "https://d1io3yog0oux5.cloudfront.net/_30f8d843824dfbccc3bd0b0cd772d41f/intel/news/2019-01-31_Intel_Names_Robert_Swan_96.pdf"
+   },
+   {
+    "label": "Intel, Intel appoints Pat Gelsinger CEO, 2021-01-13",
+    "levelZh": "一手",
+    "levelEn": "Primary",
+    "url": "https://d1io3yog0oux5.cloudfront.net/_57627f36f021419831e44f49449e5f89/intel/news/2021-01-13_Intel_Appoints_Tech_Industry_Leader_Pat_Gelsinger__1438.pdf"
    },
    {
     "label": "Ben Horowitz, Why We Prefer Founding CEOs, a16z, 2010-04-28",
