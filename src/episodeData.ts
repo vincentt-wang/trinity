@@ -267,7 +267,7 @@ export const EPISODES: Episode[] = [
  {
   "slug": "ep04",
   "n": 4,
-  "published": false,
+  "published": true,
   "en": {
    "title": "If you disappeared tomorrow, who'd actually miss you?",
    "term": "Product-market fit",
