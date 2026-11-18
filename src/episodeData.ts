@@ -91,36 +91,36 @@ export const EPISODES: Episode[] = [
   "n": 2,
   "published": false,
   "en": {
-   "title": "Founder-market fit: can a CFO write Nvidia's next song?",
+   "title": "Founder-market fit: what left Nvidia with Jensen Huang?",
    "term": "Founder-market fit",
-   "desc": "The band's songwriter is out, and the one who handles the money takes the mic. By YC's founder-market fit test, Nvidia's stand-in scores low.",
+   "desc": "Founder-market fit is the data, insight and network nobody else can buy. Jensen Huang built all three. Nvidia keeps the data. The rest may walk out with him.",
    "body": [
-    "Your band's songwriter is out. For now, the one who handles the money takes the mic.",
-    "That's Nvidia. Co-founder Jensen Huang stepped down over personal conduct, and CFO Colette Kress is filling in as interim CEO.",
-    "YC's word for what a founder brings is <mark>founder-market fit</mark>: are the founders experts in what they're doing? Run that test on the stand-in: thirteen years at Nvidia, every one of them in finance.",
-    "Her first earnings report beat forecasts, 115.8 billion dollars in sales. That quarter closed before she took over.",
-    "Intel tried this. It made its CFO the CEO in 2019. Two years later, its board went back to an engineer."
+    "Your band's songwriter quits. You keep his notebook. You lose his ear and his friends.",
+    "That's <mark>founder-market fit</mark>: the data, insight and network nobody else can buy.",
+    "Jensen Huang's data: since 2006, 7.5 million developers have built on CUDA. His insight: CUDA ate all of Nvidia's gross profit, he says, and he kept it, then went all in on deep learning.",
+    "His network: TSMC has made his chips for decades. In his words, we don't have a contract.",
+    "Now he's out. Nvidia keeps the data. It may not keep his insight, or the trust behind no contract."
    ],
    "quoteBy": "Ben Horowitz, a16z, Why We Prefer Founding CEOs (2010)",
    "quote": "Professional CEOs are effective at maximizing, but not finding, product cycles.",
    "quoteNote": "",
-   "ask": "Does Nvidia need someone to play the hits, or write the next one? What do you think?"
+   "ask": "So who finds Nvidia's next one? What do you think?"
   },
   "zh": {
-   "title": "創辦人與市場契合：財務長寫得出 Nvidia 的下一首歌嗎？",
+   "title": "創辦人與市場契合：黃仁勳走了，Nvidia 留下什麼？",
    "term": "創辦人與市場契合",
-   "desc": "樂團寫歌的人出局，管錢的那位拿起麥克風。用 YC 的 founder-market fit 量，Nvidia 的代理人分數不高。",
+   "desc": "創辦人與市場契合，是外人買不到的資料、洞見與人脈。黃仁勳三樣都有。資料留在 Nvidia，另外兩樣不一定。",
    "body": [
-    "你們樂團寫歌的人出局了，暫時由管錢的那位拿起麥克風。",
-    "這就是 Nvidia。共同創辦人黃仁勳因個人行為下台，財務長 Colette Kress 代理執行長。",
-    "YC 把創辦人帶來的東西叫 <mark>founder-market fit</mark>：創辦人是不是這一行的專家？拿這把尺量代理人：在 Nvidia 十三年，每一年都在管財務。",
-    "她交出的第一份財報超出預期，營收 1,158 億美元。那一季結束時，她還沒接任。",
-    "Intel 試過。2019 年讓財務長當執行長，兩年後，董事會回頭找了工程師。"
+    "你們樂團寫歌的人走了。他的筆記本留下來，他的耳朵和朋友帶走了。",
+    "這就是 <mark>founder-market fit</mark>：外人買不到的資料、洞見和人脈。",
+    "黃仁勳的資料：2006 年起，750 萬名開發者在 CUDA 上開發。他的洞見：他說 CUDA 吃掉了 Nvidia 全部的毛利，他沒收手，還全押深度學習。",
+    "他的人脈：台積電幫他做晶片幾十年。他的原話：我們沒有合約。",
+    "現在他走了。資料留在 Nvidia。他的洞見，和沒有合約背後的信任，不一定留得住。"
    ],
    "quoteBy": "a16z 的 Ben Horowitz，〈Why We Prefer Founding CEOs〉（2010）",
-   "quote": "專業經理人很會把產品週期做到最大，但不擅長找到下一個。",
+   "quote": "專業經理人很會把產品週期做到最大，但找不到下一個。",
    "quoteNote": "",
-   "ask": "Nvidia 需要唱老歌的人，還是寫下一首的人？你怎麼想？",
+   "ask": "那 Nvidia 的下一個，誰來找？你怎麼想？",
    "quoteOrig": "Professional CEOs are effective at maximizing, but not finding, product cycles."
   },
   "sources": [
@@ -131,40 +131,28 @@ export const EPISODES: Episode[] = [
     "url": "https://www.ycombinator.com/library/8g-how-to-get-startup-ideas"
    },
    {
-    "label": "Nvidia Newsroom, NVIDIA Announces CEO Transition, 2026-11-12",
+    "label": "Nvidia Form 10-K, 2026-02-25: CUDA since 2006, over 7.5 million developers",
     "levelZh": "一手",
     "levelEn": "Primary",
-    "url": "https://nvidianews.nvidia.com/news/nvidia-announces-ceo-transition"
+    "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
    },
    {
-    "label": "Nvidia Newsroom, Colette Kress executive bio",
+    "label": "Lex Fridman Podcast #494 transcript, 2026-03-23",
     "levelZh": "一手",
     "levelEn": "Primary",
-    "url": "https://nvidianews.nvidia.com/bios/colette-kress"
+    "url": "https://lexfridman.com/jensen-huang-transcript/"
    },
    {
-    "label": "CNBC, Nvidia Q3 FY2027 earnings, 2026-11-17",
-    "levelZh": "媒體報導",
-    "levelEn": "News report",
-    "url": null
-   },
-   {
-    "label": "Intel, CEO Brian Krzanich resigns; board appoints Bob Swan interim CEO, 2018-06-21",
+    "label": "Acquired, TSMC founder Morris Chang",
     "levelZh": "一手",
     "levelEn": "Primary",
-    "url": "https://www.intc.com/news-events/press-releases/detail/146/intel-ceo-brian-krzanich-resigns-board-appoints-bob-swan"
+    "url": "https://www.acquired.fm/episodes/tsmc-founder-morris-chang"
    },
    {
-    "label": "Intel, Intel names Robert Swan CEO, 2019-01-31",
+    "label": "Nvidia 8-K, CEO transition, 2026-11-12",
     "levelZh": "一手",
     "levelEn": "Primary",
-    "url": "https://d1io3yog0oux5.cloudfront.net/_30f8d843824dfbccc3bd0b0cd772d41f/intel/news/2019-01-31_Intel_Names_Robert_Swan_96.pdf"
-   },
-   {
-    "label": "Intel, Intel appoints Pat Gelsinger CEO, 2021-01-13",
-    "levelZh": "一手",
-    "levelEn": "Primary",
-    "url": "https://d1io3yog0oux5.cloudfront.net/_57627f36f021419831e44f49449e5f89/intel/news/2021-01-13_Intel_Appoints_Tech_Industry_Leader_Pat_Gelsinger__1438.pdf"
+    "url": "https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000082/nvidiaannouncesceotransiti.htm"
    },
    {
     "label": "Ben Horowitz, Why We Prefer Founding CEOs, a16z, 2010-04-28",

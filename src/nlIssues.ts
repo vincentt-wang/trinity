@@ -36,24 +36,24 @@ export const NL_ISSUES: Record<string, NlIssue> = {
   },
   ep02: {
     zh: {
-      subject: 'Intel 2019 年讓財務長當執行長，兩年後換回工程師',
-      opener: 'Nvidia 代理執行長 Colette Kress 11 月 17 日交出第一份財報：營收 1,158.4 億美元，市場預期 1,091 億。這一季在 10 月底就結束了，她 11 月 12 日才接任。',
+      subject: '黃仁勳說，Nvidia 和台積電做了三十年生意，沒有合約',
+      opener: 'Founder-market fit 拆開來，是外人買不到的三樣東西：資料、洞見、人脈。黃仁勳在 Nvidia 33 年，三樣都有。',
       points: [
-        'YC 合夥人 Jared Friedman 對創辦人與市場契合的定義只有一句：創辦人是不是這一行的專家。Kress 在 Nvidia 13 年，每一年都在當財務長。',
-        'Intel 2018 年執行長辭職，財務長 Bob Swan 先代理、2019 年轉正。2021 年董事會換上 Intel 第一任技術長 Pat Gelsinger，理由是要借重他的技術與工程專長。',
-        'Ben Horowitz 的分法：專業經理人很會把一個產品週期做到最大，創辦人執行長很會找到下一個。董事會要找的是哪一種，還沒說。',
+        '資料：2006 年推出的 CUDA，到 2026 年的年報有超過 750 萬名開發者在用。這一格屬於公司，人走了還在。',
+        '洞見：他說 CUDA 曾吃掉公司全部的毛利，那時 Nvidia 是毛利率 35% 的公司。他沒收手，之後全押深度學習。',
+        '人脈：張忠謀說合作起於 1997 年左右黃仁勳寫的一封信。黃仁勳說兩家三十年、幾百億美元的生意，沒有合約。',
       ],
-      chartNote: '出處：CNBC，2026-11-17。',
+      chartNote: '出處：Nvidia 公司年表、1998 年新聞稿、2026 年 10-K、Kress 官方簡介。',
     },
     en: {
-      subject: 'Intel made its CFO the CEO in 2019. Two years later, it went back to an engineer.',
-      opener: 'Nvidia\'s interim CEO Colette Kress reported her first quarter on Nov 17: $115.84 billion in revenue against $109.1 billion expected. The quarter ended in late October; she took over on Nov 12.',
+      subject: 'Jensen says Nvidia and TSMC have done three decades of business with no contract',
+      opener: 'Break founder-market fit apart and you get three things outsiders can\'t buy: data, insight and network. Jensen Huang built all three over 33 years at Nvidia.',
       points: [
-        'YC partner Jared Friedman defines founder-market fit in one line: are the founders experts in what they\'re doing? Kress has spent 13 years at Nvidia, all of them as CFO.',
-        'Intel\'s CEO resigned in 2018. CFO Bob Swan filled in, then got the job in 2019. In 2021 the board named Pat Gelsinger, Intel\'s first CTO, to draw on his technology and engineering expertise.',
-        'Ben Horowitz\'s split: professional CEOs are good at maximizing a product cycle, founding CEOs at finding the next one. Which kind Nvidia\'s board wants, it hasn\'t said.',
+        'Data: CUDA launched in 2006. Nvidia\'s 2026 annual report counts over 7.5 million developers using it and its other tools. That part belongs to the company and stays.',
+        'Insight: he says CUDA once ate all of Nvidia\'s gross profit, at a company with a 35% gross margin. He kept it, and later went all in on deep learning.',
+        'Network: Morris Chang says the partnership began with a letter from Jensen around 1997. Jensen says three decades and hundreds of billions of dollars of business, and no contract.',
       ],
-      chartNote: 'Source: CNBC, 2026-11-17.',
+      chartNote: 'Sources: Nvidia corporate timeline, 1998 press release, 2026 10-K, Kress bio.',
     },
   },
   ep03: {
