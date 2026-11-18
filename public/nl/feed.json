@@ -1,6 +1,6 @@
 {
  "v": 1,
- "generated": "2026-11-18T07:31:15.553Z",
+ "generated": "2026-11-18T11:17:21.879Z",
  "eps": [
   {
    "slug": "ep01",
@@ -66,75 +66,6 @@
       {
        "k": "c",
        "t": "Wait for the investigation"
-      }
-     ]
-    }
-   }
-  },
-  {
-   "slug": "ep02",
-   "n": 2,
-   "url": "https://trinity.easeai.com.tw/insight/ep02",
-   "zh": {
-    "title": "新的人，取代得了認識你很多年的那個人嗎？",
-    "subject": "代理執行長在 Nvidia 13 年，黃仁勳 33 年",
-    "opener": "現在代理 Nvidia 執行長的是財務長 Colette Kress。她 2013 年進公司，之前在財務線上做了大約 25 年。",
-    "points": [
-     "Chris Dixon 2011 年寫，創辦人與市場契合（founder-market fit，創辦人是不是這一行的專家）可以靠經驗養出來，而且常常被高估。",
-     "Ben Horowitz 的分法：專業經理人擅長把現在的產品週期做到最大，創辦人執行長擅長找到下一個。",
-     "董事長說接班人選內外都找，財政部長 Bessent 說該找外部的人。下一個週期由誰去找，才是這次選人的題目。"
-    ],
-    "img": "https://trinity.easeai.com.tw/nl/ep02-zh.png",
-    "imgH": 464,
-    "imgAlt": "在這一行累積了幾年",
-    "chartNote": "出處：Nvidia 2026 年 10-K、Nvidia 官網 Colette Kress 簡介。",
-    "poll": {
-     "id": "ep02-successor",
-     "q": "Nvidia 下一任執行長，該找誰？",
-     "opts": [
-      {
-       "k": "a",
-       "t": "內部的人，例如 Colette Kress"
-      },
-      {
-       "k": "b",
-       "t": "外部的專業經理人"
-      },
-      {
-       "k": "c",
-       "t": "讓黃仁勳回來"
-      }
-     ]
-    }
-   },
-   "en": {
-    "title": "Can someone new replace the one who knew you for years?",
-    "subject": "The interim CEO has 13 years at Nvidia. Jensen had 33.",
-    "opener": "Nvidia's interim CEO is CFO Colette Kress. She joined in 2013 after about 25 years in finance roles.",
-    "points": [
-     "Chris Dixon wrote in 2011 that founder-market fit, being an expert in the thing you build, can be developed with experience and is often overestimated.",
-     "Ben Horowitz splits it this way: professional managers are good at maximizing the current product cycle. Founding CEOs are good at finding the next one.",
-     "The chair says the search covers inside and outside candidates. Treasury Secretary Bessent says it should be an outsider. Who finds the next cycle is the real question in this pick."
-    ],
-    "img": "https://trinity.easeai.com.tw/nl/ep02-en.png",
-    "imgH": 464,
-    "imgAlt": "Years in the business",
-    "chartNote": "Source: Nvidia 2026 Form 10-K and Nvidia's bio of Colette Kress.",
-    "poll": {
-     "id": "ep02-successor",
-     "q": "Who should be Nvidia's next CEO?",
-     "opts": [
-      {
-       "k": "a",
-       "t": "An insider, like Colette Kress"
-      },
-      {
-       "k": "b",
-       "t": "A professional CEO from outside"
-      },
-      {
-       "k": "c",
-       "t": "Bring Jensen back"
       }
      ]
     }

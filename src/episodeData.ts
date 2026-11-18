@@ -89,7 +89,7 @@ export const EPISODES: Episode[] = [
  {
   "slug": "ep02",
   "n": 2,
-  "published": true,
+  "published": false,
   "en": {
    "title": "Can someone new replace the one who knew you for years?",
    "term": "Founder-market fit",

@@ -90,7 +90,7 @@ const EP03_ZH: StoryLang = {
         '美東時間 11 月 17 日上午，黃仁勳在 X 發了一篇長文。他先認錯：沒有做到 Nvidia 對每個人的要求，私生活上犯了嚴重的錯，會配合董事會的獨立調查。',
         '接著他寫，如果董事會認為他回來，對股東、員工、公司和美國最好，他「很榮幸回應這些呼聲，回任執行長」。他講的是執行長，<b>董事席一個字都沒提</b>。',
         '大約五個半小時後，Nvidia 開第三季財報電話會議。董事長 Harvey Jones 一開場就說，董事會一致接受他的辭職，<mark>「不打算讓 Jensen 回任執行長」</mark>。',
-        '他也說，接班人選內部、外部都會找，不會為了快而隨便定人。現在代理執行長的是財務長 Colette Kress；她是誰，創辦人那種懂這一行的深度交不交得出去，<a href="/insight/ep02">EP02</a> 談過。',
+        '他也說，接班人選內部、外部都會找，不會為了快而隨便定人。現在代理執行長的是財務長 Colette Kress。',
       ],
     },
     {
@@ -230,7 +230,7 @@ const EP03_EN: StoryLang = {
         'On the morning of November 17, Eastern time, Jensen Huang posted a long statement on X. He opened with an apology. He said he fell short of Nvidia\'s standards, made serious mistakes in his personal life, and will cooperate with the board\'s independent investigation.',
         'Then he wrote that if the board decides his return is in the best interest of shareholders, employees, the company and America, he "would be honored to answer these calls and return as CEO." He talked about the CEO job. <b>He never mentioned his board seat.</b>',
         'About five and a half hours later, Nvidia held its third-quarter earnings call. Chair Harvey Jones opened it. He said the board unanimously accepted the resignation and <mark>"does not intend to reinstate Jensen as CEO."</mark>',
-        'He added that the board will look at internal and external candidates, and won\'t rush the pick. For now the interim CEO is CFO Colette Kress. <a href="/insight/ep02">EP02</a> looks at who she is, and whether a founder\'s depth in the business can be handed over.',
+        'He added that the board will look at internal and external candidates, and won\'t rush the pick. For now the interim CEO is CFO Colette Kress.',
       ],
     },
     {
