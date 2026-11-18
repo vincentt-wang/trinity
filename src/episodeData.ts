@@ -221,22 +221,40 @@ export const EPISODES: Episode[] = [
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3924753"
    },
    {
-    "label": "Apple 1998 proxy statement, Jobs holds 1 share",
-    "levelZh": "一手",
-    "levelEn": "Primary",
-    "url": "https://www.sec.gov/Archives/edgar/data/320193/0001047469-98-010062.txt"
+    "label": "Noam Wasserman interview, CKGSB Knowledge, 2013-01-31: 52% of founder-CEOs who reached a third round were replaced",
+    "levelZh": "本人訪談",
+    "levelEn": "Interview",
+    "url": "https://english.ckgsb.edu.cn/knowledge/article/the-hypergrowth-conundrum-qa-with-noam-wasserman-start-up-statistician/"
    },
    {
-    "label": "PayPal 2002 IPO prospectus, Musk 13.0 percent",
-    "levelZh": "一手",
-    "levelEn": "Primary",
-    "url": "https://www.sec.gov/Archives/edgar/data/1103415/000091205702006471/a2071068z424b4.htm"
+    "label": "CBS News, petition passes 180,000 signatures (count reported by the petition site), 2026-11-16",
+    "levelZh": "媒體報導",
+    "levelEn": "News report",
+    "url": null
    },
    {
     "label": "CNBC, Nvidia board is not considering bringing Jensen Huang back as CEO, 2026-11-16",
     "levelZh": "媒體報導",
     "levelEn": "News report",
     "url": null
+   },
+   {
+    "label": "Meta 2026 proxy statement: Zuckerberg holds 60.8% of voting power",
+    "levelZh": "一手",
+    "levelEn": "Primary",
+    "url": null
+   },
+   {
+    "label": "Nvidia 2026 proxy statement: Jensen Huang holds 3.58% (record date 2026-03-23)",
+    "levelZh": "一手",
+    "levelEn": "Primary",
+    "url": null
+   },
+   {
+    "label": "Nvidia Newsroom, NVIDIA Announces CEO Transition, 2026-11-12",
+    "levelZh": "一手",
+    "levelEn": "Primary",
+    "url": "https://nvidianews.nvidia.com/news/nvidia-announces-ceo-transition"
    },
    {
     "label": "Steve Jobs, Stanford commencement address, 2005-06-12",
