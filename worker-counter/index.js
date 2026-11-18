@@ -20,8 +20,9 @@
  *    CORS open (*): the personal site and the V site post here too.
  *
  * 4) Article polls (261118)
- *    GET  /poll?id=<poll>   -> {id, counts:{opt:n}, total}  (public, no-store)
- *    POST /poll {id, o, v}  -> one vote per visitor id (v) per poll; returns the new counts
+ *    GET  /poll?id=<poll>[&v=<visitor>] -> {id, counts:{opt:n}, total, mine?}  (public, no-store)
+ *    POST /poll {id, o, v}  -> one vote per visitor id (v) per poll; voting again for another option
+ *                              moves the vote (old -1, new +1); returns the new counts and mine
  *    GET  /poll?all=1&token=… -> every poll's counts (token-gated, reuses WAITLIST_TOKEN)
  *
  * Abuse controls (the public number must track real submissions):
@@ -94,7 +95,10 @@ export default {
         }
         const id = url.searchParams.get('id') || ''
         if (!ID_RE.test(id)) return new Response(JSON.stringify({ err: 'id' }), { status: 400, headers: oh })
-        return out(id, await read(id))
+        // ?v=<visitor id> also returns the option this visitor currently holds, so a reload shows the server's answer
+        const gv = (url.searchParams.get('v') || '').replace(/[^a-z0-9]/gi, '').slice(0, 32)
+        const mine = gv.length >= 8 ? await env.COUNTER.get('pv:' + id + ':' + gv) : null
+        return out(id, await read(id), mine ? { mine } : {})
       }
       if (req.method !== 'POST') return new Response(JSON.stringify({ err: 'method' }), { status: 405, headers: oh })
       if (!ORIGINS.includes(origin)) return new Response(JSON.stringify({ err: 'origin' }), { status: 403, headers: oh })
@@ -102,21 +106,24 @@ export default {
       try { b = JSON.parse(await req.text()) } catch { /* keep {} */ }
       const id = String(b.id || ''), o = String(b.o || ''), v = String(b.v || '').replace(/[^a-z0-9]/gi, '').slice(0, 32)
       if (!ID_RE.test(id) || !OPT_RE.test(o) || v.length < 8) return new Response(JSON.stringify({ err: 'input' }), { status: 400, headers: oh })
-      // one vote per visitor id per poll; one IP can cast at most 40 votes per poll per 10 min (shared WiFi ok, floods not)
+      // one vote per visitor id per poll (pv:<id>:<v> = the option they currently hold).
+      // 261118: a visitor can switch at any time: old option -1 (never below 0), new option +1. Same option again = no change.
+      // one IP can cast or switch at most 40 times per poll per 10 min (shared WiFi ok, floods not)
       const vk = 'pv:' + id + ':' + v
       const prev = await env.COUNTER.get(vk)
       const c = await read(id)
-      if (prev) return out(id, c, { mine: prev, dup: true })
+      if (prev === o) return out(id, c, { mine: prev, dup: true })
       const ip = req.headers.get('cf-connecting-ip') || 'x'
       const gate = 'pvip:' + id + ':' + ip
       const burst = parseInt((await env.COUNTER.get(gate)) || '0', 10)
-      if (burst >= 40) return out(id, c, { mine: o, throttled: true })
+      if (burst >= 40) return out(id, c, { mine: prev || o, throttled: true })
       if (c[o] === undefined && Object.keys(c).length >= 8) return new Response(JSON.stringify({ err: 'opt' }), { status: 400, headers: oh })
+      if (prev && c[prev] > 0) c[prev] -= 1
       c[o] = (c[o] || 0) + 1
       await env.COUNTER.put('poll:' + id, JSON.stringify(c))
       await env.COUNTER.put(vk, o, { expirationTtl: 60 * 60 * 24 * 400 })
       await env.COUNTER.put(gate, String(burst + 1), { expirationTtl: 600 })
-      return out(id, c, { mine: o })
+      return out(id, c, prev ? { mine: o, switched: prev } : { mine: o })
     }
 
     // ── waitlist ──

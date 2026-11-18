@@ -18,13 +18,13 @@ const L = {
   en: {
     ideaH: 'Working on an idea of your own?', ideaBtn: 'Let Trinity take a look',
     moreH: 'More episodes', prevA: 'Previous', nextA: 'Next', all: 'All episodes', allSub: 'See every published piece', pv: 'Preview',
-    voteN: (n: number) => `${n.toLocaleString('en-US')} ${n === 1 ? 'vote' : 'votes'} so far`, mine: 'Your pick',
+    voteN: (n: number) => `${n.toLocaleString('en-US')} ${n === 1 ? 'vote' : 'votes'} so far`, mine: 'Your pick', change: 'Tap another option to change your vote',
     pollKick: 'Your turn', pollErr: 'Couldn\'t reach the vote counter. Try again in a moment.', pollPv: 'Preview votes are counted separately and don\'t touch the live poll.',
   },
   zh: {
     ideaH: '手上也有一個點子嗎？', ideaBtn: '讓 Trinity 看看',
     moreH: '系列文章', prevA: '上一張', nextA: '下一張', all: '全部集數', allSub: '看所有已發布的文章', pv: '預覽',
-    voteN: (n: number) => `目前 ${n.toLocaleString('zh-TW')} 人投票`, mine: '你選的',
+    voteN: (n: number) => `目前 ${n.toLocaleString('zh-TW')} 人投票`, mine: '你的選擇', change: '點其他選項可以改選',
     pollKick: '換你選', pollErr: '票數暫時連不上，請稍後再試一次。', pollPv: '預覽模式的票另外計算，不會算進正式票數。',
   },
 }
@@ -203,7 +203,7 @@ function GrowChart({ c }: { c: StoryChart }) {
   )
 }
 
-/* ── 5. 投票：票數存在 worker，重整後看得到自己的選擇與比例 ── */
+/* ── 5. 投票：票數存在 worker，重整後看得到自己的選擇與比例；隨時可以改選（261118） ── */
 function visitorId() {
   try {
     let v = localStorage.getItem('trinity-vid')
@@ -224,11 +224,16 @@ function Poll({ p, preview }: { p: StoryPoll; preview: boolean }) {
 
   useEffect(() => {
     let live = true
-    fetch(`${POLL_URL}?id=${pid}`, { signal: AbortSignal.timeout(5000) })
-      .then((r) => r.json()).then((j) => { if (live && j.counts) setCounts(j.counts) })
+    fetch(`${POLL_URL}?id=${pid}&v=${visitorId()}`, { signal: AbortSignal.timeout(5000) })
+      .then((r) => r.json()).then((j) => {
+        if (!live || !j.counts) return
+        setCounts(j.counts)
+        // the server remembers what this visitor holds now; trust it over this browser's copy
+        if (typeof j.mine === 'string') { setMine(j.mine); try { localStorage.setItem(key, j.mine) } catch { /* ignore */ } }
+      })
       .catch(() => { if (live) setErr(true) })
     return () => { live = false }
-  }, [pid])
+  }, [pid, key])
   // 週信的「你選哪一個？」連到 #poll：文章是渲染完才出現，所以自己捲過去
   useEffect(() => {
     if (location.hash !== '#poll') return
@@ -236,16 +241,29 @@ function Poll({ p, preview }: { p: StoryPoll; preview: boolean }) {
     return () => clearTimeout(t)
   }, [])
 
+  // 261118 Vincent：投過之後隨時可以改選。改選時舊選項減一、新選項加一（伺服器記住每位訪客目前選的，不會重複計）。
   const vote = async (k: string) => {
-    if (mine || busy) return
+    if (busy || mine === k) return
+    const prev = mine
     setBusy(true)
     setMine(k)
+    // move the vote on screen right away; the server's answer replaces it a moment later
+    setCounts((c) => {
+      if (!c) return c
+      const n = { ...c }
+      if (prev && n[prev] > 0) n[prev] -= 1
+      n[k] = (n[k] || 0) + 1
+      return n
+    })
     try { localStorage.setItem(key, k) } catch { /* ignore */ }
     if (!preview) trackCta(`poll:${p.id}:${k}`)
     try {
       const r = await fetch(POLL_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ id: pid, o: k, v: visitorId() }), signal: AbortSignal.timeout(6000) })
       const j = await r.json()
-      if (j.counts) { setCounts(j.counts); setErr(false) } else setErr(true)
+      if (j.counts) {
+        setCounts(j.counts); setErr(false)
+        if (typeof j.mine === 'string' && j.mine !== k) { setMine(j.mine); try { localStorage.setItem(key, j.mine) } catch { /* ignore */ } }
+      } else setErr(true)
     } catch { setErr(true) }
     setBusy(false)
   }
@@ -263,7 +281,7 @@ function Poll({ p, preview }: { p: StoryPoll; preview: boolean }) {
           const n = shown ? shown[o.k] || 0 : 0
           const pc = total ? Math.round((n / total) * 100) : 0
           return (
-            <button key={o.k} type="button" className={`pl-opt${mine ? ' done' : ''}${mine === o.k ? ' mine' : ''}`} onClick={() => vote(o.k)} disabled={!!mine} data-k={o.k} aria-pressed={mine === o.k}>
+            <button key={o.k} type="button" className={`pl-opt${mine ? ' done' : ''}${mine === o.k ? ' mine' : ''}`} onClick={() => vote(o.k)} disabled={busy} data-k={o.k} aria-pressed={mine === o.k}>
               {mine && <span className="pl-bar" style={{ width: `${pc}%` }} />}
               <span className="pl-t">{o.t}{mine === o.k && <em>{t.mine}</em>}</span>
               {mine && <span className="pl-pc" data-pc={pc}>{pc}%</span>}
@@ -273,7 +291,7 @@ function Poll({ p, preview }: { p: StoryPoll; preview: boolean }) {
       </div>
       {mine && (
         <>
-          <p className="pl-n" data-testid="poll-n">{t.voteN(total)}</p>
+          <p className="pl-n" data-testid="poll-n">{t.voteN(total)}<span className="pl-chg"> · {t.change}</span></p>
           <p className="pl-after">{p.after}</p>
         </>
       )}

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "check:story": "python3 scripts/check_story_meta.py",
+    "check:story": "python3 scripts/check_story_meta.py && python3 scripts/check_story_length.py",
     "prebuild": "npm run check:story",
     "build": "tsc -b && vite build",
     "lint": "oxlint",

@@ -1,11 +1,14 @@
 # Trinity 部署
 
-部署一律用 `npm run deploy:cf`，它會先跑 `scripts/check_story_meta.py`，集數文章有生產過程或自我保留的文字（沒畫、查無、推算、樣本、our reading、left out 等）就 exit 1 停下來。
+部署一律用 `npm run deploy:cf`，它會先跑兩支檢查，任一支 exit 1 就停下來：
 
-手動部署時，`DEPLOY_TARGET=cf npx vite build` 不會觸發 npm 的 prebuild，要先自己跑：
+- `scripts/check_story_meta.py`：集數文章有生產過程或自我保留的文字（沒畫、查無、推算、樣本、our reading、left out 等）。
+- `scripts/check_story_length.py`：已發布文章的中文或英文正文超過 7 分鐘（中文 400 字／分鐘、英文 230 字／分鐘，不含出處；算法在 `src/storyLength.ts`，文章頁標題下的閱讀時間也用它）。
+
+手動部署時，`DEPLOY_TARGET=cf npx vite build` 不會觸發 npm 的 prebuild，要先自己跑這兩支：
 
 ```
-python3 scripts/check_story_meta.py && DEPLOY_TARGET=cf npx vite build && npx wrangler pages deploy dist --project-name=trinity --branch=main
+python3 scripts/check_story_meta.py && python3 scripts/check_story_length.py && DEPLOY_TARGET=cf npx vite build && npx wrangler pages deploy dist --project-name=trinity --branch=main
 ```
 
 # React + TypeScript + Vite

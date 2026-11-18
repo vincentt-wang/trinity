@@ -1558,6 +1558,7 @@ html[lang^=zh] .ep-quote blockquote::before{content:"「"}html[lang^=zh] .ep-quo
 
 /* ===== 集數文章 v2 共用版型（261118，src/EpStory.tsx）===== */
 .ep-detail .ep-kick{font-size:1rem}
+.ep-detail .ep-read{margin-top:10px;font-size:1rem;font-weight:600;color:var(--ink-soft)}
 .ep-detail .ep-lv{font-size:1rem;padding:1px 10px}
 .st{margin-top:22px}
 .st h2{font-size:clamp(1.35rem,2.6vw,1.6rem);font-weight:700;line-height:1.3}
@@ -1666,7 +1667,10 @@ html[lang^=zh] .ep-quote blockquote::before{content:"「"}html[lang^=zh] .ep-quo
 .pl-opts{display:grid;gap:10px;margin-top:18px}
 .pl-opt{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;font:inherit;font-size:1.04rem;font-weight:600;color:#fff;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.05);cursor:pointer;transition:border-color .2s,background .2s}
 .pl-opt:not(.done):hover{border-color:#93c5fd;background:rgba(147,197,253,.12)}
-.pl-opt.done{cursor:default}
+.pl-opt.done{cursor:pointer}
+.pl-opt.done:not(.mine):hover{border-color:#93c5fd}
+.pl-opt.mine{cursor:default}
+.pl .pl-n .pl-chg{color:rgba(255,255,255,.7)}
 .pl-opt.mine{border-color:#93c5fd}
 .pl-bar{position:absolute;left:0;top:0;bottom:0;background:rgba(147,197,253,.22);transition:width .9s var(--ease)}
 .pl-opt.mine .pl-bar{background:rgba(96,165,250,.42)}

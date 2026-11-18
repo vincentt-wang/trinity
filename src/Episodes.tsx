@@ -9,6 +9,8 @@ import { routeTo } from './router'
 import { FOLLOW } from './intake'
 import { setSource, trackCta, trackView } from './lib/track'
 import { StoryBody, hasStory } from './EpStory'
+import { EP_STORY } from './epStories'
+import { readMinutes } from './storyLength'
 
 /** Video episodes moved over from venturerelations.pages.dev (261117). Clean URLs: /insight/ep01 … /insight/ep06. */
 
@@ -122,6 +124,7 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
       <header className="id-head">
         <div className="ep-kick">EP {nn(ep.n)} · {c.term}</div>
         <h1 className="id-title">{c.title}</h1>
+        {story && <p className="ep-read" data-testid="read-time">{lang === 'zh' ? `約 ${readMinutes(EP_STORY[ep.slug].zh, 'zh')} 分鐘` : `${readMinutes(EP_STORY[ep.slug].en, 'en')} min read`}</p>}
         {!long && <p className="id-lead">{c.desc}</p>}
       </header>
       {story ? <StoryBody ep={ep} preview={preview} /> : (
