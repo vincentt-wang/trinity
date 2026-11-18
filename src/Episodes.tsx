@@ -8,6 +8,7 @@ export const PUBLISHED_EPISODES = EPISODES.filter((e) => e.published)
 import { routeTo } from './router'
 import { FOLLOW } from './intake'
 import { setSource, trackCta, trackView } from './lib/track'
+import { StoryBody, hasStory } from './EpStory'
 
 /** Video episodes moved over from venturerelations.pages.dev (261117). Clean URLs: /insight/ep01 … /insight/ep06. */
 
@@ -87,7 +88,8 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
   const idx = PUBLISHED_EPISODES.findIndex((x) => x.slug === ep.slug)
   const prev = PUBLISHED_EPISODES[idx - 1]
   const next = PUBLISHED_EPISODES[idx + 1]
-  const long = EP_LONG[ep.slug]?.[lang] || EP_SEC[ep.slug]?.[lang]
+  const story = hasStory(ep.slug)
+  const long = story || EP_LONG[ep.slug]?.[lang] || EP_SEC[ep.slug]?.[lang]
   const src = `ins-${ep.slug}`
 
   const preview = !ep.published
@@ -122,6 +124,8 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
         <h1 className="id-title">{c.title}</h1>
         {!long && <p className="id-lead">{c.desc}</p>}
       </header>
+      {story ? <StoryBody ep={ep} preview={preview} /> : (
+      <>
       <div className="ep-video">
         <video key={ep.slug} controls playsInline preload="metadata" poster={`/ep/${ep.slug}.jpg`} src={`/ep/${ep.slug}.mp4`} />
       </div>
@@ -163,6 +167,8 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
         {prev ? <a href={`/insight/${prev.slug}`} onClick={(e) => { e.preventDefault(); go(prev.slug) }}>← {t.prev}: EP {nn(prev.n)}</a> : <span />}
         {next ? <a className="nx" href={`/insight/${next.slug}`} onClick={(e) => { e.preventDefault(); go(next.slug) }}>{t.next}: EP {nn(next.n)} →</a> : <a href="/insight" onClick={(e) => { e.preventDefault(); go(null) }}>{t.back}</a>}
       </nav>
+      </>
+      )}
       <FollowRow label={t.follow} />
     </article>
   )

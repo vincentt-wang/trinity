@@ -19,12 +19,17 @@
  *    GET  /e?token=…&d=YYYY-MM-DD -> that day's counts (token-gated, reuses WAITLIST_TOKEN)
  *    CORS open (*): the personal site and the V site post here too.
  *
+ * 4) Article polls (261118)
+ *    GET  /poll?id=<poll>   -> {id, counts:{opt:n}, total}  (public, no-store)
+ *    POST /poll {id, o, v}  -> one vote per visitor id (v) per poll; returns the new counts
+ *    GET  /poll?all=1&token=… -> every poll's counts (token-gated, reuses WAITLIST_TOKEN)
+ *
  * Abuse controls (the public number must track real submissions):
  *  - POST only from allow-listed Origins (403 otherwise)
  *  - counter: one increment per IP per hour, global cap 25/UTC-day
  *  - waitlist: one write per IP per 20s (deters bot floods, never blocks a person)
  */
-const ORIGINS = ['https://trinity.easeai.com.tw', 'https://trinity-7x1.pages.dev', 'https://vincentt-wang.github.io', 'http://localhost:5173']
+const ORIGINS = ['https://trinity.easeai.com.tw', 'https://trinity-7x1.pages.dev', 'https://vincentt-wang.github.io', 'http://localhost:5173', 'http://localhost:4173']
 const DAILY_CAP = 25
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 const cors = (o) => ({
@@ -66,6 +71,52 @@ export default {
         await env.COUNTER.put(key, JSON.stringify(day), { expirationTtl: 60 * 60 * 24 * 400 })
       }
       return new Response(JSON.stringify({ ok: true }), { headers: oh })
+    }
+
+    // ── polls (261118): article votes, one KV key per poll "poll:<id>" = {"<opt>": count} ──
+    if (url.pathname === '/poll') {
+      const oh = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET,POST,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
+      if (req.method === 'OPTIONS') return new Response(null, { headers: oh })
+      const ID_RE = /^[a-z0-9-]{1,40}$/
+      const OPT_RE = /^[a-z0-9]{1,12}$/
+      const read = async (id) => { try { return JSON.parse((await env.COUNTER.get('poll:' + id)) || '{}') } catch { return {} } }
+      const out = (id, c, extra = {}) => new Response(JSON.stringify({ id, counts: c, total: Object.values(c).reduce((a, b) => a + b, 0), ...extra }), { headers: oh })
+      if (req.method === 'GET') {
+        // GET /poll?all=1&token=…  -> every poll (token-gated overview for Vincent)
+        if (url.searchParams.get('all')) {
+          if (!env.WAITLIST_TOKEN || url.searchParams.get('token') !== env.WAITLIST_TOKEN) {
+            return new Response(JSON.stringify({ err: 'unauthorized' }), { status: 401, headers: oh })
+          }
+          const res = {}
+          const page = await env.COUNTER.list({ prefix: 'poll:' })
+          for (const k of page.keys) { try { res[k.name.slice(5)] = JSON.parse((await env.COUNTER.get(k.name)) || '{}') } catch { /* skip */ } }
+          return new Response(JSON.stringify(res), { headers: oh })
+        }
+        const id = url.searchParams.get('id') || ''
+        if (!ID_RE.test(id)) return new Response(JSON.stringify({ err: 'id' }), { status: 400, headers: oh })
+        return out(id, await read(id))
+      }
+      if (req.method !== 'POST') return new Response(JSON.stringify({ err: 'method' }), { status: 405, headers: oh })
+      if (!ORIGINS.includes(origin)) return new Response(JSON.stringify({ err: 'origin' }), { status: 403, headers: oh })
+      let b = {}
+      try { b = JSON.parse(await req.text()) } catch { /* keep {} */ }
+      const id = String(b.id || ''), o = String(b.o || ''), v = String(b.v || '').replace(/[^a-z0-9]/gi, '').slice(0, 32)
+      if (!ID_RE.test(id) || !OPT_RE.test(o) || v.length < 8) return new Response(JSON.stringify({ err: 'input' }), { status: 400, headers: oh })
+      // one vote per visitor id per poll; one IP can cast at most 40 votes per poll per 10 min (shared WiFi ok, floods not)
+      const vk = 'pv:' + id + ':' + v
+      const prev = await env.COUNTER.get(vk)
+      const c = await read(id)
+      if (prev) return out(id, c, { mine: prev, dup: true })
+      const ip = req.headers.get('cf-connecting-ip') || 'x'
+      const gate = 'pvip:' + id + ':' + ip
+      const burst = parseInt((await env.COUNTER.get(gate)) || '0', 10)
+      if (burst >= 40) return out(id, c, { mine: o, throttled: true })
+      if (c[o] === undefined && Object.keys(c).length >= 8) return new Response(JSON.stringify({ err: 'opt' }), { status: 400, headers: oh })
+      c[o] = (c[o] || 0) + 1
+      await env.COUNTER.put('poll:' + id, JSON.stringify(c))
+      await env.COUNTER.put(vk, o, { expirationTtl: 60 * 60 * 24 * 400 })
+      await env.COUNTER.put(gate, String(burst + 1), { expirationTtl: 600 })
+      return out(id, c, { mine: o })
     }
 
     // ── waitlist ──

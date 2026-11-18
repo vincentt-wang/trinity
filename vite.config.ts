@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { EPISODES } from './src/episodeData.ts'
 import { EP_LONG, EP_SEC } from './src/epArticles.ts'
+import { EP_STORY } from './src/epStories.ts'
 
 /* Production-only CSP: GitHub Pages cannot set response headers, so the policy
  * ships as a meta tag. Injected only at build time — the Vite dev server needs
@@ -42,7 +43,7 @@ const cspPlugin: Plugin = {
  * /insight/epNN gets its own static HTML with the right title, description and og tags.
  * Cloudflare Pages serves dist/insight/ep01.html at /insight/ep01 before the SPA fallback.
  * Unpublished episodes (published: false in src/episodeData.ts) get a noindex page,
- * an X-Robots-Tag header, no sitemap entry, and their video and thumbnail are left out of dist. */
+ * an X-Robots-Tag header (also on their video and thumbnail, kept for ?preview=vs) and no sitemap entry. */
 const SITE = 'https://trinity.easeai.com.tw'
 const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 function setMeta(html: string, attr: 'name' | 'property', key: string, val: string) {
@@ -66,7 +67,7 @@ function episodePagesPlugin(): Plugin {
         const url = `${SITE}/insight/${e.slug}`
         if (e.published) {
           const title = `${e.en.title} · Trinity Check`
-          const desc = EP_LONG[e.slug]?.ogDesc || EP_SEC[e.slug]?.ogDesc || e.en.desc
+          const desc = EP_STORY[e.slug]?.ogDesc || EP_LONG[e.slug]?.ogDesc || EP_SEC[e.slug]?.ogDesc || e.en.desc
           const img = fs.existsSync(path.join(outDir, 'ep', `${e.slug}-og.jpg`)) ? `${SITE}/ep/${e.slug}-og.jpg` : `${SITE}/ep/${e.slug}.jpg`
           h = h.replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
           h = h.replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${url}" />`)
@@ -94,7 +95,8 @@ function episodePagesPlugin(): Plugin {
           h = setMeta(h, 'name', 'twitter:description', 'This piece is not published yet.')
           h = h.replace(/<noscript>[\s\S]*?<\/noscript>/, '<noscript><h1>Not published yet</h1></noscript>')
           headers.push(`/insight/${e.slug}\n  X-Robots-Tag: noindex, nofollow`, `/insight/${e.slug}.html\n  X-Robots-Tag: noindex, nofollow`)
-          for (const ext of ['mp4', 'jpg']) fs.rmSync(path.join(outDir, 'ep', `${e.slug}.${ext}`), { force: true })
+          // 261118: keep the video and thumbnail so /insight/epNN?preview=vs can play it; they stay unlisted and noindex.
+          headers.push(`/ep/${e.slug}.mp4\n  X-Robots-Tag: noindex, nofollow`, `/ep/${e.slug}.jpg\n  X-Robots-Tag: noindex, nofollow`)
         }
         fs.writeFileSync(path.join(outDir, 'insight', `${e.slug}.html`), h)
       }
