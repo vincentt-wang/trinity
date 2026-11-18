@@ -90,14 +90,16 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
   const long = EP_LONG[ep.slug]?.[lang] || EP_SEC[ep.slug]?.[lang]
   const src = `ins-${ep.slug}`
 
-  useEffect(() => { trackView('/insight/' + ep.slug) }, [ep.slug])
+  const preview = !ep.published
+  useEffect(() => { if (!preview) trackView('/insight/' + ep.slug) }, [ep.slug, preview])
   useEffect(() => {
     document.title = `EP ${nn(ep.n)} · ${c.title} · Trinity Check`
     let m = document.querySelector('meta[name="description"]') as HTMLMetaElement | null
     if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m) }
     m.content = c.desc
-    setRobots(null)
-  }, [ep, c])
+    setRobots(preview ? 'noindex,nofollow' : null)
+    return () => { if (preview) setRobots(null) }
+  }, [ep, c, preview])
 
   const analyze = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -110,6 +112,7 @@ export function EpisodeDetail({ ep }: { ep: Episode }) {
 
   return (
     <article className="insight-detail ep-detail" data-lens="e">
+      {preview && <div className="ep-preview" role="note">{lang === 'zh' ? '預覽：這篇還沒發布，只有拿到這個網址的人看得到。' : 'Preview: not published yet. Only people with this link can see it.'}</div>}
       <button className="id-back" onClick={() => go(null)}>
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M15 18l-6-6 6-6" /></svg>
         {t.back}

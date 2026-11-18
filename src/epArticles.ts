@@ -187,7 +187,7 @@ const S3 = {
 
 const EP03_EN: SecLang = {
   open: [
-    'On November 12, 2026, Jensen Huang resigned as Nvidia\'s CEO and gave up his board seat. Within days, Elon Musk, President Trump and a petition with more than 170,000 self-reported names said they want him back.',
+    'On November 12, 2026, Jensen Huang resigned as Nvidia\'s CEO and gave up his board seat. Within days, Elon Musk and a petition with more than 180,000 self-reported names, as of November 16, said they want him back. President Trump only said he "would not mind" and did not sign it.',
     'So can a founder get back with his company? Start with couples.',
   ],
   sections: [
@@ -260,7 +260,7 @@ const EP03_EN: SecLang = {
 
 const EP03_ZH: SecLang = {
   open: [
-    '2026 年 11 月 12 日，黃仁勳辭去 Nvidia 執行長，連董事席也一起辭了。幾天之內，馬斯克、川普，還有一份超過十七萬個自填簽名的請願，都說要他回來。',
+    '2026 年 11 月 12 日，黃仁勳辭去 Nvidia 執行長，連董事席也一起辭了。幾天之內，馬斯克和一份超過十八萬個自填簽名的請願（截至 11 月 16 日）都說要他回來。川普只說「不介意」，沒有連署。',
     '創辦人回得去自己的公司嗎？先從情侶講起。',
   ],
   sections: [

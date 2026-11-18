@@ -968,7 +968,7 @@ export default function Insight({ onBack, onAnalyze }: { onBack: () => void; onA
             exit={{ opacity: 0, y: -14 }}
             transition={{ duration: 0.42, ease: EASE }}
           >
-            {ep.published ? <EpisodeDetail ep={ep} /> : <EpisodeNotPublished />}
+            {ep.published || (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('preview') === 'vs') ? <EpisodeDetail ep={ep} /> : <EpisodeNotPublished />}
           </motion.div>
         ) : open === null ? (
           <motion.div

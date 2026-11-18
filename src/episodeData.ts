@@ -181,13 +181,14 @@ export const EPISODES: Episode[] = [
   "en": {
    "title": "Can Jensen Huang come back?",
    "term": "Getting back together",
-   "desc": "Getting back with an ex is common. Founders get back with their companies too. It is not shares that decide it. It is the board.",
+   "desc": "Getting back with an ex is common. Founders get back with their companies too. Unless a founder holds the votes, the board decides.",
    "body": [
-    "In one study, 45 percent of young couples who broke up got back together. So can a founder get back with his company?",
-    "Musk, Trump and over 170,000 petition names want Jensen Huang back. The board reportedly says no.",
-    "Steve Jobs was pushed out of Apple and came back twelve years later. Sam Altman was fired by OpenAI and back in five days. Elon Musk was replaced at X.com, PayPal's predecessor, on his honeymoon, and never went back.",
-    "Shares didn't decide it. Jobs owned one share. Musk owned 13 percent and still couldn't. <mark>The board decided.</mark>",
-    "Jensen gave up his board seat too. To rejoin, six of ten directors must say yes. And reportedly, the board won't bring him back as CEO."
+    "In one US study, 45 percent of young adults broke up and got back together. Companies break up with founders too.",
+    "By the third funding round, half of founder CEOs are replaced. Founders are 4 percent of big-company CEOs, but 44 percent of comeback CEOs.",
+    "Jensen Huang has left Nvidia. Elon Musk and over 180,000 petition signers want him back. The board reportedly says no.",
+    "Who decides? Steve Jobs was pushed out in 1985 and came back when Apple bought NeXT. Musk himself, replaced at X.com, never went back.",
+    "<mark>Unless a founder controls the votes, the board decides.</mark> Mark Zuckerberg controls 61 percent of Meta's votes. Jensen holds 3.6 percent.",
+    "He left the board too. Getting back on takes six of ten directors."
    ],
    "quoteBy": "Steve Jobs, Stanford commencement address, 2005",
    "quote": "I had been rejected, but I was still in love.",
@@ -197,13 +198,14 @@ export const EPISODES: Episode[] = [
   "zh": {
    "title": "黃仁勳回得來嗎？",
    "term": "復合",
-   "desc": "跟前任復合很常見，創辦人也會回到自己的公司。決定的不是股份，是董事會。",
+   "desc": "跟前任復合很常見，創辦人也會回到自己的公司。除非創辦人握有投票權，不然董事會說了算。",
    "body": [
-    "一份研究裡，分手的年輕情侶有 45% 復合了。那創辦人，回得去自己的公司嗎？",
-    "馬斯克、川普、超過十七萬個自填連署都要黃仁勳回來；據報導，董事會說不要。",
-    "Jobs 被擠出 Apple，十二年後回來。Altman 被 OpenAI 開除，五天就回來。Musk 度蜜月時被換掉 X.com（PayPal 前身）執行長，再也沒回去。",
-    "決定的不是股份。Jobs 只有一股；Musk 持有 13%，還是回不去。<mark>決定的是董事會。</mark>",
-    "黃仁勳連董事席也辭了。要回來，十位董事要六位點頭。據報導，董事會不打算讓他回任執行長。"
+    "美國一份研究裡，45% 的年輕人分手後又復合了。公司也會跟創辦人分手。",
+    "募到第三輪時，一半的創辦人執行長已被換掉。美國大公司執行長裡，創辦人只佔 4%，回鍋的執行長卻有 44% 是創辦人。",
+    "黃仁勳已經離開 Nvidia。馬斯克和超過 18 萬個連署人都要他回來；據報導，董事會說不要。",
+    "誰說了算？Jobs 1985 年被擠出 Apple，Apple 買下 NeXT 之後他回來了。馬斯克自己被 X.com（PayPal 前身）換掉，再也沒回去。",
+    "<mark>除非創辦人手上握有投票權，不然董事會說了算。</mark>祖克柏握有 Meta 61% 的投票權，黃仁勳只有 3.6%。",
+    "他連董事會也退出了。要回董事會，十位董事要六位點頭。"
    ],
    "quoteBy": "Steve Jobs，2005 年史丹佛畢業演講",
    "quote": "我被拒絕了，但我還愛著。",

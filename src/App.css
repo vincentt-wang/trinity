@@ -1552,3 +1552,6 @@ html[lang^=zh] .ep-quote blockquote::before{content:"「"}html[lang^=zh] .ep-quo
 .ep-items li{border:1px solid var(--line);border-radius:16px;background:var(--bg-card);box-shadow:var(--shadow);padding:16px 18px}
 .ep-items h3{margin:0 0 6px;font-family:var(--font-disp);font-size:1.08rem;font-weight:700;color:var(--ink)}
 .ep-items p{margin:0;font-size:1.02rem;line-height:1.7;color:var(--ink)}
+
+/* 未發布文章的預覽條（?preview=vs，261118） */
+.ep-preview{margin:14px 0 18px;padding:10px 14px;border-radius:10px;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.5);color:#F59E0B;font-size:16px;font-weight:600}
