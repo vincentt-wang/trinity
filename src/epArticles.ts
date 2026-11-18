@@ -1,5 +1,5 @@
 // 集數的長文版（261117）。手寫正本，不由 gen_episodes.py 產生，重跑腳本不會蓋掉。
-// EP01 事實全部出自 V怪客影片/03_查核/JE02_董事會名單_261116.md 與文末出處；最新動態查到 2026-11-17。
+// EP01 事實全部出自 V怪客影片/03_查核/A01_董事會名單_261116.md 與文末出處；最新動態查到 2026-11-17。
 // 規則：只寫事實不評價；中文零破折號；改完跑 check_voice.py。
 
 export type Director = { name: string; since: string; bg: string }
@@ -164,7 +164,7 @@ const EP01_ZH: LongLang = {
 }
 
 
-// EP03（JE09）事實全部出自 V怪客影片/03_查核/EP_黃仁勳回得來嗎_261117.md、L02_控制權查核_261115.md、L02_利益與幕後說法查核_261115.md；
+// EP03（JE09）事實全部出自 V怪客影片/03_查核/A03_黃仁勳回得來嗎_261117.md、L02_控制權查核_261115.md、L02_利益與幕後說法查核_261115.md；
 // 「董事會怎麼換」一節另查 Darden 2014（Nation's Restaurant News）與 Exxon 2021（CNBC）。查到 2026-11-17。
 const S3 = {
   tars: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3924753',

@@ -1,7 +1,7 @@
 // 集數文章 v2（261118）：統一版型。手寫正本，不由 gen_episodes.py 產生，重跑腳本不會蓋掉。
 // 版型順序：情境圖 → 影片回顧（約兩成，含影片）→ 延伸（約八成，中間插分析圖）→ 投票 → 出處 → 點子 CTA → 系列輪播。
-// 事實出處：V怪客影片/03_查核/ 的 EP_黃仁勳願意回來_261118.md、EP_黃仁勳回得來嗎_261117.md、JE02_董事會名單_261116.md、
-// FounderMarketFit_YC_261116.md、結尾名人觀點_261116.md、L02_FirstRound_Superhuman原文_261114.md；261118 另查的都附在 sources。
+// 事實出處：V怪客影片/03_查核/ 的 A04_黃仁勳願意回來_261118.md、A03_黃仁勳回得來嗎_261117.md、A01_董事會名單_261116.md、
+// A02_FounderMarketFit_YC_261116.md、結尾名人觀點_261116.md、L02_FirstRound_Superhuman原文_261114.md；261118 另查的都附在 sources。
 // 規則：不編事實與原話；中文零破折號；改完把中英文字抽出來跑 check_voice.py。
 
 export type Source = { what: string; label: string; url: string; level: 'p' | 'n' | 's' }
