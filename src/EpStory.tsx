@@ -229,6 +229,12 @@ function Poll({ p, preview }: { p: StoryPoll; preview: boolean }) {
       .catch(() => { if (live) setErr(true) })
     return () => { live = false }
   }, [pid])
+  // 週信的「你選哪一個？」連到 #poll：文章是渲染完才出現，所以自己捲過去
+  useEffect(() => {
+    if (location.hash !== '#poll') return
+    const t = setTimeout(() => document.getElementById('poll')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 700)
+    return () => clearTimeout(t)
+  }, [])
 
   const vote = async (k: string) => {
     if (mine || busy) return
@@ -249,7 +255,7 @@ function Poll({ p, preview }: { p: StoryPoll; preview: boolean }) {
   if (shown && mine && !(shown[mine] > 0)) shown[mine] = 1
   const total = shown ? p.opts.reduce((n, o) => n + (shown[o.k] || 0), 0) : 0
   return (
-    <section className="pl" data-testid="poll" data-poll={pid}>
+    <section className="pl" id="poll" data-testid="poll" data-poll={pid}>
       <div className="pl-kick">{t.pollKick}</div>
       <h2>{p.q}</h2>
       <div className="pl-opts" role="group" aria-label={p.q}>
@@ -351,10 +357,10 @@ function Carousel({ cur, preview }: { cur: string; preview: boolean }) {
 
 /* ── 8. 訂閱文章：文章最下方。送出後寄確認信，按了才算訂閱（261118） ── */
 const SL = {
-  en: { kick: 'Subscribe', h: 'New pieces, in your inbox', p: 'When there is a new piece, I will send it to you. One at a time, and you can leave whenever you like.',
+  en: { kick: 'Venture Relations', h: 'One piece a week, in your inbox', p: 'Every Thursday morning, Taipei time, one piece readers responded to most. Never the same one twice, and you can leave whenever you like.',
     btn: 'Subscribe', busy: 'Sending…', bad: 'This email looks off.', err: 'That did not go through. Try again.',
     okH: 'One more step', ok: 'I sent a confirmation email. Your subscription starts once you confirm it. If it is not there, it may be in spam.' },
-  zh: { kick: '訂閱文章', h: '新文章，寄到你的信箱', p: '有新文章時，我會寄給你。一次一篇，隨時可以取消。',
+  zh: { kick: 'Venture Relations', h: '每週一篇，寄到你的信箱', p: '每週四早上，寄一篇讀者反應最好的文章。同一篇不寄第二次，隨時可以取消。',
     btn: '訂閱', busy: '送出中…', bad: 'email 格式不對。', err: '沒送出去，再按一次試試。',
     okH: '還差一步', ok: '確認信已經寄出，按下信裡的按鈕，訂閱才算完成。沒看到的話，可能在垃圾信件夾。' },
 }

@@ -6,6 +6,9 @@ const LangCtx = createContext<{ lang: Lang; setLang: (l: Lang) => void }>({ lang
 
 export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Lang>(() => {
+    // ?lang=zh|en 優先（週信的連結會帶訂閱者的語言），其次是上次選的
+    const q = typeof location !== 'undefined' ? new URLSearchParams(location.search).get('lang') : null
+    if (q === 'zh' || q === 'en') return q
     const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('trinity-lang') : null
     return saved === 'zh' ? 'zh' : 'en'
   })
