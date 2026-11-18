@@ -1713,3 +1713,17 @@ html[lang^=zh] .ep-quote blockquote::before{content:"「"}html[lang^=zh] .ep-quo
 .sc-door::after{top:52px}
 .sc-door-in{white-space:nowrap}
 @media(max-width:700px){.sc-door{width:100%}}
+/* 訂閱文章（261118）：文章最下方，白卡、一行 email＋按鈕，手機改直排 */
+.sb{margin-top:48px;padding:26px 26px 24px;border-radius:20px;border:1px solid var(--line);background:var(--bg-card);box-shadow:var(--shadow)}
+.sb-kick{font-size:1rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--earth)}
+.sb h2{margin-top:8px}
+.sb p{margin-top:8px;color:var(--ink-soft)}
+.sb-form{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.sb-form input[type=email]{flex:1 1 260px;min-width:0;min-height:50px;font:inherit;font-size:1.04rem;padding:0 16px;border-radius:12px;border:1px solid var(--line-strong);background:#fff;color:var(--ink)}
+.sb-form input[type=email]:focus{outline:none;border-color:var(--earth);box-shadow:0 0 0 4px var(--earth-soft)}
+.sb-form .btn{min-height:50px;white-space:nowrap}
+.sb-form .btn[disabled]{opacity:.6;cursor:default}
+.sb-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.sb .sb-err{font-size:1rem;color:#b42318}
+.sb-ok h2{margin-top:8px}
+@media (max-width:560px){.sb{padding:22px 18px}.sb-form .btn{flex:1 1 100%;justify-content:center;text-align:center}}

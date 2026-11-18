@@ -10,6 +10,8 @@ import { routeTo } from './router'
 import { setSource, trackCta } from './lib/track'
 
 const POLL_URL = 'https://trinity-counter.comicbnb.workers.dev/poll'
+// 訂閱：寫進 vincent.easeai.com.tw 的電子報名單（雙重確認，KV nl:sub:<email>），跟個人部落格共用同一份（261118）
+const SUB_URL = 'https://vincent.easeai.com.tw/api/nl/subscribe'
 const nn = (n: number) => String(n).padStart(2, '0')
 
 const L = {
@@ -66,6 +68,7 @@ export function StoryBody({ ep, preview }: { ep: Episode; preview: boolean }) {
         <a className="btn btn-primary" href={`/analyze?s=${src}`} onClick={analyze} data-testid="st-analyze">{t.ideaBtn} →</a>
       </div>
       <Carousel cur={ep.slug} preview={preview} />
+      <Subscribe slug={ep.slug} preview={preview} />
     </div>
   )
 }
@@ -342,6 +345,57 @@ function Carousel({ cur, preview }: { cur: string; preview: boolean }) {
           </span>
         </a>
       </div>
+    </section>
+  )
+}
+
+/* ── 8. 訂閱文章：文章最下方。送出後寄確認信，按了才算訂閱（261118） ── */
+const SL = {
+  en: { kick: 'Subscribe', h: 'New pieces, in your inbox', p: 'When there is a new piece, I will send it to you. One at a time, and you can leave whenever you like.',
+    btn: 'Subscribe', busy: 'Sending…', bad: 'This email looks off.', err: 'That did not go through. Try again.',
+    okH: 'One more step', ok: 'I sent a confirmation email. Your subscription starts once you confirm it. If it is not there, it may be in spam.' },
+  zh: { kick: '訂閱文章', h: '新文章，寄到你的信箱', p: '有新文章時，我會寄給你。一次一篇，隨時可以取消。',
+    btn: '訂閱', busy: '送出中…', bad: 'email 格式不對。', err: '沒送出去，再按一次試試。',
+    okH: '還差一步', ok: '確認信已經寄出，按下信裡的按鈕，訂閱才算完成。沒看到的話，可能在垃圾信件夾。' },
+}
+function Subscribe({ slug, preview }: { slug: string; preview: boolean }) {
+  const { lang } = useLang()
+  const t = SL[lang]
+  const [mail, setMail] = useState('')
+  const [hp, setHp] = useState('')
+  const [st, setSt] = useState<'idle' | 'busy' | 'ok' | 'bad' | 'err'>('idle')
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const m = mail.trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m)) { setSt('bad'); return }
+    setSt('busy')
+    try {
+      // text/plain：不觸發預檢，worker 照樣讀 JSON
+      const r = await fetch(SUB_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ email: m, lang, src: 'trinity-' + slug, website_hp: hp }), signal: AbortSignal.timeout(10000) })
+      const j = await r.json()
+      if (!j || !j.ok) throw new Error('sub')
+      if (!preview) trackCta('ep:' + slug + ':subscribe')
+      setSt('ok')
+    } catch { setSt('err') }
+  }
+  return (
+    <section className="sb" data-testid="subscribe">
+      <div className="sb-kick">{t.kick}</div>
+      {st === 'ok' ? (
+        <div className="sb-ok" role="status"><h2>{t.okH}</h2><p>{t.ok}</p></div>
+      ) : (
+        <>
+          <h2>{t.h}</h2>
+          <p>{t.p}</p>
+          <form className="sb-form" onSubmit={submit} noValidate>
+            <input type="email" autoComplete="email" maxLength={120} placeholder="you@example.com" aria-label="Email" value={mail}
+              onChange={(e) => { setMail(e.target.value); if (st === 'bad' || st === 'err') setSt('idle') }} data-testid="sub-email" />
+            <input className="sb-hp" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" value={hp} onChange={(e) => setHp(e.target.value)} />
+            <button type="submit" className="btn btn-primary" disabled={st === 'busy'} data-testid="sub-btn">{st === 'busy' ? t.busy : t.btn}</button>
+          </form>
+          {(st === 'bad' || st === 'err') && <p className="sb-err" role="alert">{st === 'bad' ? t.bad : t.err}</p>}
+        </>
+      )}
     </section>
   )
 }

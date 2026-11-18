@@ -22,7 +22,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   'font-src https://fonts.gstatic.com',
   "img-src 'self' data:",
-  "connect-src 'self' https://cloudflareinsights.com https://trinity-counter.comicbnb.workers.dev https://trinity-check-intake.comicbnb.workers.dev",
+  "connect-src 'self' https://cloudflareinsights.com https://trinity-counter.comicbnb.workers.dev https://trinity-check-intake.comicbnb.workers.dev https://vincent.easeai.com.tw",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
